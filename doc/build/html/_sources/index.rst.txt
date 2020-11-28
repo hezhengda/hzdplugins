@@ -11,6 +11,7 @@ Welcome to hzdplugins's documentation!
    :caption: Contents:
 
    modules
+   log
 
 Indices and tables
 ==================

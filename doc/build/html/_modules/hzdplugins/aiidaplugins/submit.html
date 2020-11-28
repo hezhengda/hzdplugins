@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiida.submit &mdash; hzdplugins 0.0.5 documentation</title>
+  <title>hzdplugins.aiidaplugins.submit &mdash; hzdplugins 0.0.5 documentation</title>
   
 
   
@@ -133,7 +133,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>hzdplugins.aiida.submit</li>
+      <li>hzdplugins.aiidaplugins.submit</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,11 +148,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for hzdplugins.aiida.submit</h1><div class="highlight"><pre>
+  <h1>Source code for hzdplugins.aiidaplugins.submit</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">StructureData</span><span class="p">,</span> <span class="n">KpointsData</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
-<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiida.submit.qePwOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -300,7 +300,7 @@
 
     <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">pk</span></div>
 
-<div class="viewcode-block" id="qePwContinueSubmit"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiida.submit.qePwContinueSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwContinueSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">pk</span><span class="p">,</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">del_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">kpoints</span><span class="o">=</span><span class="p">[],</span> <span class="n">pseudo_family</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">cluster_options</span><span class="o">=</span><span class="p">{},</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="qePwContinueSubmit"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.submit.qePwContinueSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwContinueSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">pk</span><span class="p">,</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">del_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">kpoints</span><span class="o">=</span><span class="p">[],</span> <span class="n">pseudo_family</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">cluster_options</span><span class="o">=</span><span class="p">{},</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 
