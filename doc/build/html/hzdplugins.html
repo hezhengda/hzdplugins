@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins Modules &mdash; hzdplugins 0.0.1 documentation</title>
+  <title>hzdplugins Modules &mdash; hzdplugins 0.0.2 documentation</title>
   
 
   
@@ -211,7 +211,7 @@
 <dt>results:</dt><dd><p>The results dictionary that contains all relevant computational information.</p>
 </dd>
 </dl>
-<p>Return: A table which shows all the information.</p>
+<p>Return: A panda object that we can use to display the dataframe</p>
 </dd></dl>
 
 <dl class="py function">
@@ -229,6 +229,71 @@
 </div>
 <div class="section" id="module-hzdplugins.aiida.submit">
 <span id="hzdplugins-aiida-submit-module"></span><h4>hzdplugins.aiida.submit module<a class="headerlink" href="#module-hzdplugins.aiida.submit" title="Permalink to this headline">¶</a></h4>
+<dl class="py function">
+<dt id="hzdplugins.aiida.submit.qePwContinueSubmit">
+<code class="sig-prename descclassname">hzdplugins.aiida.submit.</code><code class="sig-name descname">qePwContinueSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">pk</span></em>, <em class="sig-param"><span class="n">add_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">del_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">pseudo_family</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cluster_options</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">metadata</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiida/submit.html#qePwContinueSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiida.submit.qePwContinueSubmit" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>qePwContinueSubmit</cite> will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs</p>
+<p>Parameters:</p>
+<dl>
+<dt>pk:</dt><dd><p>The id of previous calculation. We will start our calculation from there.</p>
+</dd>
+<dt>add_parameters:</dt><dd><p>A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</p>
+<p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
+<p>e.g. {‘CONTROL’:{}, ‘SYSTEM’:{}}</p>
+</dd>
+<dt>del_parameters:</dt><dd><p>A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then ‘nspin’ needs to be deleted. Same structure as add_parameters.</p>
+<p>e.g. {‘CONTROL’: [key1, key2, key3], ‘SYSTEM’: [key1, key2, key3]}</p>
+</dd>
+<dt>kpoints:</dt><dd><p>A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</p>
+</dd>
+<dt>pseudo_family:</dt><dd><p>A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.</p>
+</dd>
+<dt>cluster_options:</dt><dd><p>A dictionary. The detailed option for the cluster. Different cluster may have different settings. There are some keywords are necessary: (1) resources (2) max_wallclock_seconds (3) account (4) queue_name</p>
+</dd>
+<dt>metadata:</dt><dd><p>A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
+</dd>
+<dt>Return:</dt><dd><p>results: a modified results dictionary with the latest submitted job
+pk: the id of that CalcJob</p>
+</dd>
+<dt>Return:</dt><dd><p>results: a modified results dictionary with the latest submitted job
+pk: the id of that CalcJob</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiida.submit.qePwOriginalSubmit">
+<code class="sig-prename descclassname">hzdplugins.aiida.submit.</code><code class="sig-name descname">qePwOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">kpoints</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiida/submit.html#qePwOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiida.submit.qePwOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>qePwOriginalSubmit</cite> will submit an original computational task to the desired computer by using certain code.</p>
+<p>Parameters:</p>
+<dl>
+<dt>results:</dt><dd><p>A dictionary that has all the relevant information about the</p>
+</dd>
+<dt>codename:</dt><dd><p>A string. Represent the code for pw.x that you want to use</p>
+</dd>
+<dt>structure:</dt><dd><p>A StructureData object. The structure of your system. It needs to be StructureData type.</p>
+</dd>
+<dt>add_parameters:</dt><dd><p>A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</p>
+<p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
+<p>e.g. {‘CONTROL’:{}, ‘SYSTEM’:{}}</p>
+</dd>
+<dt>del_parameters:</dt><dd><p>A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then ‘nspin’ needs to be deleted. Same structure as add_parameters.</p>
+<p>e.g. {‘CONTROL’: [key1, key2, key3], ‘SYSTEM’: [key1, key2, key3]}</p>
+</dd>
+<dt>kpoints:</dt><dd><p>A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</p>
+</dd>
+<dt>pseudo_family:</dt><dd><p>A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.</p>
+</dd>
+<dt>cluster_options:</dt><dd><p>A dictionary. The detailed option for the cluster. Different cluster may have different settings. There are some keywords are necessary: (1) resources (2) max_wallclock_seconds (3) account (4) queue_name</p>
+</dd>
+<dt>metadata:</dt><dd><p>A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
+</dd>
+<dt>Return:</dt><dd><p>results: a modified results dictionary with the latest submitted job
+pk: the id of that CalcJob</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 </div>

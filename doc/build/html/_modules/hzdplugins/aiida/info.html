@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiida.info &mdash; hzdplugins 0.0.1 documentation</title>
+  <title>hzdplugins.aiida.info &mdash; hzdplugins 0.0.2 documentation</title>
   
 
   
@@ -181,13 +181,13 @@
 <span class="sd">    results:</span>
 <span class="sd">        The results dictionary that contains all relevant computational information.</span>
 
-<span class="sd">    Return: A table which shows all the information.</span>
+<span class="sd">    Return: A panda object that we can use to display the dataframe </span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
     <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_rows&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;display.max_columns&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">df</span></div>
+    <span class="k">return</span> <span class="n">df</span></div>
 </pre></div>
 
            </div>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiida.io &mdash; hzdplugins 0.0.1 documentation</title>
+  <title>hzdplugins.aiida.io &mdash; hzdplugins 0.0.2 documentation</title>
   
 
   
@@ -185,7 +185,8 @@
 
     <span class="c1"># check whether the calculation is finished (0 or 501) or not</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">exit_status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">exit_status</span> <span class="o">==</span> <span class="mi">501</span><span class="p">)</span> <span class="ow">or</span> <span class="n">finished</span><span class="p">:</span>
-        <span class="k">pass</span>
+        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exit_status</span><span class="p">)</span>
+        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finished</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pk:</span><span class="si">{}</span><span class="s1"> --- Sorry, your calculation is not finished yet, please wait until it is finished.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pk</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">results_tmp</span>
