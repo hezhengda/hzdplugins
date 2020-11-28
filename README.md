@@ -5,3 +5,7 @@ This package is the summary of all my personal plugins for my own research. Beca
 # How to install it
 
 The installation is really simple, it is `pip install hzdplugins`.
+
+# Official Documentation
+
+The documentation can be viewed in https://hzdplugins.readthedocs.io/en/latest/.
