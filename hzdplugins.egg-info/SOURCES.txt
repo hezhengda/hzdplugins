@@ -1,0 +1,8 @@
+README.md
+setup.py
+hzdplugins.egg-info/PKG-INFO
+hzdplugins.egg-info/SOURCES.txt
+hzdplugins.egg-info/dependency_links.txt
+hzdplugins.egg-info/not-zip-safe
+hzdplugins.egg-info/requires.txt
+hzdplugins.egg-info/top_level.txt

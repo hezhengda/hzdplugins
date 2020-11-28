@@ -1,0 +1,4 @@
+aiida-core
+aiida-quantumespresso
+ase
+pymatgen
