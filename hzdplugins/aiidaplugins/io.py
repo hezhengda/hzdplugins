@@ -1,4 +1,5 @@
 from copy import deepcopy
+from aiida.orm import load_node
 
 def qeCleanOneRemoteFolder(results, pk):
 
@@ -87,7 +88,7 @@ def qeCleanOneRemoteFolder(results, pk):
         return results_tmp
     else:
         print('pk:{} --- There is no out folder in the working directory. Please check whether the calculation is sucessfully submitted and executed.')
-        return 0
+        return results_tmp
 
 def qecleanAllRemoteFolder(results, *args):
 

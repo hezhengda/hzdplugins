@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins Modules &mdash; hzdplugins 0.0.5 documentation</title>
+  <title>hzdplugins Modules &mdash; hzdplugins 0.0.10 documentation</title>
   
 
   
@@ -207,6 +207,42 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.unConvergedTasks">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">unConvergedTasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#unConvergedTasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.unConvergedTasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>show all the finished by not converged computational tasks, which means the <cite>is_finished</cite> tag is True, but <cite>is_finished_ok</cite> is False, although when <cite>exit_status == ‘501’</cite>, it is still ok.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>results:</dt><dd><p>The results dictionary that contains all relevant computational information.</p>
+</dd>
+</dl>
+<p>Return: A dictionary that contain all the unfinished and unconverged tasks, in total ‘unDown’ tasks.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.unDoneTasks">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">unDoneTasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#unDoneTasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.unDoneTasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>show all the unDone computational tasks, which means the exit_status is neither ‘0’ or ‘501’, or None.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>results:</dt><dd><p>The results dictionary that contains all relevant computational information.</p>
+</dd>
+</dl>
+<p>Return: A dictionary that contain all the unfinished and unconverged tasks, in total ‘unDown’ tasks.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.unFinishedTasks">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">unFinishedTasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#unFinishedTasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.unFinishedTasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>show all the unFinished computational tasks, which means the is_finished tag is False</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>results:</dt><dd><p>The results dictionary that contains all relevant computational information.</p>
+</dd>
+</dl>
+<p>Return: A dictionary that contain all the unfinished and unconverged tasks, in total ‘unDown’ tasks.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="hzdplugins.aiidaplugins.info.uuid">
 <code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">uuid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pk</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.uuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Give the uuid of certain node</p>
@@ -223,11 +259,13 @@
 <span id="hzdplugins-aiidaplugins-submit-module"></span><h2>hzdplugins.aiidaplugins.submit module<a class="headerlink" href="#module-hzdplugins.aiidaplugins.submit" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.submit.qePwContinueSubmit">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwContinueSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">pk</span></em>, <em class="sig-param"><span class="n">add_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">del_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">pseudo_family</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cluster_options</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">metadata</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwContinueSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwContinueSubmit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwContinueSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">pk</span></em>, <em class="sig-param"><span class="n">codename</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">add_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">del_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">pseudo_family</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cluster_options</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">metadata</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwContinueSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwContinueSubmit" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>qePwContinueSubmit</cite> will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs</p>
 <p>Parameters:</p>
 <dl>
 <dt>pk:</dt><dd><p>The id of previous calculation. We will start our calculation from there.</p>
+</dd>
+<dt>codename:</dt><dd><p>A string. Represent the code for pw.x that you want to use.</p>
 </dd>
 <dt>add_parameters:</dt><dd><p>A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</p>
 <p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>

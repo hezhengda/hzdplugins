@@ -1,5 +1,7 @@
-from aiida.orm import StructureData, KpointsData
+from aiida.orm import StructureData, KpointsData, Dict
 from copy import deepcopy
+from aiida.orm import load_node
+from aiida.engine.launch import submit
 
 def qePwOriginalSubmit(results, codename, structure, add_parameters, del_parameters, kpoints, pseudo_family, cluster_options, metadata):
 
@@ -144,12 +146,12 @@ def qePwOriginalSubmit(results, codename, structure, add_parameters, del_paramet
     results_tmp[str(calc.pk)]['comp_type'] = parameters_default['CONTROL']['calculation']
     results_tmp[str(calc.pk)]['converged'] = False
     results_tmp[str(calc.pk)]['remove_remote_folder'] = False
-    results_tmp[str(calc.pk)]['E / eV'] = None
+    results_tmp[str(calc.pk)]['E/eV'] = None
     results_tmp[str(calc.pk)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
 
     return results_tmp, calc.pk
 
-def qePwContinueSubmit(results, pk, add_parameters={}, del_parameters={}, kpoints=[], pseudo_family='', cluster_options={}, metadata={}):
+def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_parameters={}, kpoints=[], pseudo_family='', cluster_options={}, metadata={}):
 
     """
 
@@ -159,6 +161,9 @@ def qePwContinueSubmit(results, pk, add_parameters={}, del_parameters={}, kpoint
 
     pk:
         The id of previous calculation. We will start our calculation from there.
+
+    codename:
+        A string. Represent the code for pw.x that you want to use.
 
     add_parameters:
         A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
@@ -198,7 +203,11 @@ def qePwContinueSubmit(results, pk, add_parameters={}, del_parameters={}, kpoint
 
     node = load_node(pk)
 
-    restart_builder = node.get_builder_restart() # get the restart_builder
+    if len(codename) == 0:
+        restart_builder = node.get_builder_restart() # get the restart_builder
+    else:
+        code = Code.get_from_string(codename)
+        restart_builder = code.get_builder()
 
     parameters_tmp = deepcopy(node.inputs.parameters)
     structure = node.outputs.output_structure
@@ -273,7 +282,7 @@ def qePwContinueSubmit(results, pk, add_parameters={}, del_parameters={}, kpoint
     results_tmp[str(calc.pk)]['comp_type'] = parameters_default['CONTROL']['calculation']
     results_tmp[str(calc.pk)]['converged'] = False
     results_tmp[str(calc.pk)]['remove_remote_folder'] = False
-    results_tmp[str(calc.pk)]['E / eV'] = None
+    results_tmp[str(calc.pk)]['E/eV'] = None
     results_tmp[str(calc.pk)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
 
     return results_tmp, calc.pk

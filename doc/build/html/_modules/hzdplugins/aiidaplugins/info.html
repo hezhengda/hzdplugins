@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.5 documentation</title>
+  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.10 documentation</title>
   
 
   
@@ -152,6 +152,7 @@
 <span></span><span class="c1"># This document contains many small functions that can help us find relevant information about each node</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">load_node</span>
 
 <div class="viewcode-block" id="uuid"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.info.uuid">[docs]</a><span class="k">def</span> <span class="nf">uuid</span><span class="p">(</span><span class="n">pk</span><span class="p">):</span>
 
@@ -182,13 +183,94 @@
 <span class="sd">    results:</span>
 <span class="sd">        The results dictionary that contains all relevant computational information.</span>
 
-<span class="sd">    Return: A panda object that we can use to display the dataframe </span>
+<span class="sd">    Return: A panda object that we can use to display the dataframe</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
     <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_rows&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;display.max_columns&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="unDoneTasks"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.info.unDoneTasks">[docs]</a><span class="k">def</span> <span class="nf">unDoneTasks</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    show all the unDone computational tasks, which means the exit_status is neither &#39;0&#39; or &#39;501&#39;, or None.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    results:</span>
+<span class="sd">        The results dictionary that contains all relevant computational information.</span>
+
+<span class="sd">    Return: A dictionary that contain all the unfinished and unconverged tasks, in total &#39;unDown&#39; tasks.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subresults</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;exit_status&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;501&#39;</span><span class="p">:</span>
+                <span class="n">subresults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">exit_status</span> <span class="o">!=</span> <span class="s1">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">exit_status</span> <span class="o">!=</span> <span class="s1">&#39;501&#39;</span><span class="p">:</span>
+                <span class="n">subresults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">subresults</span></div>
+
+<div class="viewcode-block" id="unFinishedTasks"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.info.unFinishedTasks">[docs]</a><span class="k">def</span> <span class="nf">unFinishedTasks</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    show all the unFinished computational tasks, which means the is_finished tag is False</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    results:</span>
+<span class="sd">        The results dictionary that contains all relevant computational information.</span>
+
+<span class="sd">    Return: A dictionary that contain all the unfinished and unconverged tasks, in total &#39;unDown&#39; tasks.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subresults</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">pk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">subresults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">subresults</span></div>
+
+<div class="viewcode-block" id="unConvergedTasks"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.info.unConvergedTasks">[docs]</a><span class="k">def</span> <span class="nf">unConvergedTasks</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    show all the finished by not converged computational tasks, which means the `is_finished` tag is True, but `is_finished_ok` is False, although when `exit_status == &#39;501&#39;`, it is still ok.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    results:</span>
+<span class="sd">        The results dictionary that contains all relevant computational information.</span>
+
+<span class="sd">    Return: A dictionary that contain all the unfinished and unconverged tasks, in total &#39;unDown&#39; tasks.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subresults</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">pk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">is_finished_ok</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">exit_status</span> <span class="o">!=</span> <span class="mi">501</span><span class="p">:</span>
+                    <span class="n">subresults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">subresults</span></div>
 </pre></div>
 
            </div>
