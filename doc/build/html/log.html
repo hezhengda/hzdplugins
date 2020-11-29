@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>This is the log file for hzdplugins &mdash; hzdplugins 0.0.10 documentation</title>
+  <title>This is the log file for hzdplugins &mdash; hzdplugins 0.0.11 documentation</title>
   
 
   
@@ -171,6 +171,16 @@
 <li><dl class="simple">
 <dt>v0.0.5: 2020.11.28</dt><dd><ul>
 <li><p>I’ve learn that if you want to make a python module, then you need to add <cite>__init__.py</cite> file in the folder.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.11: 2020.11.29</dt><dd><ul>
+<li><p>I’ve changed the keys in results, now it has the following keys: [‘system’, ‘uuid’, ‘comp_type’, ‘cluster’, ‘xc functional’, ‘exit_status’, ‘is_finished’, ‘is_finished_ok’, ‘E/eV’, ‘remove_remote_folder’,  ‘previous_calc’]</p></li>
+<li><p>Add functions <cite>unDoneTasks</cite>, <cite>unFinishedTasks</cite>, <cite>unConvergedTasks</cite>, which can be used in selecting the tasks that still needs attention.</p></li>
+<li><p>put all the important information in <cite>constants.py</cite></p></li>
+<li><p>change the <cite>qePwOriginalSubmit</cite> and <cite>qePwContinueSubmit</cite> with the usage of <cite>constants.py</cite>, now the input becomes simpler.</p></li>
 </ul>
 </dd>
 </dl>

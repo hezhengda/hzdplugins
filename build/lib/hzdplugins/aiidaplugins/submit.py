@@ -2,8 +2,9 @@ from aiida.orm import StructureData, KpointsData, Dict
 from copy import deepcopy
 from aiida.orm import load_node
 from aiida.engine.launch import submit
+from hzdplugins.aiidaplugins.constants import results_keys_set, slurm_options
 
-def qePwOriginalSubmit(results, codename, structure, add_parameters, del_parameters, kpoints, pseudo_family, cluster_options, metadata):
+def qePwOriginalSubmit(results, codename, structure, add_parameters={}, del_parameters={}, kpoints, pseudo_family, cluster_options={}, metadata):
 
     """
 
@@ -39,7 +40,7 @@ def qePwOriginalSubmit(results, codename, structure, add_parameters, del_paramet
         A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
 
     cluster_options:
-        A dictionary. The detailed option for the cluster. Different cluster may have different settings. There are some keywords are necessary: (1) resources (2) max_wallclock_seconds (3) account (4) queue_name
+        A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
 
     metadata:
         A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
@@ -53,6 +54,7 @@ def qePwOriginalSubmit(results, codename, structure, add_parameters, del_paramet
     results_tmp = deepcopy(results) # first we need to create a copy for our simulation
 
     code = Code.get_from_string(codename)
+    computer = codename.split('@')[1] # get the name of the cluster
     pw_builder = code.get_builder()
 
     # pseudopotential
@@ -122,14 +124,22 @@ def qePwOriginalSubmit(results, codename, structure, add_parameters, del_paramet
     pw_builder.metadata.label = metadata['label']
     pw_builder.metadata.description = metadata['description']
 
-    # set options for slurm
-    pw_builder.metadata.options.resources = cluster_options['resources'] # in here machine = node
-    pw_builder.metadata.options.max_wallclock_seconds = cluster_options['max_wallclock_seconds'] # in here machine = node
-    pw_builder.metadata.options.account = cluster_options['account'] # in here machine = node
-    pw_builder.metadata.options.scheduler_stderr = 'stderr'
-    pw_builder.metadata.options.scheduler_stdout = 'stdout'
-    if cluster_options['queue_name'] != None:
-        pw_builder.metadata.options.queue_name = cluster_options['queue_name']
+    # set default options for slurm
+    pw_builder.metadata.options.resources = slurm_options[computer]['resources'] # in here machine = node
+    pw_builder.metadata.options.max_wallclock_seconds = slurm_options[computer]['max_wallclock_seconds'] # in here machine = node
+    pw_builder.metadata.options.account = slurm_options[computer]['account'] # in here machine = node
+    pw_builder.metadata.options.scheduler_stderr = slurm_options[computer]['scheduler_stderr']
+    pw_builder.metadata.options.scheduler_stdout = slurm_options[computer]['scheduler_stderr']
+    pw_builder.metadata.options.queue_name = slurm_options[computer]['queue_name']
+
+    # revised by cluster_options
+    if len(cluster_options) > 0:
+        if 'resources' in cluster_options.keys():
+            pw_builder.metadata.options.resources = cluster_options['resources']
+        if 'account' in cluster_options.keys():
+            pw_builder.metadata.options.resources = cluster_options['account']
+        if 'queue_name' in cluster_options.keys():
+            pw_builder.metadata.options.resources = cluster_options['queue_name']
 
     # launch the simulation
     pw_builder.structure = structure
@@ -140,14 +150,18 @@ def qePwOriginalSubmit(results, codename, structure, add_parameters, del_paramet
 
     # results
     results_tmp[str(calc.pk)] = {}
-    results_tmp[str(calc.pk)]['type'] = 'original'
+    results_tmp[str(calc.pk)]['uuid'] = calc.uuid
     results_tmp[str(calc.pk)]['system'] = metadata['label']
-    results_tmp[str(calc.pk)]['description'] = metadata['description']
     results_tmp[str(calc.pk)]['comp_type'] = parameters_default['CONTROL']['calculation']
-    results_tmp[str(calc.pk)]['converged'] = False
-    results_tmp[str(calc.pk)]['remove_remote_folder'] = False
     results_tmp[str(calc.pk)]['E/eV'] = None
+    results_tmp[str(calc.pk)]['remove_remote_folder'] = False
+    results_tmp[str(calc.pk)]['cluster'] = codename.split('@')[1] # becase all the codename have same structure "code@computer"
     results_tmp[str(calc.pk)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
+    results_tmp[str(calc.pk)]['exit_status'] = None
+    results_tmp[str(calc.pk)]['is_finished'] = None
+    results_tmp[str(calc.pk)]['is_finished_ok'] = None
+    results_tmp[str(calc.pk)]['previous_calc'] = 0 # 0 represent original
+    # results_tmp[str(calc.pk)]['description'] = metadata['description']
 
     return results_tmp, calc.pk
 
@@ -184,7 +198,7 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
         A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
 
     cluster_options:
-        A dictionary. The detailed option for the cluster. Different cluster may have different settings. There are some keywords are necessary: (1) resources (2) max_wallclock_seconds (3) account (4) queue_name
+        A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
 
     metadata:
         A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
@@ -203,9 +217,11 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
 
     node = load_node(pk)
 
-    if len(codename) == 0:
+    if len(codename) == 0: # not going to change cluster
+        computer = node.computer.label
         restart_builder = node.get_builder_restart() # get the restart_builder
     else:
+        copmuter = codename.split('@')[1]
         code = Code.get_from_string(codename)
         restart_builder = code.get_builder()
 
@@ -245,8 +261,6 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
     if len(cluster_options) > 0:
         if 'resources' in cluster_options.keys():
             restart_builder.metadata.options.resources = cluster_options['resources']
-        if 'max_wallclock_seconds' in cluster_options.keys():
-            restart_builder.metadata.options.max_wallclock_seconds = cluster_options['max_wallclock_seconds']
         if 'account' in cluster_options.keys():
             restart_builder.metadata.options.account = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
@@ -276,13 +290,16 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
 
     # results
     results_tmp[str(calc.pk)] = {}
-    results_tmp[str(calc.pk)]['type'] = 'continue from '+str(pk)
-    results_tmp[str(calc.pk)]['system'] = restart_builder.metadata.label
-    results_tmp[str(calc.pk)]['description'] = restart_builder.metadata.description = node.description = node.description
+    results_tmp[str(calc.pk)]['uuid'] = calc.uuid
+    results_tmp[str(calc.pk)]['system'] = metadata['label']
     results_tmp[str(calc.pk)]['comp_type'] = parameters_default['CONTROL']['calculation']
-    results_tmp[str(calc.pk)]['converged'] = False
-    results_tmp[str(calc.pk)]['remove_remote_folder'] = False
     results_tmp[str(calc.pk)]['E/eV'] = None
+    results_tmp[str(calc.pk)]['remove_remote_folder'] = False
+    results_tmp[str(calc.pk)]['cluster'] = computer
     results_tmp[str(calc.pk)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
+    results_tmp[str(calc.pk)]['exit_status'] = None
+    results_tmp[str(calc.pk)]['is_finished'] = None
+    results_tmp[str(calc.pk)]['is_finished_ok'] = None
+    results_tmp[str(calc.pk)]['previous_calc'] = pk # pk is the previous calculation
 
     return results_tmp, calc.pk

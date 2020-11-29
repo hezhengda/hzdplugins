@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins Modules &mdash; hzdplugins 0.0.10 documentation</title>
+  <title>hzdplugins Modules &mdash; hzdplugins 0.0.11 documentation</title>
   
 
   
@@ -195,6 +195,18 @@
 <div class="section" id="module-hzdplugins.aiidaplugins.info">
 <span id="hzdplugins-aiidaplugins-info-module"></span><h2>hzdplugins.aiidaplugins.info module<a class="headerlink" href="#module-hzdplugins.aiidaplugins.info" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.assignValue">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">assignValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#assignValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.assignValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign the current status of simulaton to results. The function will do two things: (1) clean the current results dictionary, remove any key that does not belong to the new key set. (2) Add the values in the new set.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>results:</dt><dd><p>The results dictionary that contains all relevant computational information.</p>
+</dd>
+</dl>
+<p>Return: A dictionary that has modified and assigned values</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="hzdplugins.aiidaplugins.info.showresults">
 <code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">showresults</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#showresults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.showresults" title="Permalink to this definition">¶</a></dt>
 <dd><p>show results in pandas form.</p>
@@ -278,7 +290,7 @@
 </dd>
 <dt>pseudo_family:</dt><dd><p>A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.</p>
 </dd>
-<dt>cluster_options:</dt><dd><p>A dictionary. The detailed option for the cluster. Different cluster may have different settings. There are some keywords are necessary: (1) resources (2) max_wallclock_seconds (3) account (4) queue_name</p>
+<dt>cluster_options:</dt><dd><p>A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</p>
 </dd>
 <dt>metadata:</dt><dd><p>A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
 </dd>
@@ -293,7 +305,7 @@ pk: the id of that CalcJob</p>
 
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">kpoints</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">kpoints</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">add_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">del_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">cluster_options</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>qePwOriginalSubmit</cite> will submit an original computational task to the desired computer by using certain code.</p>
 <p>Parameters:</p>
 <dl>
@@ -314,7 +326,7 @@ pk: the id of that CalcJob</p>
 </dd>
 <dt>pseudo_family:</dt><dd><p>A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.</p>
 </dd>
-<dt>cluster_options:</dt><dd><p>A dictionary. The detailed option for the cluster. Different cluster may have different settings. There are some keywords are necessary: (1) resources (2) max_wallclock_seconds (3) account (4) queue_name</p>
+<dt>cluster_options:</dt><dd><p>A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</p>
 </dd>
 <dt>metadata:</dt><dd><p>A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
 </dd>

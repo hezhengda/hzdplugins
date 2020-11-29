@@ -2,6 +2,8 @@
 
 import pandas as pd
 from aiida.orm import load_node
+from copy import deepcopy
+from hzdplugins.aiidaplugins.constants import results_keys_set
 
 def uuid(pk):
 
@@ -36,7 +38,9 @@ def showresults(results):
 
     """
 
-    df = pd.DataFrame.from_dict(results, orient='index')
+    df = pd.DataFrame.from_dict(results,
+                                orient='index',
+                                columns=results_keys_set)
     pd.set_option("display.max_rows", None, "display.max_columns", None)
     return df
 
@@ -120,3 +124,46 @@ def unConvergedTasks(results):
                     subresults[key] = value
 
     return subresults
+
+def assignValue(results):
+
+    """
+
+    Assign the current status of simulaton to results. The function will do two things: (1) clean the current results dictionary, remove any key that does not belong to the new key set. (2) Add the values in the new set.
+
+    Parameters:
+
+    results:
+        The results dictionary that contains all relevant computational information.
+
+    Return: A dictionary that has modified and assigned values
+
+    """
+
+    results_tmp = deepcopy(results)
+
+    for pk_str, value in results.items():
+        pk = int(pk_str)
+        value_tmp = deepcopy(value)
+        node = load_node(pk)
+        # clean the results
+        for key in value_tmp:
+            if not(key in results_keys_set):
+                results_tmp[pk_str].pop(key)
+        # assign the value
+        results_tmp[pk_str]['uuid'] = node.uuid
+        results_tmp[pk_str]['system'] = node.label
+        results_tmp[pk_str]['cluster'] = node.computer.label
+        results_tmp[pk_str]['comp_type'] = node.inputs.parameters.get_dict()['CONTROL']['calculation']
+        results_tmp[pk_str]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
+        if (node.is_finished_ok) or (node.exit_status == 0) or (node.exit_status == 501):
+            results_tmp[pk_str]['E/eV'] = node.res.energy
+            results_tmp[pk_str]['is_finished'] = node.is_finished
+            results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
+            results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+        else:
+            results_tmp[pk_str]['is_finished'] = node.is_finished
+            results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
+            results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+
+    return results_tmp

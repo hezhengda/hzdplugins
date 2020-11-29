@@ -1,5 +1,5 @@
-This is the log file for hzdplugins
-===================================
+Log file for hzdplugins
+=======================
 
 * v0.0.3: 2020.11.28
     * add qePwOriginalSubmit and qePwContinueSubmit methods.
@@ -9,3 +9,9 @@ This is the log file for hzdplugins
 
 * v0.0.5: 2020.11.28
     * I've learn that if you want to make a python module, then you need to add `__init__.py` file in the folder.
+
+* v0.0.11: 2020.11.29
+    * I've changed the keys in results, now it has the following keys: ['system', 'uuid', 'comp_type', 'cluster', 'xc functional', 'exit_status', 'is_finished', 'is_finished_ok', 'E/eV', 'remove_remote_folder',  'previous_calc']
+    * Add functions `unDoneTasks`, `unFinishedTasks`, `unConvergedTasks`, which can be used in selecting the tasks that still needs attention.
+    * put all the important information in `constants.py`
+    * change the `qePwOriginalSubmit` and `qePwContinueSubmit` with the usage of `constants.py`, now the input becomes simpler.

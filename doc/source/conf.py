@@ -29,7 +29,7 @@ copyright = '2020, Zheng-Da He'
 author = 'Zheng-Da He'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.10'
+release = '0.0.11'
 
 
 # -- General configuration ---------------------------------------------------
