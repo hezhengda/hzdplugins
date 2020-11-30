@@ -4,6 +4,7 @@ import pandas as pd
 from aiida.orm import load_node
 from copy import deepcopy
 from hzdplugins.aiidaplugins.constants import results_keys_set
+import json
 
 def uuid(pk):
 
@@ -167,3 +168,47 @@ def assignValue(results):
             results_tmp[pk_str]['exit_status'] = str(node.exit_status)
 
     return results_tmp
+
+def saveResults(results, filename):
+
+    """
+
+    `saveResults` can be used for saving results
+
+    Parameters:
+
+    results:
+        The results dictionary that contains all relevant computational information.
+
+    filename:
+        The name of the file that you want to store in
+
+    Return: A dictionary that has modified and assigned values
+
+    """
+
+    # dump results file
+    with open(filename, 'w') as json_file:
+        json.dump(results, json_file)
+
+    return 'Your results have been successfully saved.'
+
+def readResults(filename):
+
+    """
+
+    `readResults` can be used for reading results from json file
+
+    Parameters:
+
+    filename:
+        The name of the file that you store all the information in
+
+    Return: A dictionary that has modified and assigned values
+
+    """
+
+    with open(filename, 'r') as json_file:
+        results = json.load(json_file)
+
+    return results

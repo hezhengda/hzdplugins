@@ -15,3 +15,18 @@ Log file for hzdplugins
     * Add functions `unDoneTasks`, `unFinishedTasks`, `unConvergedTasks`, which can be used in selecting the tasks that still needs attention.
     * put all the important information in `constants.py`
     * change the `qePwOriginalSubmit` and `qePwContinueSubmit` with the usage of `constants.py`, now the input becomes simpler.
+
+* v0.0.12: 2020.11.29
+    * resubmit the package, because some mistakes in `qePwOriginalSubmit` haven't been resolved, but now they are removed.
+
+* v0.0.13: 2020.11.29
+    * resolve a mistake that Code is not imported.
+
+* v0.0.14: 2020.11.29
+    * change `results_tmp[str(calc.pk)]['system'] = node.label` in `qePwContinueSubmit` in `submit.py`
+
+* v0.0.15: 2020.11.29
+    * change `computer` in `qePwContinueSubmit` in `submit.py`
+
+* v0.0.17: 2020.11.29
+    * add `saveResults`, `readResults` in `info.py` for save and read current results via json file.

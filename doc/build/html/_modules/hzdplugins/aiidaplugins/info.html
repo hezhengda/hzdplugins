@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.11 documentation</title>
+  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.17 documentation</title>
   
 
   
@@ -84,7 +84,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../hzdplugins.html">hzdplugins Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../log.html">This is the log file for hzdplugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../log.html">Log file for hzdplugins</a></li>
 </ul>
 
             
@@ -155,6 +155,7 @@
 <span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">load_node</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">results_keys_set</span>
+<span class="kn">import</span> <span class="nn">json</span>
 
 <div class="viewcode-block" id="uuid"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.info.uuid">[docs]</a><span class="k">def</span> <span class="nf">uuid</span><span class="p">(</span><span class="n">pk</span><span class="p">):</span>
 
@@ -318,6 +319,50 @@
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">results_tmp</span></div>
+
+<div class="viewcode-block" id="saveResults"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.info.saveResults">[docs]</a><span class="k">def</span> <span class="nf">saveResults</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    `saveResults` can be used for saving results</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    results:</span>
+<span class="sd">        The results dictionary that contains all relevant computational information.</span>
+
+<span class="sd">    filename:</span>
+<span class="sd">        The name of the file that you want to store in</span>
+
+<span class="sd">    Return: A dictionary that has modified and assigned values</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># dump results file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">json_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39;Your results have been successfully saved.&#39;</span></div>
+
+<div class="viewcode-block" id="readResults"><a class="viewcode-back" href="../../../hzdplugins.html#hzdplugins.aiidaplugins.info.readResults">[docs]</a><span class="k">def</span> <span class="nf">readResults</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    `readResults` can be used for reading results from json file</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    filename:</span>
+<span class="sd">        The name of the file that you store all the information in</span>
+
+<span class="sd">    Return: A dictionary that has modified and assigned values</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
 </pre></div>
 
            </div>

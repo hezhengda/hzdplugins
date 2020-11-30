@@ -1,8 +1,9 @@
-from aiida.orm import StructureData, KpointsData, Dict
+from aiida.orm import StructureData, KpointsData, Dict, Code
 from copy import deepcopy
 from aiida.orm import load_node
 from aiida.engine.launch import submit
 from hzdplugins.aiidaplugins.constants import results_keys_set, slurm_options
+from aiida.orm.nodes.data.upf import get_pseudos_from_structure
 
 def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, metadata, add_parameters={}, del_parameters={}, cluster_options={}):
 
@@ -221,7 +222,7 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
         computer = node.computer.label
         restart_builder = node.get_builder_restart() # get the restart_builder
     else:
-        copmuter = codename.split('@')[1]
+        computer = codename.split('@')[1]
         code = Code.get_from_string(codename)
         restart_builder = code.get_builder()
 
@@ -278,8 +279,8 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
         else:
             restart_builder.metadata.description = node.description
     else:
-        restart_builder.metadata.label = node.label = node.label
-        restart_builder.metadata.description = node.description = node.description
+        restart_builder.metadata.label = node.label
+        restart_builder.metadata.description = node.description
 
     # submit the calculation
     restart_builder.structure = structure
@@ -291,7 +292,7 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
     # results
     results_tmp[str(calc.pk)] = {}
     results_tmp[str(calc.pk)]['uuid'] = calc.uuid
-    results_tmp[str(calc.pk)]['system'] = metadata['label']
+    results_tmp[str(calc.pk)]['system'] = node.label
     results_tmp[str(calc.pk)]['comp_type'] = parameters_default['CONTROL']['calculation']
     results_tmp[str(calc.pk)]['E/eV'] = None
     results_tmp[str(calc.pk)]['remove_remote_folder'] = False
@@ -300,6 +301,6 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
     results_tmp[str(calc.pk)]['exit_status'] = None
     results_tmp[str(calc.pk)]['is_finished'] = None
     results_tmp[str(calc.pk)]['is_finished_ok'] = None
-    results_tmp[str(calc.pk)]['previous_calc'] = pk # pk is the previous calculation
+    results_tmp[str(calc.pk)]['previous_calc'] = str(pk) # pk is the previous calculation
 
     return results_tmp, calc.pk
