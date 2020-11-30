@@ -5,7 +5,7 @@ results_keys_set = ['system', 'uuid', 'comp_type', 'cluster', 'xc functional', '
 slurm_options = {}
 # 'claix'
 slurm_options['rwth-claix'] = {
-    'resources': {'num_machines', 2}, # on rwth_claix, each node has 48 cores.
+    'resources': {'num_machines': 2}, # on rwth_claix, each node has 48 cores.
     'max_wallclock_seconds': 86400,
     'account': 'jara0037',
     'scheduler_stderr': 'stderr',
@@ -15,7 +15,7 @@ slurm_options['rwth-claix'] = {
 
 # 'juwels'
 slurm_options['juwels'] = {
-    'resources': {'num_machines', 2}, # on juwels, each node has 48 cores.
+    'resources': {'num_machines': 2}, # on juwels, each node has 48 cores.
     'max_wallclock_seconds': 86400,
     'account': 'fzj-mac',
     'scheduler_stderr': 'stderr',
