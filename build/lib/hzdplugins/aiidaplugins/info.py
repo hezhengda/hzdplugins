@@ -163,9 +163,13 @@ def assignValue(results):
             results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
             results_tmp[pk_str]['exit_status'] = str(node.exit_status)
         else:
+            results_tmp[pk_str]['E/eV'] = None
             results_tmp[pk_str]['is_finished'] = node.is_finished
             results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
-            results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+            if node.is_killed == True:
+                results_tmp[pk_str]['exit_status'] = 'killed'
+            else:
+                results_tmp[pk_str]['exit_status'] = str(node.exit_status)
 
     return results_tmp
 

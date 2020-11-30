@@ -162,6 +162,7 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
     results_tmp[str(calc.pk)]['is_finished'] = None
     results_tmp[str(calc.pk)]['is_finished_ok'] = None
     results_tmp[str(calc.pk)]['previous_calc'] = 0 # 0 represent original
+    results_tmp[str(calc.pk)]['son_calc'] = None # currently no son_calc node
     # results_tmp[str(calc.pk)]['description'] = metadata['description']
 
     return results_tmp, calc.pk
@@ -266,6 +267,15 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
             restart_builder.metadata.options.account = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
             restart_builder.metadata.options.queue_name = cluster_options['queue_name']
+    else:
+        restart_builder.metadata.options.update({
+            'resources': slurm_options[computer]['resources'],
+            'max_wallclock_seconds': slurm_options[computer]['max_wallclock_seconds'],
+            'account': slurm_options[computer]['account'],
+            'scheduler_stderr': slurm_options[computer]['scheduler_stderr'],
+            'scheduler_stdout': slurm_options[computer]['scheduler_stdout'],
+            'queue_name': slurm_options[computer]['queue_name']
+        })
 
     # reset metadata
     if len(metadata) > 0:
@@ -302,5 +312,9 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
     results_tmp[str(calc.pk)]['is_finished'] = None
     results_tmp[str(calc.pk)]['is_finished_ok'] = None
     results_tmp[str(calc.pk)]['previous_calc'] = str(pk) # pk is the previous calculation
+    results_tmp[str(calc.pk)]['son_calc'] = None # right now there is no son_node
+
+    # change son_calc with previous simulation
+    results_tmp[str(pk)]['son_calc'] = str(calc.pk)
 
     return results_tmp, calc.pk

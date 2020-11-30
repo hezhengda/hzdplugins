@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.17 documentation</title>
+  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.22 documentation</title>
   
 
   
@@ -314,9 +314,13 @@
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished_ok</span>
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;E/eV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished</span>
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished_ok</span>
-            <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_killed</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;killed&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results_tmp</span><span class="p">[</span><span class="n">pk_str</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">results_tmp</span></div>
 

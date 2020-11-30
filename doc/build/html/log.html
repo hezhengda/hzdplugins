@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.17 documentation</title>
+  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.22 documentation</title>
   
 
   
@@ -216,6 +216,42 @@
 <li><dl class="simple">
 <dt>v0.0.17: 2020.11.29</dt><dd><ul>
 <li><p>add <cite>saveResults</cite>, <cite>readResults</cite> in <cite>info.py</cite> for save and read current results via json file.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.18: 2020.11.30</dt><dd><ul>
+<li><p>change <cite>assignValue</cite> in <cite>info.py</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.19: 2020.11.30</dt><dd><ul>
+<li><p>add assignment for restart_builder.metadata.options when cluster_options is empty.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.20: 2020.11.30</dt><dd><ul>
+<li><p>It turns out, the error is in constant.py, where <cite>max_wallclock_seconds</cite> is mistaken to <cite>max_walllock_seconds</cite> …</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.21: 2020.11.30</dt><dd><ul>
+<li><p>Add <cite>son_calc</cite> to the constants in order to connect the “son” with the “father” CalcNode, because now not only we can search back, we can also search forward at the same time.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.22: 2020.11.30</dt><dd><ul>
+<li><p>Remember that all the pk have to be change to str, otherwise it will look ugly (e.g. 211.0 not 211)</p></li>
+<li><p>change <cite>assignValue</cite> function in <cite>info.py</cite>: Now the killed process can also be identified.</p></li>
 </ul>
 </dd>
 </dl>

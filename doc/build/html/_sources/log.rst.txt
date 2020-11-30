@@ -30,3 +30,19 @@ Log file for hzdplugins
 
 * v0.0.17: 2020.11.29
     * add `saveResults`, `readResults` in `info.py` for save and read current results via json file.
+
+* v0.0.18: 2020.11.30
+    * change `assignValue` in `info.py`
+
+* v0.0.19: 2020.11.30
+    * add assignment for restart_builder.metadata.options when cluster_options is empty.
+
+* v0.0.20: 2020.11.30
+    * It turns out, the error is in constant.py, where `max_wallclock_seconds` is mistaken to `max_walllock_seconds` ...
+
+* v0.0.21: 2020.11.30
+    * Add `son_calc` to the constants in order to connect the "son" with the "father" CalcNode, because now not only we can search back, we can also search forward at the same time.
+
+* v0.0.22: 2020.11.30
+    * Remember that all the pk have to be change to str, otherwise it will look ugly (e.g. 211.0 not 211)
+    * change `assignValue` function in `info.py`: Now the killed process can also be identified.
