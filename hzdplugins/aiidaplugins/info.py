@@ -1,28 +1,11 @@
 # This document contains many small functions that can help us find relevant information about each node
+# It would be better if the key of results dictionary is the uuid of each node, because uuid is unique, but pk value is not.
 
 import pandas as pd
-from aiida.orm import load_node
+from aiida.orm import load_node, QueryBuilder, Node
 from copy import deepcopy
 from hzdplugins.aiidaplugins.constants import results_keys_set
 import json
-
-def uuid(pk):
-
-    """
-
-    Give the uuid of certain node
-
-    Parameters:
-
-    pk:
-        The pk of the node
-
-    Return: uuid of that node
-
-    """
-
-    node = load_node(pk)
-    print(node.uuid)
 
 def showresults(results):
 
@@ -83,7 +66,7 @@ def unFinishedTasks(results):
     Parameters:
 
     results:
-        The results dictionary that contains all relevant computational information.
+        The results dictionary that contains all relevant computational information. The keys are uuid of each nodes
 
     Return: A dictionary that contain all the unfinished and unconverged tasks, in total 'unDown' tasks.
 
@@ -92,8 +75,7 @@ def unFinishedTasks(results):
     subresults = {}
 
     for key, value in results.items():
-        pk = int(key)
-        node = load_node(pk)
+        node = load_node(uuid=key)
         if node.is_finished == False:
             subresults[key] = value
 
@@ -117,18 +99,13 @@ def unConvergedTasks(results):
     subresults = {}
 
     for key, value in results.items():
-        pk = int(key)
-        node = load_node(pk)
+        node = load_node(uuid=key)
         if node.is_finished == True:
             if (node.is_finished_ok == False):
                 if node.exit_status != 501:
                     subresults[key] = value
 
     return subresults
-
-from copy import deepcopy
-
-results_keys_set = ['system', 'uuid', 'comp_type', 'cluster', 'xc functional', 'exit_status', 'is_finished', 'is_finished_ok', 'E/eV', 'remove_remote_folder',  'previous_calc', 'son_calc']
 
 def assignValue(results):
 
@@ -147,50 +124,134 @@ def assignValue(results):
 
     results_tmp = deepcopy(results)
 
-    for pk_str, value in results.items():
-        pk = int(pk_str)
+    for uuid_node, value in results.items():
         value_tmp = deepcopy(value)
-        node = load_node(pk)
+        node = load_node(uuid=uuid_node)
         # clean the results
         for key in value_tmp:
             if not(key in results_keys_set):
                 results_tmp[pk_str].pop(key)
         # assign the value
-        results_tmp[pk_str]['uuid'] = node.uuid
-        results_tmp[pk_str]['system'] = node.label
-        results_tmp[pk_str]['cluster'] = node.computer.label
+        results_tmp[uuid_node]['system'] = node.label
+        results_tmp[uuid_node]['cluster'] = node.computer.label
 
         if 'CONTROL' in node.inputs.parameters.get_dict().keys(): # it is pw.x calculation
-            results_tmp[pk_str]['comp_type'] = node.inputs.parameters.get_dict()['CONTROL']['calculation']
-            results_tmp[pk_str]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
+            results_tmp[uuid_node]['comp_type'] = node.inputs.parameters.get_dict()['CONTROL']['calculation']
+            results_tmp[uuid_node]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
             compcode = 'pw'
 
         if 'projwfc' in node.inputs.parameters.get_dict().keys(): # it is projwfc calculation
-            results_tmp[pk_str]['comp_type'] = 'PDOS'
+            results_tmp[uuid_node]['comp_type'] = 'PDOS'
             compcode = 'projwfc'
 
         if (node.is_finished_ok) or (node.exit_status == 0) or (node.exit_status == 501):
             if compcode == 'pw':
                 compType = node.inputs.parameters['CONTROL']['calculation']
                 if compType == 'relax' or compType == 'vc-relax':
-                    results_tmp[pk_str]['E/eV'] = node.res.energy
-                results_tmp[pk_str]['is_finished'] = node.is_finished
-                results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
-                results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+                    results_tmp[uuid_node]['E/eV'] = node.res.energy
+                results_tmp[uuid_node]['is_finished'] = node.is_finished
+                results_tmp[uuid_node]['is_finished_ok'] = node.is_finished_ok
+                results_tmp[uuid_node]['exit_status'] = str(node.exit_status)
             if compcode == 'projwfc':
-                results_tmp[pk_str]['is_finished'] = node.is_finished
-                results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
-                results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+                results_tmp[uuid_node]['is_finished'] = node.is_finished
+                results_tmp[uuid_node]['is_finished_ok'] = node.is_finished_ok
+                results_tmp[uuid_node]['exit_status'] = str(node.exit_status)
         else:
-            results_tmp[pk_str]['E/eV'] = None
-            results_tmp[pk_str]['is_finished'] = node.is_finished
-            results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
+            results_tmp[uuid_node]['E/eV'] = None
+            results_tmp[uuid_node]['is_finished'] = node.is_finished
+            results_tmp[uuid_node]['is_finished_ok'] = node.is_finished_ok
             if node.is_killed == True:
-                results_tmp[pk_str]['exit_status'] = 'killed'
+                results_tmp[uuid_node]['exit_status'] = 'killed'
             else:
-                results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+                results_tmp[uuid_node]['exit_status'] = str(node.exit_status)
 
     return results_tmp
+
+def pkToUuidConverter(results_pk):
+
+    """
+
+    `pkToUuidConverter` can convert the `pk` based results dictionary to `uuid` based dictionary.
+
+    Parameters:
+
+    results_pk:
+        The results dictionary that has pk as its key
+
+    Return: A dictionary that has uuid as its key
+
+    """
+
+    results_tmp = {} # our empty and temporary dictionary for storing the converted dictionary
+
+    for key, value in results_pk.items():
+        # get the node by uuid, pk may not work (different profile)
+        uuid_node = value['uuid']
+        qb = QueryBuilder()
+        qb.append(Node, filters={'uuid': {'==':uuid_node}})
+        node = qb.all()[0][0] # because uuid is unique, it can only return to one node
+
+        # reconstruct results_tmp, add the checking mechanism
+        results_tmp[uuid_node] = {}
+        keyset = value.keys()
+        if 'system' in keyset:
+            results_tmp[uuid_node]['system'] = value['system']
+        else:
+            results_tmp[uuid_node]['system'] = None
+
+        if 'comp_type' in keyset:
+            results_tmp[uuid_node]['comp_type'] = value['comp_type']
+        else:
+            results_tmp[uuid_node]['comp_type'] = None
+
+        if 'cluster' in keyset:
+            results_tmp[uuid_node]['cluster'] = value['cluster']
+        else:
+            results_tmp[uuid_node]['cluster'] = None
+
+        if 'xc functional' in keyset:
+            results_tmp[uuid_node]['xc functional'] = value['xc functional']
+        else:
+            results_tmp[uuid_node]['xc functional'] = None
+
+        if 'exit_status' in keyset:
+            results_tmp[uuid_node]['exit_status'] = value['exit_status']
+        else:
+            results_tmp[uuid_node]['exit_status'] = None
+
+        if 'is_finished' in keyset:
+            results_tmp[uuid_node]['is_finished'] = value['is_finished']
+        else:
+            results_tmp[uuid_node]['is_finished'] = None
+
+        if 'is_finished_ok' in keyset:
+            results_tmp[uuid_node]['is_finished_ok'] = value['is_finished_ok']
+        else:
+            results_tmp[uuid_node]['is_finished_ok'] = None
+
+        if 'E/eV' in keyset:
+            results_tmp[uuid_node]['E/eV'] = value['E/eV']
+        else:
+            results_tmp[uuid_node]['E/eV'] = None
+
+        if 'remove_remote_folder' in keyset:
+            results_tmp[uuid_node]['remove_remote_folder'] = value['remove_remote_folder']
+        else:
+            results_tmp[uuid_node]['remove_remote_folder'] = None
+
+        # for previous_calc and son_calc, we need to change them to uuid
+        if 'previous_calc' in keyset:
+            results_tmp[uuid_node]['previous_calc'] = results_pk[value['previous_calc']]['uuid']
+        else:
+            results_tmp[uuid_node]['previous_calc'] = None
+
+        if ('son_calc' in keyset) and (value['son_calc'] in results_pk.keys()):
+            results_tmp[uuid_node]['son_calc'] = results_pk[value['son_calc']]['uuid']
+        else:
+            results_tmp[uuid_node]['son_calc'] = None
+
+    return results_tmp
+
 
 def saveResults(results, filename):
 

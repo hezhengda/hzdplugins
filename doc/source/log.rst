@@ -1,6 +1,12 @@
 Log file for hzdplugins
 =======================
 
+* v0.0.26-27: 2020.12.04
+    * Assign `uuid` instead of `pk` for all the nodes, because `uuid` is unique, but `pk` is not, so this may cause some difficulties in the implementation. Also add a converter from `pk` based results dictionary to `uuid` based results dictionary.
+
+* v0.0.25: 2020.12.04
+    * modified the `constants` file because I transfer the aiida from ubuntu to mac, so all the computer names have changed. e.g. from `rwth-claix` to `rwth-claix-mac`.
+
 * v0.0.24: 2020.12.01
     * modified the `assignValue` method in `info.py`, now it can process both 'pw.x' and 'projwfc' calculations.
 

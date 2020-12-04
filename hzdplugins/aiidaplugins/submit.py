@@ -14,7 +14,7 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
     Parameters:
 
     results:
-        A dictionary that has all the relevant information about the
+        A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode
 
     codename:
         A string. Represent the code for pw.x that you want to use
@@ -150,24 +150,23 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
     calc = submit(pw_builder)
 
     # results
-    results_tmp[str(calc.pk)] = {}
-    results_tmp[str(calc.pk)]['uuid'] = calc.uuid
-    results_tmp[str(calc.pk)]['system'] = metadata['label']
-    results_tmp[str(calc.pk)]['comp_type'] = parameters_default['CONTROL']['calculation']
-    results_tmp[str(calc.pk)]['E/eV'] = None
-    results_tmp[str(calc.pk)]['remove_remote_folder'] = False
-    results_tmp[str(calc.pk)]['cluster'] = codename.split('@')[1] # becase all the codename have same structure "code@computer"
-    results_tmp[str(calc.pk)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
-    results_tmp[str(calc.pk)]['exit_status'] = None
-    results_tmp[str(calc.pk)]['is_finished'] = None
-    results_tmp[str(calc.pk)]['is_finished_ok'] = None
-    results_tmp[str(calc.pk)]['previous_calc'] = 0 # 0 represent original
-    results_tmp[str(calc.pk)]['son_calc'] = None # currently no son_calc node
+    results_tmp[str(calc.uuid)] = {}
+    results_tmp[str(calc.uuid)]['system'] = metadata['label']
+    results_tmp[str(calc.uuid)]['comp_type'] = parameters_default['CONTROL']['calculation']
+    results_tmp[str(calc.uuid)]['E/eV'] = None
+    results_tmp[str(calc.uuid)]['remove_remote_folder'] = False
+    results_tmp[str(calc.uuid)]['cluster'] = codename.split('@')[1] # becase all the codename have same structure "code@computer"
+    results_tmp[str(calc.uuid)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
+    results_tmp[str(calc.uuid)]['exit_status'] = None
+    results_tmp[str(calc.uuid)]['is_finished'] = None
+    results_tmp[str(calcuuidpk)]['is_finished_ok'] = None
+    results_tmp[str(calc.uuid)]['previous_calc'] = 0 # 0 represent original
+    results_tmp[str(calc.uuid)]['son_calc'] = None # currently no son_calc node
     # results_tmp[str(calc.pk)]['description'] = metadata['description']
 
-    return results_tmp, calc.pk
+    return results_tmp, calc.uuid
 
-def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_parameters={}, kpoints=[], pseudo_family='', cluster_options={}, metadata={}):
+def qePwContinueSubmit(results, uuid, pseudo_family, codename='', add_parameters={}, del_parameters={}, kpoints=[], cluster_options={}, metadata={}):
 
     """
 
@@ -175,8 +174,11 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
 
     Parameters:
 
-    pk:
-        The id of previous calculation. We will start our calculation from there.
+    uuid:
+        The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
+
+    pseudo_family:
+        A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.
 
     codename:
         A string. Represent the code for pw.x that you want to use.
@@ -196,9 +198,6 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
     kpoints:
         A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
 
-    pseudo_family:
-        A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
-
     cluster_options:
         A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
 
@@ -207,17 +206,13 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
 
     Return:
         results: a modified results dictionary with the latest submitted job
-        pk: the id of that CalcJob
-
-    Return:
-        results: a modified results dictionary with the latest submitted job
-        pk: the id of that CalcJob
+        uuid: the uuid of that CalcJob
 
     """
 
     results_tmp = deepcopy(results)
 
-    node = load_node(pk)
+    node = load_node(uuid=uuid)
 
     if len(codename) == 0: # not going to change cluster
         computer = node.computer.label
@@ -300,21 +295,20 @@ def qePwContinueSubmit(results, pk, codename='', add_parameters={}, del_paramete
     calc = submit(restart_builder)
 
     # results
-    results_tmp[str(calc.pk)] = {}
-    results_tmp[str(calc.pk)]['uuid'] = calc.uuid
-    results_tmp[str(calc.pk)]['system'] = node.label
-    results_tmp[str(calc.pk)]['comp_type'] = parameters_default['CONTROL']['calculation']
-    results_tmp[str(calc.pk)]['E/eV'] = None
-    results_tmp[str(calc.pk)]['remove_remote_folder'] = False
-    results_tmp[str(calc.pk)]['cluster'] = computer
-    results_tmp[str(calc.pk)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
-    results_tmp[str(calc.pk)]['exit_status'] = None
-    results_tmp[str(calc.pk)]['is_finished'] = None
-    results_tmp[str(calc.pk)]['is_finished_ok'] = None
-    results_tmp[str(calc.pk)]['previous_calc'] = str(pk) # pk is the previous calculation
-    results_tmp[str(calc.pk)]['son_calc'] = None # right now there is no son_node
+    results_tmp[str(calc.uuid)] = {}
+    results_tmp[str(calc.uuid)]['system'] = restart_builder.metadata.label
+    results_tmp[str(calc.uuid)]['comp_type'] = parameters_default['CONTROL']['calculation']
+    results_tmp[str(calc.uuid)]['E/eV'] = None
+    results_tmp[str(calc.uuid)]['remove_remote_folder'] = False
+    results_tmp[str(calc.uuid)]['cluster'] = computer
+    results_tmp[str(calc.uuid)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
+    results_tmp[str(calc.uuid)]['exit_status'] = None
+    results_tmp[str(calc.uuid)]['is_finished'] = None
+    results_tmp[str(calc.uuid)]['is_finished_ok'] = None
+    results_tmp[str(calc.uuid)]['previous_calc'] = uuid # pk is the previous calculation
+    results_tmp[str(calc.uuid)]['son_calc'] = None # right now there is no son_node
 
     # change son_calc with previous simulation
-    results_tmp[str(pk)]['son_calc'] = str(calc.pk)
+    results_tmp[uuid]['son_calc'] = calc.uuid
 
-    return results_tmp, calc.pk
+    return results_tmp, calc.uuid
