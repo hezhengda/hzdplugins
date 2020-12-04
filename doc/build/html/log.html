@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.22 documentation</title>
+  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.27 documentation</title>
   
 
   
@@ -155,22 +155,100 @@
 <h1>Log file for hzdplugins<a class="headerlink" href="#log-file-for-hzdplugins" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><dl class="simple">
-<dt>v0.0.3: 2020.11.28</dt><dd><ul>
-<li><p>add qePwOriginalSubmit and qePwContinueSubmit methods.</p></li>
+<dt>v0.0.26-27: 2020.12.04</dt><dd><ul>
+<li><p>Assign <cite>uuid</cite> instead of <cite>pk</cite> for all the nodes, because <cite>uuid</cite> is unique, but <cite>pk</cite> is not, so this may cause some difficulties in the implementation. Also add a converter from <cite>pk</cite> based results dictionary to <cite>uuid</cite> based results dictionary.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>v0.0.4: 2020.11.28</dt><dd><ul>
-<li><p>change the structure of the folder</p></li>
+<dt>v0.0.25: 2020.12.04</dt><dd><ul>
+<li><p>modified the <cite>constants</cite> file because I transfer the aiida from ubuntu to mac, so all the computer names have changed. e.g. from <cite>rwth-claix</cite> to <cite>rwth-claix-mac</cite>.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>v0.0.5: 2020.11.28</dt><dd><ul>
-<li><p>I’ve learn that if you want to make a python module, then you need to add <cite>__init__.py</cite> file in the folder.</p></li>
+<dt>v0.0.24: 2020.12.01</dt><dd><ul>
+<li><p>modified the <cite>assignValue</cite> method in <cite>info.py</cite>, now it can process both ‘pw.x’ and ‘projwfc’ calculations.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.23: 2020.11.30</dt><dd><ul>
+<li><p>Correct <cite>constants.py</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.22: 2020.11.30</dt><dd><ul>
+<li><p>Remember that all the pk have to be change to str, otherwise it will look ugly (e.g. 211.0 not 211)</p></li>
+<li><p>change <cite>assignValue</cite> function in <cite>info.py</cite>: Now the killed process can also be identified.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.21: 2020.11.30</dt><dd><ul>
+<li><p>Add <cite>son_calc</cite> to the constants in order to connect the “son” with the “father” CalcNode, because now not only we can search back, we can also search forward at the same time.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.20: 2020.11.30</dt><dd><ul>
+<li><p>It turns out, the error is in constant.py, where <cite>max_wallclock_seconds</cite> is mistaken to <cite>max_walllock_seconds</cite> …</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.19: 2020.11.30</dt><dd><ul>
+<li><p>add assignment for restart_builder.metadata.options when cluster_options is empty.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.18: 2020.11.30</dt><dd><ul>
+<li><p>change <cite>assignValue</cite> in <cite>info.py</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.17: 2020.11.29</dt><dd><ul>
+<li><p>add <cite>saveResults</cite>, <cite>readResults</cite> in <cite>info.py</cite> for save and read current results via json file.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.15: 2020.11.29</dt><dd><ul>
+<li><p>change <cite>computer</cite> in <cite>qePwContinueSubmit</cite> in <cite>submit.py</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.14: 2020.11.29</dt><dd><ul>
+<li><p>change <cite>results_tmp[str(calc.pk)][‘system’] = node.label</cite> in <cite>qePwContinueSubmit</cite> in <cite>submit.py</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.13: 2020.11.29</dt><dd><ul>
+<li><p>resolve a mistake that Code is not imported.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.12: 2020.11.29</dt><dd><ul>
+<li><p>resubmit the package, because some mistakes in <cite>qePwOriginalSubmit</cite> haven’t been resolved, but now they are removed.</p></li>
 </ul>
 </dd>
 </dl>
@@ -186,72 +264,22 @@
 </dl>
 </li>
 <li><dl class="simple">
-<dt>v0.0.12: 2020.11.29</dt><dd><ul>
-<li><p>resubmit the package, because some mistakes in <cite>qePwOriginalSubmit</cite> haven’t been resolved, but now they are removed.</p></li>
+<dt>v0.0.5: 2020.11.28</dt><dd><ul>
+<li><p>I’ve learn that if you want to make a python module, then you need to add <cite>__init__.py</cite> file in the folder.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>v0.0.13: 2020.11.29</dt><dd><ul>
-<li><p>resolve a mistake that Code is not imported.</p></li>
+<dt>v0.0.4: 2020.11.28</dt><dd><ul>
+<li><p>change the structure of the folder</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>v0.0.14: 2020.11.29</dt><dd><ul>
-<li><p>change <cite>results_tmp[str(calc.pk)][‘system’] = node.label</cite> in <cite>qePwContinueSubmit</cite> in <cite>submit.py</cite></p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>v0.0.15: 2020.11.29</dt><dd><ul>
-<li><p>change <cite>computer</cite> in <cite>qePwContinueSubmit</cite> in <cite>submit.py</cite></p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>v0.0.17: 2020.11.29</dt><dd><ul>
-<li><p>add <cite>saveResults</cite>, <cite>readResults</cite> in <cite>info.py</cite> for save and read current results via json file.</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>v0.0.18: 2020.11.30</dt><dd><ul>
-<li><p>change <cite>assignValue</cite> in <cite>info.py</cite></p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>v0.0.19: 2020.11.30</dt><dd><ul>
-<li><p>add assignment for restart_builder.metadata.options when cluster_options is empty.</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>v0.0.20: 2020.11.30</dt><dd><ul>
-<li><p>It turns out, the error is in constant.py, where <cite>max_wallclock_seconds</cite> is mistaken to <cite>max_walllock_seconds</cite> …</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>v0.0.21: 2020.11.30</dt><dd><ul>
-<li><p>Add <cite>son_calc</cite> to the constants in order to connect the “son” with the “father” CalcNode, because now not only we can search back, we can also search forward at the same time.</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>v0.0.22: 2020.11.30</dt><dd><ul>
-<li><p>Remember that all the pk have to be change to str, otherwise it will look ugly (e.g. 211.0 not 211)</p></li>
-<li><p>change <cite>assignValue</cite> function in <cite>info.py</cite>: Now the killed process can also be identified.</p></li>
+<dt>v0.0.3: 2020.11.28</dt><dd><ul>
+<li><p>add qePwOriginalSubmit and qePwContinueSubmit methods.</p></li>
 </ul>
 </dd>
 </dl>

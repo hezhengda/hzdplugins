@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins Modules &mdash; hzdplugins 0.0.22 documentation</title>
+  <title>hzdplugins Modules &mdash; hzdplugins 0.0.27 documentation</title>
   
 
   
@@ -207,6 +207,18 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.pkToUuidConverter">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">pkToUuidConverter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results_pk</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#pkToUuidConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.pkToUuidConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>pkToUuidConverter</cite> can convert the <cite>pk</cite> based results dictionary to <cite>uuid</cite> based dictionary.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>results_pk:</dt><dd><p>The results dictionary that has pk as its key</p>
+</dd>
+</dl>
+<p>Return: A dictionary that has uuid as its key</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="hzdplugins.aiidaplugins.info.readResults">
 <code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">readResults</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#readResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.readResults" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>readResults</cite> can be used for reading results from json file</p>
@@ -274,22 +286,10 @@
 <dd><p>show all the unFinished computational tasks, which means the is_finished tag is False</p>
 <p>Parameters:</p>
 <dl class="simple">
-<dt>results:</dt><dd><p>The results dictionary that contains all relevant computational information.</p>
+<dt>results:</dt><dd><p>The results dictionary that contains all relevant computational information. The keys are uuid of each nodes</p>
 </dd>
 </dl>
 <p>Return: A dictionary that contain all the unfinished and unconverged tasks, in total ‘unDown’ tasks.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="hzdplugins.aiidaplugins.info.uuid">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">uuid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pk</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.uuid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Give the uuid of certain node</p>
-<p>Parameters:</p>
-<dl class="simple">
-<dt>pk:</dt><dd><p>The pk of the node</p>
-</dd>
-</dl>
-<p>Return: uuid of that node</p>
 </dd></dl>
 
 </div>
@@ -297,11 +297,13 @@
 <span id="hzdplugins-aiidaplugins-submit-module"></span><h2>hzdplugins.aiidaplugins.submit module<a class="headerlink" href="#module-hzdplugins.aiidaplugins.submit" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.submit.qePwContinueSubmit">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwContinueSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">pk</span></em>, <em class="sig-param"><span class="n">codename</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">add_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">del_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">pseudo_family</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cluster_options</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">metadata</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwContinueSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwContinueSubmit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwContinueSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">codename</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">add_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">del_parameters</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">cluster_options</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">metadata</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwContinueSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwContinueSubmit" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>qePwContinueSubmit</cite> will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs</p>
 <p>Parameters:</p>
 <dl>
-<dt>pk:</dt><dd><p>The id of previous calculation. We will start our calculation from there.</p>
+<dt>uuid:</dt><dd><p>The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode</p>
+</dd>
+<dt>pseudo_family:</dt><dd><p>A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.</p>
 </dd>
 <dt>codename:</dt><dd><p>A string. Represent the code for pw.x that you want to use.</p>
 </dd>
@@ -314,17 +316,12 @@
 </dd>
 <dt>kpoints:</dt><dd><p>A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</p>
 </dd>
-<dt>pseudo_family:</dt><dd><p>A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.</p>
-</dd>
 <dt>cluster_options:</dt><dd><p>A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</p>
 </dd>
 <dt>metadata:</dt><dd><p>A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
 </dd>
 <dt>Return:</dt><dd><p>results: a modified results dictionary with the latest submitted job
-pk: the id of that CalcJob</p>
-</dd>
-<dt>Return:</dt><dd><p>results: a modified results dictionary with the latest submitted job
-pk: the id of that CalcJob</p>
+uuid: the uuid of that CalcJob</p>
 </dd>
 </dl>
 </dd></dl>
@@ -335,7 +332,7 @@ pk: the id of that CalcJob</p>
 <dd><p><cite>qePwOriginalSubmit</cite> will submit an original computational task to the desired computer by using certain code.</p>
 <p>Parameters:</p>
 <dl>
-<dt>results:</dt><dd><p>A dictionary that has all the relevant information about the</p>
+<dt>results:</dt><dd><p>A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode</p>
 </dd>
 <dt>codename:</dt><dd><p>A string. Represent the code for pw.x that you want to use</p>
 </dd>
