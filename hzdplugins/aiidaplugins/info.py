@@ -126,6 +126,10 @@ def unConvergedTasks(results):
 
     return subresults
 
+from copy import deepcopy
+
+results_keys_set = ['system', 'uuid', 'comp_type', 'cluster', 'xc functional', 'exit_status', 'is_finished', 'is_finished_ok', 'E/eV', 'remove_remote_folder',  'previous_calc', 'son_calc']
+
 def assignValue(results):
 
     """
@@ -155,13 +159,28 @@ def assignValue(results):
         results_tmp[pk_str]['uuid'] = node.uuid
         results_tmp[pk_str]['system'] = node.label
         results_tmp[pk_str]['cluster'] = node.computer.label
-        results_tmp[pk_str]['comp_type'] = node.inputs.parameters.get_dict()['CONTROL']['calculation']
-        results_tmp[pk_str]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
+
+        if 'CONTROL' in node.inputs.parameters.get_dict().keys(): # it is pw.x calculation
+            results_tmp[pk_str]['comp_type'] = node.inputs.parameters.get_dict()['CONTROL']['calculation']
+            results_tmp[pk_str]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
+            compcode = 'pw'
+
+        if 'projwfc' in node.inputs.parameters.get_dict().keys(): # it is projwfc calculation
+            results_tmp[pk_str]['comp_type'] = 'PDOS'
+            compcode = 'projwfc'
+
         if (node.is_finished_ok) or (node.exit_status == 0) or (node.exit_status == 501):
-            results_tmp[pk_str]['E/eV'] = node.res.energy
-            results_tmp[pk_str]['is_finished'] = node.is_finished
-            results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
-            results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+            if compcode == 'pw':
+                compType = node.inputs.parameters['CONTROL']['calculation']
+                if compType == 'relax' or compType == 'vc-relax':
+                    results_tmp[pk_str]['E/eV'] = node.res.energy
+                results_tmp[pk_str]['is_finished'] = node.is_finished
+                results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
+                results_tmp[pk_str]['exit_status'] = str(node.exit_status)
+            if compcode == 'projwfc':
+                results_tmp[pk_str]['is_finished'] = node.is_finished
+                results_tmp[pk_str]['is_finished_ok'] = node.is_finished_ok
+                results_tmp[pk_str]['exit_status'] = str(node.exit_status)
         else:
             results_tmp[pk_str]['E/eV'] = None
             results_tmp[pk_str]['is_finished'] = node.is_finished

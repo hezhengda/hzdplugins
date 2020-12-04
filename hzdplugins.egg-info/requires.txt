@@ -1,4 +1,4 @@
-aiida-core
-aiida-quantumespresso
 ase
 pymatgen
+aiida-core
+aiida-quantumespresso

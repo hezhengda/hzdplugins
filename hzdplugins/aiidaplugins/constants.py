@@ -4,7 +4,7 @@ results_keys_set = ['system', 'uuid', 'comp_type', 'cluster', 'xc functional', '
 # dictionary for the slurm system on different clusters
 slurm_options = {}
 # 'claix'
-slurm_options['rwth-claix'] = {
+slurm_options['rwth-claix-mac'] = {
     'resources': {'num_machines': 2}, # on rwth_claix, each node has 48 cores.
     'max_wallclock_seconds': 86400,
     'account': 'jara0037',
@@ -14,7 +14,7 @@ slurm_options['rwth-claix'] = {
 }
 
 # 'juwels'
-slurm_options['juwels'] = {
+slurm_options['juwels-mac'] = {
     'resources': {'num_machines': 2}, # on juwels, each node has 48 cores.
     'max_wallclock_seconds': 86400,
     'account': 'fzj-mac',
@@ -24,7 +24,7 @@ slurm_options['juwels'] = {
 }
 
 # 'jusuf'
-slurm_options['jusuf'] = {
+slurm_options['jusuf-mac'] = {
     'resources': {'num_machines': 1}, # on jusuf, each node has 128 cores
     'max_wallclock_seconds': 86400,
     'account': 'jiek61',
@@ -34,7 +34,7 @@ slurm_options['jusuf'] = {
 }
 
 # 'jureca_booster'
-slurm_options['jureca-booster'] = {
+slurm_options['jureca-booster-mac'] = {
     'resources': {'num_machines': 2}, # on jureca_booster, each node has 68 cores
     'max_wallclock_seconds': 86400,
     'account': 'jiek61',

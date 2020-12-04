@@ -1,6 +1,9 @@
 Log file for hzdplugins
 =======================
 
+* v0.0.24: 2020.12.01
+    * modified the `assignValue` method in `info.py`, now it can process both 'pw.x' and 'projwfc' calculations.
+
 * v0.0.23: 2020.11.30
     * Correct `constants.py`
 
