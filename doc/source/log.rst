@@ -1,6 +1,18 @@
 Log file for hzdplugins
 =======================
 
+* v0.0.33: 2020.12.05
+    * give some options for the plotting in `build.py` `adsorptionSites` function.
+
+* v0.0.32: 2020.12.05
+    * delete `print` in `build.py`, fixed.
+
+* v0.0.31: 2020.12.05
+    * Mising `deepcopy` in `build.py`, fixed.
+
+* v0.0.30: 2020.12.05
+    * Missing `Dict` in `build.py`, fixed.
+
 * v0.0.29: 2020.12.05
     * Add a new module `structure`, which can help me create bulk structures and slab surfaces more easily.
     * Make all the functions in `structure` module and `submit.py` in aiida's standard, which means all the input variables are from `aiida.orm` types and all the functions are decorated by `calcfunction` in order to preserve the provenance.

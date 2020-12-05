@@ -5,10 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib.path import Path
+from copy import deepcopy
 
 from hzdplugins.aiidaplugins.constants import color_dictionary
 
-from aiida.orm import StructureData, Str, List, Bool
+from aiida.orm import StructureData, Str, List, Bool, Dict
 from aiida.engine import calcfunction
 
 from ase.io import read
@@ -108,7 +109,7 @@ def millerSurfaces(bulk, miller_index, layers, vacuum, **kwargs):
     return listGenerator
 
 @calcfunction
-def adsorptionSites(slab, visualize):
+def adsorptionSites(slab, visualize, **kwargs):
 
     """
 
@@ -120,7 +121,14 @@ def adsorptionSites(slab, visualize):
         An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.
 
     visualize:
-        A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.
+        An aiida.orm.Bool object. A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.
+
+    **kwargs:
+        There are four variables which can be set for tuning the output figure
+        * repeat (Int): how many unit cell do we want to show (how large the supercell we want to show)
+        * decay (Float in [0,1]): the decay of alpha-value among different layers
+        * scale (Float): radius scaling for sites (larger scale, larger circles)
+        * window (Float): window for setting the axes limit
 
     Return:
 
@@ -152,10 +160,26 @@ def adsorptionSites(slab, visualize):
         # start plotting the figure, this part of the code was largely adopted from pymatgen github repository
 
         # parameters for the plotting
-        repeat = 2 # create supercell 3x3x1
-        decay = 0.2
-        scale = 0.8
-        window = 1.5
+        if 'repeat' in kwargs.keys():
+            repeat = kwargs['repeat']
+        else:
+            repeat = 2 # create supercell 3x3x1
+
+        if 'decay' in kwargs.keys():
+            decay = kwargs['decay']
+        else:
+            decay = 0.2
+
+        if 'scale' in kwargs.keys():
+            scale = kwargs['scale']
+        else:
+            scale = 0.8
+
+        if 'window' in kwargs.keys():
+            window = kwargs['window']
+        else:
+            window = 1.5
+
         draw_unit_cell = True
 
         fig, ax = plt.subplots(figsize=(10, 10))
@@ -164,7 +188,6 @@ def adsorptionSites(slab, visualize):
         orig_cell = deepcopy(slab.lattice.matrix)
 
         slab.make_supercell([repeat, repeat, 1])
-        print(slab)
 
         # sort the coordinates by the z component
         coords = np.array(sorted(slab.cart_coords, key=lambda x: x[2]))
@@ -272,6 +295,7 @@ def adsorptionSites(slab, visualize):
                 path, facecolor="none", lw=2, alpha=0.5, zorder=2 * n + 2
             )
             ax.add_patch(patch)
+
         ax.set_aspect("equal")
         center = corner + lattsum / 2.0
         extent = np.max(lattsum)
