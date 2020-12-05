@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>structure Modules &mdash; hzdplugins 0.0.29 documentation</title>
+  <title>structure Modules &mdash; hzdplugins 0.0.33 documentation</title>
   
 
   
@@ -164,13 +164,19 @@
 <span id="hzdplugins-structure-build-module"></span><h2>hzdplugins.structure.build module<a class="headerlink" href="#module-hzdplugins.structure.build" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="hzdplugins.structure.build.adsorptionSites">
-<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">adsorptionSites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">visualize</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#adsorptionSites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.adsorptionSites" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">adsorptionSites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">visualize</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#adsorptionSites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.adsorptionSites" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>AdsorptionSites</cite> can help us visualize the position and tag of each adsorption sites, then we can determine where we want to put the adsorbates.</p>
 <p>Parameters:</p>
 <dl class="simple">
 <dt>slab:</dt><dd><p>An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.</p>
 </dd>
-<dt>visualize:</dt><dd><p>A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.</p>
+<dt>visualize:</dt><dd><p>An aiida.orm.Bool object. A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.</p>
+</dd>
+<dt>kwargs:</dt><dd><p>There are four variables which can be set for tuning the output figure
+* repeat (Int): how many unit cell do we want to show (how large the supercell we want to show)
+* decay (Float in [0,1]): the decay of alpha-value among different layers
+* scale (Float): radius scaling for sites (larger scale, larger circles)
+* window (Float): window for setting the axes limit</p>
 </dd>
 </dl>
 <p>Return:</p>

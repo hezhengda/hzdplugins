@@ -123,7 +123,7 @@ def adsorptionSites(slab, visualize, **kwargs):
     visualize:
         An aiida.orm.Bool object. A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.
 
-    **kwargs:
+    kwargs:
         There are four variables which can be set for tuning the output figure
         * repeat (Int): how many unit cell do we want to show (how large the supercell we want to show)
         * decay (Float in [0,1]): the decay of alpha-value among different layers

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.29 documentation</title>
+  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.33 documentation</title>
   
 
   
@@ -157,10 +157,11 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">patches</span>
 <span class="kn">from</span> <span class="nn">matplotlib.path</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">color_dictionary</span>
 
-<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">StructureData</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Bool</span>
+<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">StructureData</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">from</span> <span class="nn">aiida.engine</span> <span class="kn">import</span> <span class="n">calcfunction</span>
 
 <span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span>
@@ -260,7 +261,7 @@
     <span class="k">return</span> <span class="n">listGenerator</span></div>
 
 <div class="viewcode-block" id="adsorptionSites"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.adsorptionSites">[docs]</a><span class="nd">@calcfunction</span>
-<span class="k">def</span> <span class="nf">adsorptionSites</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">visualize</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">adsorptionSites</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">visualize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -272,7 +273,14 @@
 <span class="sd">        An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.</span>
 
 <span class="sd">    visualize:</span>
-<span class="sd">        A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.</span>
+<span class="sd">        An aiida.orm.Bool object. A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.</span>
+
+<span class="sd">    kwargs:</span>
+<span class="sd">        There are four variables which can be set for tuning the output figure</span>
+<span class="sd">        * repeat (Int): how many unit cell do we want to show (how large the supercell we want to show)</span>
+<span class="sd">        * decay (Float in [0,1]): the decay of alpha-value among different layers</span>
+<span class="sd">        * scale (Float): radius scaling for sites (larger scale, larger circles)</span>
+<span class="sd">        * window (Float): window for setting the axes limit</span>
 
 <span class="sd">    Return:</span>
 
@@ -304,10 +312,26 @@
         <span class="c1"># start plotting the figure, this part of the code was largely adopted from pymatgen github repository</span>
 
         <span class="c1"># parameters for the plotting</span>
-        <span class="n">repeat</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># create supercell 3x3x1</span>
-        <span class="n">decay</span> <span class="o">=</span> <span class="mf">0.2</span>
-        <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.8</span>
-        <span class="n">window</span> <span class="o">=</span> <span class="mf">1.5</span>
+        <span class="k">if</span> <span class="s1">&#39;repeat&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">repeat</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;repeat&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">repeat</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># create supercell 3x3x1</span>
+
+        <span class="k">if</span> <span class="s1">&#39;decay&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">decay</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;decay&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decay</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+        <span class="k">if</span> <span class="s1">&#39;scale&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.8</span>
+
+        <span class="k">if</span> <span class="s1">&#39;window&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;window&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="mf">1.5</span>
+
         <span class="n">draw_unit_cell</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
@@ -316,7 +340,6 @@
         <span class="n">orig_cell</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">slab</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
 
         <span class="n">slab</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="n">repeat</span><span class="p">,</span> <span class="n">repeat</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">slab</span><span class="p">)</span>
 
         <span class="c1"># sort the coordinates by the z component</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">slab</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
@@ -424,6 +447,7 @@
                 <span class="n">path</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">2</span>
             <span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
+
         <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
         <span class="n">center</span> <span class="o">=</span> <span class="n">corner</span> <span class="o">+</span> <span class="n">lattsum</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="n">extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lattsum</span><span class="p">)</span>
