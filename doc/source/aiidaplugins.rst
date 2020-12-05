@@ -1,4 +1,4 @@
-hzdplugins Modules
+aiidaplugins Modules
 ========================
 
 hzdplugins.aiidaplugins.io module

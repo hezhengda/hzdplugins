@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.29 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/my_theme.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> hzdplugins
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aiidaplugins.html">aiidaplugins Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../structure.html">structure Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../log.html">Log file for hzdplugins</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">hzdplugins</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>hzdplugins.structure.build</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hzdplugins.structure.build</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This module will be used in generating structures for Aiida simulation, it utilizes pymatgen, ase and catkit packages from other group, all the output structures should have Aiida StructureData type.</span>
+<span class="c1"># In order to maintain provenance, we need to use all the types provided by the aiida.orm, and all functions should be decorated by @calcfunction decorator in order to be captured by the aiida program</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">patches</span>
+<span class="kn">from</span> <span class="nn">matplotlib.path</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">color_dictionary</span>
+
+<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">StructureData</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Bool</span>
+<span class="kn">from</span> <span class="nn">aiida.engine</span> <span class="kn">import</span> <span class="n">calcfunction</span>
+
+<span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span>
+
+<span class="kn">from</span> <span class="nn">pymatgen.core.surface</span> <span class="kn">import</span> <span class="n">SlabGenerator</span>
+<span class="kn">from</span> <span class="nn">pymatgen.analysis.adsorption</span> <span class="kn">import</span> <span class="n">AdsorbateSiteFinder</span><span class="p">,</span> <span class="n">get_rot</span>
+
+<div class="viewcode-block" id="bulk"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.bulk">[docs]</a><span class="nd">@calcfunction</span>
+<span class="k">def</span> <span class="nf">bulk</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">supercell</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    `bulk` function can help us create a Bulk from the file.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    filename:</span>
+<span class="sd">        An aiida.orm.Str object. Usually when we create the structural file, we do it from the strcutural file such as .xyz or .cif, etc.</span>
+
+<span class="sd">    supercell:</span>
+<span class="sd">        An aiida.orm.List object. A list that contains the dimension of supercell we would like.</span>
+
+<span class="sd">    Return: A StructureData file that can be used directly in Aiida.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># transfer from aiida.orm types to the common python types</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">supercell_list</span> <span class="o">=</span> <span class="n">supercell</span><span class="o">.</span><span class="n">get_list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;You didn&#39;t provide an input file.&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;You didn&#39;t provide a correct type, please try to name your file .xyz, .cif or other data structure types.&quot;</span><span class="p">))</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">structure</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">structure</span><span class="o">*</span><span class="n">supercell_list</span><span class="p">)</span></div>
+
+<span class="c1"># In research, not only we need to deal with solids, we also need to deal with surfaces, and add adsorbates on it, so in my module, it will be important to create any structures that I want easily and efficiently.</span>
+
+<div class="viewcode-block" id="millerSurfaces"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.millerSurfaces">[docs]</a><span class="nd">@calcfunction</span>
+<span class="k">def</span> <span class="nf">millerSurfaces</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">miller_index</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">vacuum</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    `millerSurfaces` can help us generate a list of slab structures that we could use in future studies</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    bulk:</span>
+<span class="sd">        An aiida.orm.StructureData object. The bulk structure that we are going to use for creating the surface slabs.</span>
+
+<span class="sd">    miller_index:</span>
+<span class="sd">        An aiida.orm.List object. The miller index that we want to get.</span>
+
+<span class="sd">    layers:</span>
+<span class="sd">        An aiida.orm.Int object. Set how many layers you want for the surface slab.</span>
+
+<span class="sd">    vacuum:</span>
+<span class="sd">        An aiida.orm.List object. Set how many layers you want for the vacuum layer.</span>
+
+<span class="sd">    Return: A series of uuids of StructureData object, which can be used for further investigations.</span>
+<span class="sd">        The reason why we use uuid instead of StructureData is that StructureData cannot be put in a list with List object, it will shout out error. Once we have the uuid number, we can get the structure by just using `structure = load_node(uuid=uuid_structure)`, it is very straightforward.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># do the pre-process of aiida.orm objects.</span>
+    <span class="n">bulk_pmgstructure</span> <span class="o">=</span> <span class="n">bulk</span><span class="o">.</span><span class="n">get_pymatgen_structure</span><span class="p">()</span>
+    <span class="n">miller_index_list</span> <span class="o">=</span> <span class="n">miller_index</span><span class="o">.</span><span class="n">get_list</span><span class="p">()</span>
+    <span class="n">layers_int</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">vacuum_int</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="n">sg</span> <span class="o">=</span> <span class="n">SlabGenerator</span><span class="p">(</span><span class="n">initial_structure</span> <span class="o">=</span> <span class="n">bulk_pmgstructure</span><span class="p">,</span>
+                       <span class="n">miller_index</span> <span class="o">=</span> <span class="n">miller_index_list</span><span class="p">,</span>
+                       <span class="n">min_slab_size</span> <span class="o">=</span> <span class="n">layers_int</span><span class="p">,</span>
+                       <span class="n">min_vacuum_size</span> <span class="o">=</span> <span class="n">vacuum_int</span><span class="p">,</span>
+                       <span class="n">center_slab</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="n">in_unit_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="n">primitive</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                       <span class="n">reorient_lattice</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">listOfStructures</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_slabs</span><span class="p">()</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">:</span>
+        <span class="n">structure_node</span> <span class="o">=</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">pymatgen_structure</span> <span class="o">=</span> <span class="n">structure</span><span class="p">)</span>
+        <span class="n">structure_node</span><span class="o">.</span><span class="n">store</span><span class="p">()</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure_node</span><span class="o">.</span><span class="n">uuid</span><span class="p">)</span> <span class="c1"># since uuid is the unique identifier for each node across the platform</span>
+
+    <span class="n">listGenerator</span> <span class="o">=</span> <span class="n">List</span><span class="p">()</span>
+    <span class="n">listGenerator</span><span class="o">.</span><span class="n">set_list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">listGenerator</span></div>
+
+<div class="viewcode-block" id="adsorptionSites"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.adsorptionSites">[docs]</a><span class="nd">@calcfunction</span>
+<span class="k">def</span> <span class="nf">adsorptionSites</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">visualize</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    `AdsorptionSites` can help us visualize the position and tag of each adsorption sites, then we can determine where we want to put the adsorbates.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    slab:</span>
+<span class="sd">        An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.</span>
+
+<span class="sd">    visualize:</span>
+<span class="sd">        A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.</span>
+
+<span class="sd">    Return:</span>
+
+<span class="sd">    Matplotlib figure:</span>
+<span class="sd">        A matplotlib figure, which represents the distribution of the adsorption sites and its corresponding id.</span>
+
+<span class="sd">    Adsorption site dictionary:</span>
+<span class="sd">        An aiida.orm.Dict object. Contains the information of all the positions of adsorption sites, which corresponse to the matplotlib figure.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># the inspiration for this function was from pymatgen.analysis.adsorption.AdsorbateSiteFinder.plot_slab() function, which is really intuitive way of showing the structure and the adsorption sites.</span>
+    <span class="c1"># since this function does not create any useful data, so it doesn&#39;t be decorated with @calfunction decorator</span>
+
+    <span class="c1"># get the structure and adsorption sites</span>
+    <span class="n">slab</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">get_pymatgen_structure</span><span class="p">()</span>
+    <span class="n">visualize</span> <span class="o">=</span> <span class="n">visualize</span><span class="o">.</span><span class="n">value</span>
+    <span class="c1"># end of the conversion</span>
+
+    <span class="n">asf</span> <span class="o">=</span> <span class="n">AdsorbateSiteFinder</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">selective_dynamics</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">adsorption_sites</span> <span class="o">=</span> <span class="n">asf</span><span class="o">.</span><span class="n">find_adsorption_sites</span><span class="p">(</span><span class="n">distance</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">)</span>
+
+    <span class="n">dictGenerator</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">()</span>
+    <span class="n">dictGenerator</span><span class="o">.</span><span class="n">set_dict</span><span class="p">(</span><span class="n">adsorption_sites</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">visualize</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># start plotting the figure, this part of the code was largely adopted from pymatgen github repository</span>
+
+        <span class="c1"># parameters for the plotting</span>
+        <span class="n">repeat</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># create supercell 3x3x1</span>
+        <span class="n">decay</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.8</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="mf">1.5</span>
+        <span class="n">draw_unit_cell</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+        <span class="n">orig_slab</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">slab</span><span class="p">)</span>
+        <span class="n">orig_cell</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">slab</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+
+        <span class="n">slab</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="n">repeat</span><span class="p">,</span> <span class="n">repeat</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">slab</span><span class="p">)</span>
+
+        <span class="c1"># sort the coordinates by the z component</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">slab</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">sites</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">slab</span><span class="o">.</span><span class="n">sites</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">alphas</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">decay</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">corner</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">slab</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">get_fractional_coords</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">corner</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">get_cartesian_coords</span><span class="p">(</span><span class="n">corner</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="n">orig_cell</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">lattsum</span> <span class="o">=</span> <span class="n">verts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">verts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Draw circles at sites and stack them accordingly</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">sites</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">specie</span><span class="o">.</span><span class="n">atomic_radius</span> <span class="o">*</span> <span class="n">scale</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span>
+                <span class="n">patches</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span>
+                    <span class="n">coord</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">lattsum</span> <span class="o">*</span> <span class="p">(</span><span class="n">repeat</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">color_dictionary</span><span class="p">[</span><span class="n">sites</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">species_string</span><span class="p">])</span><span class="o">/</span><span class="mi">255</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span>
+                <span class="n">patches</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span>
+                    <span class="n">coord</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">lattsum</span> <span class="o">*</span> <span class="p">(</span><span class="n">repeat</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="n">r</span><span class="p">,</span>
+                    <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="n">alphas</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                    <span class="n">lw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Adsorption sites</span>
+            <span class="c1"># top site</span>
+            <span class="n">ads_sites</span> <span class="o">=</span> <span class="n">adsorption_sites</span><span class="p">[</span><span class="s1">&#39;ontop&#39;</span><span class="p">]</span>
+            <span class="n">sop</span> <span class="o">=</span> <span class="n">get_rot</span><span class="p">(</span><span class="n">orig_slab</span><span class="p">)</span>
+            <span class="n">ads_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sop</span><span class="o">.</span><span class="n">operate</span><span class="p">(</span><span class="n">ads_site</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="n">ads_sites</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="o">*</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ads_sites</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+                <span class="n">markersize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">mew</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">10000</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">ads_site</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ads_site</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span>
+                        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                        <span class="n">zorder</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+            <span class="c1"># bridge site</span>
+            <span class="n">ads_sites</span> <span class="o">=</span> <span class="n">adsorption_sites</span><span class="p">[</span><span class="s1">&#39;bridge&#39;</span><span class="p">]</span>
+            <span class="n">sop</span> <span class="o">=</span> <span class="n">get_rot</span><span class="p">(</span><span class="n">orig_slab</span><span class="p">)</span>
+            <span class="n">ads_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sop</span><span class="o">.</span><span class="n">operate</span><span class="p">(</span><span class="n">ads_site</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="n">ads_sites</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="o">*</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ads_sites</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+                <span class="n">markersize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">mew</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">10000</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">ads_site</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ads_site</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span>
+                        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                        <span class="n">zorder</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+            <span class="c1"># hollow site</span>
+            <span class="n">ads_sites</span> <span class="o">=</span> <span class="n">adsorption_sites</span><span class="p">[</span><span class="s1">&#39;hollow&#39;</span><span class="p">]</span>
+            <span class="n">sop</span> <span class="o">=</span> <span class="n">get_rot</span><span class="p">(</span><span class="n">orig_slab</span><span class="p">)</span>
+            <span class="n">ads_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sop</span><span class="o">.</span><span class="n">operate</span><span class="p">(</span><span class="n">ads_site</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="n">ads_sites</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="o">*</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ads_sites</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">,</span>
+                <span class="n">markersize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">mew</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">10000</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">ads_site</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ads_site</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span>
+                        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                        <span class="n">zorder</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+
+        <span class="c1"># Draw unit cell</span>
+        <span class="k">if</span> <span class="n">draw_unit_cell</span><span class="p">:</span>
+            <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lattsum</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">verts</span> <span class="o">+=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+            <span class="n">verts</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">verts</span>
+            <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="o">.</span><span class="n">MOVETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">CLOSEPOLY</span><span class="p">]</span>
+            <span class="n">verts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vert</span><span class="p">)</span> <span class="o">+</span> <span class="n">corner</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">vert</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">]</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">codes</span><span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">PathPatch</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">corner</span> <span class="o">+</span> <span class="n">lattsum</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lattsum</span><span class="p">)</span>
+        <span class="n">lim_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">center</span> <span class="o">-</span> <span class="n">extent</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span> <span class="n">center</span> <span class="o">+</span> <span class="n">extent</span> <span class="o">*</span> <span class="n">window</span><span class="p">]</span>
+        <span class="n">x_lim</span> <span class="o">=</span> <span class="p">[</span><span class="n">ele</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">lim_array</span><span class="p">]</span>
+        <span class="n">y_lim</span> <span class="o">=</span> <span class="p">[</span><span class="n">ele</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">lim_array</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_lim</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">y_lim</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">dictGenerator</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Zheng-Da He
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

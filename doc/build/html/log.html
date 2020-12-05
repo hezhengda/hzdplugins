@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.27 documentation</title>
+  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.29 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="hzdplugins Modules" href="hzdplugins.html" /> 
+    <link rel="prev" title="structure Modules" href="structure.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,7 +84,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="hzdplugins.html">hzdplugins Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aiidaplugins.html">aiidaplugins Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">structure Modules</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Log file for hzdplugins</a></li>
 </ul>
 
@@ -155,8 +156,18 @@
 <h1>Log file for hzdplugins<a class="headerlink" href="#log-file-for-hzdplugins" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><dl class="simple">
-<dt>v0.0.26-27: 2020.12.04</dt><dd><ul>
+<dt>v0.0.29: 2020.12.05</dt><dd><ul>
+<li><p>Add a new module <cite>structure</cite>, which can help me create bulk structures and slab surfaces more easily.</p></li>
+<li><p>Make all the functions in <cite>structure</cite> module and <cite>submit.py</cite> in aiida’s standard, which means all the input variables are from <cite>aiida.orm</cite> types and all the functions are decorated by <cite>calcfunction</cite> in order to preserve the provenance.</p></li>
+<li><p>Add a powerful function in <cite>structure.py</cite> called <cite>adsorptionSites</cite>, in this function, if we set <cite>visualize=False</cite>, then it only gives us the position of the adsorption sites; but if <cite>visualize=True</cite>, then we will get a nice picture that shows all possible adsorption sites, and their ids, so we can visualize it and make plans for later calculations.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>v0.0.26-28: 2020.12.04</dt><dd><ul>
 <li><p>Assign <cite>uuid</cite> instead of <cite>pk</cite> for all the nodes, because <cite>uuid</cite> is unique, but <cite>pk</cite> is not, so this may cause some difficulties in the implementation. Also add a converter from <cite>pk</cite> based results dictionary to <cite>uuid</cite> based results dictionary.</p></li>
+<li><p>Correct a few mistakes</p></li>
 </ul>
 </dd>
 </dl>
@@ -296,7 +307,7 @@
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="hzdplugins.html" class="btn btn-neutral float-left" title="hzdplugins Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="structure.html" class="btn btn-neutral float-left" title="structure Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

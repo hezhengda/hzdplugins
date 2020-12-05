@@ -12,3 +12,5 @@ hzdplugins/aiidaplugins/constants.py
 hzdplugins/aiidaplugins/info.py
 hzdplugins/aiidaplugins/io.py
 hzdplugins/aiidaplugins/submit.py
+hzdplugins/structure/__init__.py
+hzdplugins/structure/build.py

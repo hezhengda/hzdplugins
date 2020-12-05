@@ -1,15 +1,21 @@
+# Since the goal of Aiida is to "preservation of provenance", so I should write this plugin with the same goal as Aiida, that's why all the relevant information will be provided in aiida.orm types. (I can convert them in the code, it is very straightforward)
+
 from aiida.orm import StructureData, KpointsData, Dict, Code
 from copy import deepcopy
 from aiida.orm import load_node
+from aiida.engine import calcfunction
 from aiida.engine.launch import submit
 from hzdplugins.aiidaplugins.constants import results_keys_set, slurm_options
 from aiida.orm.nodes.data.upf import get_pseudos_from_structure
 
-def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, metadata, add_parameters={}, del_parameters={}, cluster_options={}):
+@calcfunction
+def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, metadata, add_parameters, del_parameters, cluster_options):
 
     """
 
     `qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.
+
+    **Notice**: Every input parameters should be in `aiida.orm` types.
 
     Parameters:
 
@@ -17,40 +23,50 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
         A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode
 
     codename:
-        A string. Represent the code for pw.x that you want to use
+        An aiida.orm.Str object. A string represents the code for pw.x that you want to use
 
     structure:
-        A StructureData object. The structure of your system. It needs to be StructureData type.
+        An aiida.orm.StructureData object. The structure of your system. It needs to be StructureData type.
 
     add_parameters:
-        A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+        An aiida.orm.Dict object. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
 
         If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
         e.g. {'CONTROL':{}, 'SYSTEM':{}}
 
     del_parameters:
-        A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+        An aiida.orm.Dict object. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
 
         e.g. {'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}
 
     kpoints:
-        A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+        An aiida.orm.List object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
 
     pseudo_family:
-        A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
+        An aiida.orm.Str object. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
 
     cluster_options:
-        A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
+        An aiida.orm.Dict object. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
 
     metadata:
-        A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
+        An aiida.orm.Dict object. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
 
     Return:
         results: a modified results dictionary with the latest submitted job
         pk: the id of that CalcJob
 
     """
+
+    # clean the input from aiida.orm to regular datatypes
+    codename = codename.value
+    add_parameters = add_parameters.get_dict()
+    del_parameters = del_parameters.get_dict()
+    kpoints = kpoints.get_list()
+    pseudo_family = pseudo_family.value
+    metadata = metadata.get_dict()
+    cluster_options = cluster_options.get_dict()
+    # the end of the cleaning procedure
 
     results_tmp = deepcopy(results) # first we need to create a copy for our simulation
 
@@ -159,56 +175,70 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
     results_tmp[str(calc.uuid)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
     results_tmp[str(calc.uuid)]['exit_status'] = None
     results_tmp[str(calc.uuid)]['is_finished'] = None
-    results_tmp[str(calcuuidpk)]['is_finished_ok'] = None
+    results_tmp[str(calc.uuid)]['is_finished_ok'] = None
     results_tmp[str(calc.uuid)]['previous_calc'] = 0 # 0 represent original
     results_tmp[str(calc.uuid)]['son_calc'] = None # currently no son_calc node
     # results_tmp[str(calc.pk)]['description'] = metadata['description']
 
     return results_tmp, calc.uuid
 
-def qePwContinueSubmit(results, uuid, pseudo_family, codename='', add_parameters={}, del_parameters={}, kpoints=[], cluster_options={}, metadata={}):
+@calcfunction
+def qePwContinueSubmit(results, uuid, pseudo_family, codename, add_parameters, del_parameters, kpoints, cluster_options, metadata):
 
     """
 
-    `qePwContinueSubmit` will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs
+    `qePwContinueSubmit` will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs.
+
+    **Notice**: Every input parameters should be in `aiida.orm` types.
 
     Parameters:
 
     uuid:
-        The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
+        An aiida.orm.Str object. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
 
     pseudo_family:
-        A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.
+        An aiida.orm.Str object. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.
 
     codename:
-        A string. Represent the code for pw.x that you want to use.
+        An aiida.orm.Str object. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str('')
 
     add_parameters:
-        A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+        An aiida.orm.Dict object. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
 
         If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
         e.g. {'CONTROL':{}, 'SYSTEM':{}}
 
     del_parameters:
-        A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+        An aiida.orm.Dict object. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
 
         e.g. {'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}
 
     kpoints:
-        A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+        An aiida.orm.List object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
 
     cluster_options:
-        A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
+        An aiida.orm.Dict object. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
 
     metadata:
-        A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
+        An aiida.orm.Dict object. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
 
     Return:
         results: a modified results dictionary with the latest submitted job
         uuid: the uuid of that CalcJob
 
     """
+
+    # clean the input from aiida.orm to regular datatypes
+    uuid = uuid.value
+    codename = codename.value
+    add_parameters = add_parameters.get_dict()
+    del_parameters = del_parameters.get_dict()
+    kpoints = kpoints.get_list()
+    pseudo_family = pseudo_family.value
+    metadata = metadata.get_dict()
+    cluster_options = cluster_options.get_dict()
+    # the end of the cleaning procedure
 
     results_tmp = deepcopy(results)
 

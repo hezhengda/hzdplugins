@@ -1,8 +1,14 @@
 Log file for hzdplugins
 =======================
 
-* v0.0.26-27: 2020.12.04
+* v0.0.29: 2020.12.05
+    * Add a new module `structure`, which can help me create bulk structures and slab surfaces more easily.
+    * Make all the functions in `structure` module and `submit.py` in aiida's standard, which means all the input variables are from `aiida.orm` types and all the functions are decorated by `calcfunction` in order to preserve the provenance.
+    * Add a powerful function in `structure.py` called `adsorptionSites`, in this function, if we set `visualize=False`, then it only gives us the position of the adsorption sites; but if `visualize=True`, then we will get a nice picture that shows all possible adsorption sites, and their ids, so we can visualize it and make plans for later calculations.
+
+* v0.0.26-28: 2020.12.04
     * Assign `uuid` instead of `pk` for all the nodes, because `uuid` is unique, but `pk` is not, so this may cause some difficulties in the implementation. Also add a converter from `pk` based results dictionary to `uuid` based results dictionary.
+    * Correct a few mistakes
 
 * v0.0.25: 2020.12.04
     * modified the `constants` file because I transfer the aiida from ubuntu to mac, so all the computer names have changed. e.g. from `rwth-claix` to `rwth-claix-mac`.

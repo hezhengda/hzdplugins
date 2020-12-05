@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>structure Modules &mdash; hzdplugins 0.0.29 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Log file for hzdplugins" href="log.html" />
+    <link rel="prev" title="aiidaplugins Modules" href="aiidaplugins.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> hzdplugins
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="aiidaplugins.html">aiidaplugins Modules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">structure Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-hzdplugins.structure.build">hzdplugins.structure.build module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Log file for hzdplugins</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hzdplugins</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">&lt;no title&gt;</a> &raquo;</li>
+        
+      <li>structure Modules</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/structure.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="structure-modules">
+<h1>structure Modules<a class="headerlink" href="#structure-modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-hzdplugins.structure.build">
+<span id="hzdplugins-structure-build-module"></span><h2>hzdplugins.structure.build module<a class="headerlink" href="#module-hzdplugins.structure.build" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="hzdplugins.structure.build.adsorptionSites">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">adsorptionSites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">visualize</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#adsorptionSites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.adsorptionSites" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>AdsorptionSites</cite> can help us visualize the position and tag of each adsorption sites, then we can determine where we want to put the adsorbates.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>slab:</dt><dd><p>An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.</p>
+</dd>
+<dt>visualize:</dt><dd><p>A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.</p>
+</dd>
+</dl>
+<p>Return:</p>
+<dl class="simple">
+<dt>Matplotlib figure:</dt><dd><p>A matplotlib figure, which represents the distribution of the adsorption sites and its corresponding id.</p>
+</dd>
+<dt>Adsorption site dictionary:</dt><dd><p>An aiida.orm.Dict object. Contains the information of all the positions of adsorption sites, which corresponse to the matplotlib figure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.bulk">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">supercell</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>bulk</cite> function can help us create a Bulk from the file.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>filename:</dt><dd><p>An aiida.orm.Str object. Usually when we create the structural file, we do it from the strcutural file such as .xyz or .cif, etc.</p>
+</dd>
+<dt>supercell:</dt><dd><p>An aiida.orm.List object. A list that contains the dimension of supercell we would like.</p>
+</dd>
+</dl>
+<p>Return: A StructureData file that can be used directly in Aiida.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.millerSurfaces">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">millerSurfaces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bulk</span></em>, <em class="sig-param"><span class="n">miller_index</span></em>, <em class="sig-param"><span class="n">layers</span></em>, <em class="sig-param"><span class="n">vacuum</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#millerSurfaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.millerSurfaces" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>millerSurfaces</cite> can help us generate a list of slab structures that we could use in future studies</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>bulk:</dt><dd><p>An aiida.orm.StructureData object. The bulk structure that we are going to use for creating the surface slabs.</p>
+</dd>
+<dt>miller_index:</dt><dd><p>An aiida.orm.List object. The miller index that we want to get.</p>
+</dd>
+<dt>layers:</dt><dd><p>An aiida.orm.Int object. Set how many layers you want for the surface slab.</p>
+</dd>
+<dt>vacuum:</dt><dd><p>An aiida.orm.List object. Set how many layers you want for the vacuum layer.</p>
+</dd>
+<dt>Return: A series of uuids of StructureData object, which can be used for further investigations.</dt><dd><p>The reason why we use uuid instead of StructureData is that StructureData cannot be put in a list with List object, it will shout out error. Once we have the uuid number, we can get the structure by just using <cite>structure = load_node(uuid=uuid_structure)</cite>, it is very straightforward.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="log.html" class="btn btn-neutral float-right" title="Log file for hzdplugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="aiidaplugins.html" class="btn btn-neutral float-left" title="aiidaplugins Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Zheng-Da He
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

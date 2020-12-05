@@ -50,8 +50,7 @@ def unDoneTasks(results):
             if value['exit_status'] != '0' and value['exit_status'] != '501':
                 subresults[key] = value
         else:
-            pk = int(key)
-            node = load_node(pk)
+            node = load_node(uuid=key)
             if node.exit_status != '0' and node.exit_status != '501':
                 subresults[key] = value
 
