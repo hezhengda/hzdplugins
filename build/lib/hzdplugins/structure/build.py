@@ -123,7 +123,7 @@ def adsorptionSites(slab, visualize, **kwargs):
     visualize:
         An aiida.orm.Bool object. A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.
 
-    **kwargs:
+    kwargs:
         There are four variables which can be set for tuning the output figure
         * repeat (Int): how many unit cell do we want to show (how large the supercell we want to show)
         * decay (Float in [0,1]): the decay of alpha-value among different layers
@@ -308,3 +308,33 @@ def adsorptionSites(slab, visualize, **kwargs):
         plt.show()
 
     return dictGenerator
+
+@calcfunction
+def addAdsorbates(slab, adsSiteDictionary):
+
+    """
+
+    :code:`addAdsorbates` will take care of these things:
+
+    * Add each adsorbate to a specific site, and with optimal adsorption distance and angle
+    * Put the bottom two layers of the slab fixed, other atoms can be relaxed
+
+    Parameters:
+
+    slab:
+        An aiida.orm.StructureData object. The slab that we want to adsorb some adsorbates on.
+
+    adsSiteDictionary:
+        An aiida.orm.Dict object. In which contains the adsorbates (for common adsorbates, I can assign the adsorption atom, geometry of the adsorbates and its adsorption angle in :code:`constants.py`) and adsorption sites, also I can add new adsorbates to the adsorbates library. (Do a very simple relax simulation of a molecule in the big cell, and just output the structure and assign the adsorption site. For mono-site adsorption, it is really easy, for bi-site adsorption, it is also easy since we can get the molecule to align; for tri-site or more-site adsorption, well, we can just put the molecule closer to the surface and let the program determine how does this molecule interact with the surface, for our usual research, I don't think this is necessary.)
+
+    Return:
+        An aiida.orm.StructureData object. With the adsorbates and modified constrains on all the atoms, ready for the submit functions.
+
+    """
+
+    # clean the input parameters from aiida.orm types to usual types
+    slab = slab.get_pymatgen_structure()
+    adsSiteDictionary = adsSiteDictionary.get_dict()
+    # end of cleaning process
+
+    pass

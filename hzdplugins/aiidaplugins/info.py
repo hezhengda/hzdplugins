@@ -7,7 +7,7 @@ from copy import deepcopy
 from hzdplugins.aiidaplugins.constants import results_keys_set
 import json
 
-def showresults(results):
+def showResults(results):
 
     """
 
@@ -28,7 +28,7 @@ def showresults(results):
     pd.set_option("display.max_rows", None, "display.max_columns", None)
     return df
 
-def unDoneTasks(results):
+def get_unDoneTasks(results):
 
     """
 
@@ -56,7 +56,7 @@ def unDoneTasks(results):
 
     return subresults
 
-def unFinishedTasks(results):
+def get_unFinishedTasks(results):
 
     """
 
@@ -80,7 +80,7 @@ def unFinishedTasks(results):
 
     return subresults
 
-def unConvergedTasks(results):
+def get_unConvergedTasks(results):
 
     """
 
@@ -251,6 +251,72 @@ def pkToUuidConverter(results_pk):
 
     return results_tmp
 
+def get_ChargeAndMagneticMoments(uuid):
+
+    """
+
+    :code:`get_ChargeAndMagneticMoments` function will output the charge and the magnetic moments for each atom if we have spin-polarized simulation.
+
+    Parameter:
+
+    uuid:
+        The uuid of the computational node.
+
+    Return: A table that shows the charge and atomic_magnetic_moments for each species (labeled as `[number][atomic_species]`, e.g. 1Ni)
+
+    """
+
+    node = load_node(uuid=uuid)
+    trajectory = node.outputs.output_trajectory
+    atomic_species = trajectory.get_array('atomic_species_name')
+    magnetic_moments = trajectory.get_array('atomic_magnetic_moments')[-1] # the last step
+    charges = trajectory.get_array('atomic_charges')[-1]
+
+    results = {}
+    for i in range(len(atomic_species)):
+        name = atomic_species[i] + str(i) # e.g. Ni1
+        results[name] = {}
+        results[name]['charge'] = charges[i]
+        results[name]['magnetic_moment'] = magnetic_moments[i]
+
+    df = pd.DataFrame.from_dict(results, orient='index')
+
+    return df
+
+def get_TotalForces(uuid):
+
+    """
+
+    :code:`get_TotalForces` function will output the total force for each atomic step.
+
+    Parameter:
+
+    uuid:
+        The uuid of the computational node.
+
+    Return: A matplotlib figure that shows the convergence, and also the last 5 steps of total_forces.
+
+    """
+
+    node = load_node(uuid=uuid)
+    trajectory = node.outputs.output_trajectory
+    total_force = trajectory.get_array('total_force')
+
+    iteration = []
+    tf = []
+
+    for id in range(len(total_force)):
+        iteration.append(id)
+        tf.append(total_force[id])
+
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ax.plot(iteration, tf)
+    plt.xlabel('iterations')
+    plt.ylabel('total force / eV/A')
+    plt.show()
+
+    return tf[-5:-1]
 
 def saveResults(results, filename):
 

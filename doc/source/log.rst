@@ -1,6 +1,9 @@
 Log file for hzdplugins
 =======================
 
+* v0.0.34: 2020.12.07
+    * add some new functionalities in `info.py` which can show the charge & magnetic moments, and also the total forces for each atomic step. Write `get_TotalForces` and `get_ChargeAndMagneticMoments`
+
 * v0.0.33: 2020.12.05
     * give some options for the plotting in `build.py` `adsorptionSites` function.
 
