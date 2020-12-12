@@ -28,7 +28,7 @@ slurm_options['juwels-mac'] = {
 
 # 'jusuf-mac'
 slurm_options['jusuf-mac'] = {
-    'resources': {'num_machines': 1}, # on jusuf, each node has 128 cores
+    'resources': {'num_machines': 2}, # on jusuf, each node has 128 cores
     'max_wallclock_seconds': 86400,
     'account': 'jiek61',
     'scheduler_stderr': 'stderr',
@@ -199,4 +199,9 @@ color_dictionary = {
       'Yb': [0, 191, 56],
       'Zn': [143, 143, 129],
       'Zr': [0, 255, 0],
+}
+
+cmd_shortcut = {
+    'gf': "grep 'scf accuracy' aiida.out",
+    'gforce': "grep 'Total force' aiida.out"
 }

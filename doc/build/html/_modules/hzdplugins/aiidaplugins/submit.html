@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.submit &mdash; hzdplugins 0.0.33 documentation</title>
+  <title>hzdplugins.aiidaplugins.submit &mdash; hzdplugins 0.0.37 documentation</title>
   
 
   
@@ -159,14 +159,11 @@
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">results_keys_set</span><span class="p">,</span> <span class="n">slurm_options</span>
 <span class="kn">from</span> <span class="nn">aiida.orm.nodes.data.upf</span> <span class="kn">import</span> <span class="n">get_pseudos_from_structure</span>
 
-<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">[docs]</a><span class="nd">@calcfunction</span>
-<span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">):</span>
+<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">fixed_coords</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    `qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.</span>
-
-<span class="sd">    **Notice**: Every input parameters should be in `aiida.orm` types.</span>
 
 <span class="sd">    Parameters:</span>
 
@@ -174,50 +171,46 @@
 <span class="sd">        A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode</span>
 
 <span class="sd">    codename:</span>
-<span class="sd">        An aiida.orm.Str object. A string represents the code for pw.x that you want to use</span>
+<span class="sd">        A string. A string represents the code for pw.x that you want to use</span>
 
 <span class="sd">    structure:</span>
 <span class="sd">        An aiida.orm.StructureData object. The structure of your system. It needs to be StructureData type.</span>
 
+<span class="sd">    fixed_coords:</span>
+<span class="sd">        A list. It&#39;s size should be Nx3, where N is the number of atoms in structure. e.g. [[True, False, False], [False, False, False]]. True represents that this coordinate is fixed, and False means this coordinate is free to move. Very useful in surface calculation.</span>
+
 <span class="sd">    add_parameters:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</span>
+<span class="sd">        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</span>
 
 <span class="sd">        If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</span>
 
 <span class="sd">        e.g. {&#39;CONTROL&#39;:{}, &#39;SYSTEM&#39;:{}}</span>
 
 <span class="sd">    del_parameters:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure as add_parameters.</span>
+<span class="sd">        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure as add_parameters.</span>
 
 <span class="sd">        e.g. {&#39;CONTROL&#39;: [key1, key2, key3], &#39;SYSTEM&#39;: [key1, key2, key3]}</span>
 
 <span class="sd">    kpoints:</span>
-<span class="sd">        An aiida.orm.List object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
+<span class="sd">        A list object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
 
 <span class="sd">    pseudo_family:</span>
-<span class="sd">        An aiida.orm.Str object. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.</span>
+<span class="sd">        A string. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.</span>
+
+<span class="sd">    pseudo_dict:</span>
+<span class="sd">        A dictionary. Which contains the pseudopotential files that we want to use in the simulation.</span>
 
 <span class="sd">    cluster_options:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</span>
+<span class="sd">        A dictionary. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</span>
 
 <span class="sd">    metadata:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</span>
+<span class="sd">        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        results: a modified results dictionary with the latest submitted job</span>
 <span class="sd">        pk: the id of that CalcJob</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># clean the input from aiida.orm to regular datatypes</span>
-    <span class="n">codename</span> <span class="o">=</span> <span class="n">codename</span><span class="o">.</span><span class="n">value</span>
-    <span class="n">add_parameters</span> <span class="o">=</span> <span class="n">add_parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="n">del_parameters</span> <span class="o">=</span> <span class="n">del_parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpoints</span><span class="o">.</span><span class="n">get_list</span><span class="p">()</span>
-    <span class="n">pseudo_family</span> <span class="o">=</span> <span class="n">pseudo_family</span><span class="o">.</span><span class="n">value</span>
-    <span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="n">cluster_options</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="c1"># the end of the cleaning procedure</span>
 
     <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="c1"># first we need to create a copy for our simulation</span>
 
@@ -226,7 +219,16 @@
     <span class="n">pw_builder</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">get_builder</span><span class="p">()</span>
 
     <span class="c1"># pseudopotential</span>
-    <span class="n">pw_builder</span><span class="o">.</span><span class="n">pseudos</span> <span class="o">=</span> <span class="n">get_pseudos_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">family_name</span><span class="o">=</span><span class="n">pseudo_family</span><span class="p">)</span>
+    <span class="c1"># check whether pseudo_family and pseudo_dict are set at the same time, if true, then break</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_family</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot set pseudo_family and pseudo_dict at the same time&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_family</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You need to specify at least one in pseudo_family or pseudo_dict.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_family</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pw_builder</span><span class="o">.</span><span class="n">pseudos</span> <span class="o">=</span> <span class="n">get_pseudos_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">family_name</span><span class="o">=</span><span class="n">pseudo_family</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pw_builder</span><span class="o">.</span><span class="n">pseudos</span> <span class="o">=</span> <span class="n">pseudo_dict</span>
 
     <span class="c1"># set kpoints</span>
     <span class="n">kpts</span> <span class="o">=</span> <span class="n">KpointsData</span><span class="p">()</span>
@@ -264,8 +266,8 @@
             <span class="s1">&#39;electron_maxstep&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
             <span class="s1">&#39;conv_thr&#39;</span><span class="p">:</span> <span class="mf">1.0e-6</span><span class="p">,</span>
             <span class="s1">&#39;diagonalization&#39;</span><span class="p">:</span> <span class="s1">&#39;david&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;mixing_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;local-TF&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;mixing_beta&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+            <span class="s1">&#39;mixing_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mixing_beta&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
             <span class="s1">&#39;mixing_ndim&#39;</span><span class="p">:</span> <span class="mi">10</span>
         <span class="p">}</span>
     <span class="p">})</span>
@@ -309,11 +311,26 @@
         <span class="k">if</span> <span class="s1">&#39;queue_name&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">pw_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
 
+    <span class="c1"># setting&#39;s dictionary</span>
+    <span class="n">setting_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;CMDLINE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;-npools&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fixed_coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># we need to fix some atoms</span>
+        <span class="n">setting_dict</span><span class="p">[</span><span class="s1">&#39;fixed_coords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fixed_coords</span>
+
+    <span class="n">setting_dict</span><span class="p">[</span><span class="s1">&#39;additional_retrieve_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;aiida.out&#39;</span><span class="p">]</span> <span class="c1"># retrieve output file</span>
+
+    <span class="c1">## get atomic occupations</span>
+    <span class="k">if</span> <span class="s1">&#39;lda_plus_u&#39;</span> <span class="ow">in</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;lda_plus_u&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">setting_dict</span><span class="p">[</span><span class="s1">&#39;parser_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;parse_atomic_occupations&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+
     <span class="c1"># launch the simulation</span>
     <span class="n">pw_builder</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
     <span class="n">pw_builder</span><span class="o">.</span><span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpts</span>
     <span class="n">pw_builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters_default</span>
-    <span class="n">pw_builder</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;CMDLINE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;-npools&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">]})</span>
+    <span class="n">pw_builder</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">setting_dict</span><span class="p">)</span>
     <span class="n">calc</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">pw_builder</span><span class="p">)</span>
 
     <span class="c1"># results</span>
@@ -333,63 +350,55 @@
 
     <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
 
-<div class="viewcode-block" id="qePwContinueSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwContinueSubmit">[docs]</a><span class="nd">@calcfunction</span>
-<span class="k">def</span> <span class="nf">qePwContinueSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+<div class="viewcode-block" id="qePwContinueSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwContinueSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwContinueSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">parent_folder</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    `qePwContinueSubmit` will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs.</span>
 
-<span class="sd">    **Notice**: Every input parameters should be in `aiida.orm` types.</span>
-
 <span class="sd">    Parameters:</span>
 
 <span class="sd">    uuid:</span>
-<span class="sd">        An aiida.orm.Str object. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode</span>
+<span class="sd">        A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode</span>
 
 <span class="sd">    pseudo_family:</span>
-<span class="sd">        An aiida.orm.Str object. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.</span>
+<span class="sd">        A string. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.</span>
+
+<span class="sd">    pseudo_dict:</span>
+<span class="sd">        A dictionary. Which contains the pseudopotential files that we want to use in the simulation.</span>
 
 <span class="sd">    codename:</span>
-<span class="sd">        An aiida.orm.Str object. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str(&#39;&#39;)</span>
+<span class="sd">        A string. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str(&#39;&#39;)</span>
+
+<span class="sd">    parent_folder:</span>
+<span class="sd">        A Boolean variable. If parent_folder is True, then the calculation will start with the output files from previous calculations.</span>
 
 <span class="sd">    add_parameters:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</span>
+<span class="sd">        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</span>
 
 <span class="sd">        If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</span>
 
 <span class="sd">        e.g. {&#39;CONTROL&#39;:{}, &#39;SYSTEM&#39;:{}}</span>
 
 <span class="sd">    del_parameters:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure as add_parameters.</span>
+<span class="sd">        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure as add_parameters.</span>
 
 <span class="sd">        e.g. {&#39;CONTROL&#39;: [key1, key2, key3], &#39;SYSTEM&#39;: [key1, key2, key3]}</span>
 
 <span class="sd">    kpoints:</span>
-<span class="sd">        An aiida.orm.List object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
+<span class="sd">        A list. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
 
 <span class="sd">    cluster_options:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</span>
+<span class="sd">        A dictionary. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</span>
 
 <span class="sd">    metadata:</span>
-<span class="sd">        An aiida.orm.Dict object. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</span>
+<span class="sd">        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        results: a modified results dictionary with the latest submitted job</span>
 <span class="sd">        uuid: the uuid of that CalcJob</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># clean the input from aiida.orm to regular datatypes</span>
-    <span class="n">uuid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">value</span>
-    <span class="n">codename</span> <span class="o">=</span> <span class="n">codename</span><span class="o">.</span><span class="n">value</span>
-    <span class="n">add_parameters</span> <span class="o">=</span> <span class="n">add_parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="n">del_parameters</span> <span class="o">=</span> <span class="n">del_parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpoints</span><span class="o">.</span><span class="n">get_list</span><span class="p">()</span>
-    <span class="n">pseudo_family</span> <span class="o">=</span> <span class="n">pseudo_family</span><span class="o">.</span><span class="n">value</span>
-    <span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="n">cluster_options</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
-    <span class="c1"># the end of the cleaning procedure</span>
 
     <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
@@ -404,7 +413,14 @@
         <span class="n">restart_builder</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">get_builder</span><span class="p">()</span>
 
     <span class="n">parameters_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-    <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">output_structure</span>
+
+    <span class="n">parameters_dict</span> <span class="o">=</span> <span class="n">parameters_tmp</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
+    <span class="n">calc_type</span> <span class="o">=</span> <span class="n">parameters_dict</span><span class="p">[</span><span class="s1">&#39;CONTROL&#39;</span><span class="p">][</span><span class="s1">&#39;calculation&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;relax&#39;</span> <span class="ow">or</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;vc-relax&#39;</span><span class="p">:</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">output_structure</span>
+    <span class="k">elif</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;scf&#39;</span> <span class="ow">or</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;nscf&#39;</span><span class="p">:</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">structure</span>
 
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">add_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">key2</span><span class="p">,</span> <span class="n">value2</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -431,9 +447,17 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">kpts</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">kpoints</span>
 
-    <span class="c1"># reset the pseudo_family</span>
-    <span class="k">if</span> <span class="n">pseudo_family</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+    <span class="c1"># pseudopotential</span>
+    <span class="c1"># check whether pseudo_family and pseudo_dict are set at the same time, if true, then break</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_family</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot set pseudo_family and pseudo_dict at the same time&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_family</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You need to specify at least one in pseudo_family or pseudo_dict.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_family</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">restart_builder</span><span class="o">.</span><span class="n">pseudos</span> <span class="o">=</span> <span class="n">get_pseudos_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">family_name</span><span class="o">=</span><span class="n">pseudo_family</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">restart_builder</span><span class="o">.</span><span class="n">pseudos</span> <span class="o">=</span> <span class="n">pseudo_dict</span>
 
     <span class="c1"># reset cluster_options:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -467,6 +491,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">label</span>
         <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">description</span>
+
+    <span class="c1"># assign the parent_folder</span>
+    <span class="k">if</span> <span class="n">parent_folder</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">restart_builder</span><span class="o">.</span><span class="n">parent_folder</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">remote_folder</span>
 
     <span class="c1"># submit the calculation</span>
     <span class="n">restart_builder</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>

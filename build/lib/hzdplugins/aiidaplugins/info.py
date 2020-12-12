@@ -2,6 +2,7 @@
 # It would be better if the key of results dictionary is the uuid of each node, because uuid is unique, but pk value is not.
 
 import pandas as pd
+import numpy as np
 from aiida.orm import load_node, QueryBuilder, Node
 from copy import deepcopy
 from hzdplugins.aiidaplugins.constants import results_keys_set
@@ -28,7 +29,7 @@ def showResults(results):
     pd.set_option("display.max_rows", None, "display.max_columns", None)
     return df
 
-def get_unDoneTasks(results):
+def getUnDoneTasks(results):
 
     """
 
@@ -56,7 +57,7 @@ def get_unDoneTasks(results):
 
     return subresults
 
-def get_unFinishedTasks(results):
+def getUnFinishedTasks(results):
 
     """
 
@@ -80,7 +81,7 @@ def get_unFinishedTasks(results):
 
     return subresults
 
-def get_unConvergedTasks(results):
+def getUnConvergedTasks(results):
 
     """
 
@@ -161,6 +162,8 @@ def assignValue(results):
             results_tmp[uuid_node]['is_finished_ok'] = node.is_finished_ok
             if node.is_killed == True:
                 results_tmp[uuid_node]['exit_status'] = 'killed'
+            elif node.is_excepted:
+                results_tmp[uuid_node]['exit_status'] = 'excepted'
             else:
                 results_tmp[uuid_node]['exit_status'] = str(node.exit_status)
 
@@ -251,7 +254,7 @@ def pkToUuidConverter(results_pk):
 
     return results_tmp
 
-def get_ChargeAndMagneticMoments(uuid):
+def getChargeAndMagneticMoments(uuid, traj_index=-1):
 
     """
 
@@ -262,6 +265,9 @@ def get_ChargeAndMagneticMoments(uuid):
     uuid:
         The uuid of the computational node.
 
+    index:
+        The index in trajectory that we want to see. Usually '-1' is good, but sometime if the last SCF simulation is problematic, then we need to choose '-2'.
+
     Return: A table that shows the charge and atomic_magnetic_moments for each species (labeled as `[number][atomic_species]`, e.g. 1Ni)
 
     """
@@ -269,8 +275,8 @@ def get_ChargeAndMagneticMoments(uuid):
     node = load_node(uuid=uuid)
     trajectory = node.outputs.output_trajectory
     atomic_species = trajectory.get_array('atomic_species_name')
-    magnetic_moments = trajectory.get_array('atomic_magnetic_moments')[-1] # the last step
-    charges = trajectory.get_array('atomic_charges')[-1]
+    magnetic_moments = trajectory.get_array('atomic_magnetic_moments')[traj_index] # the last step
+    charges = trajectory.get_array('atomic_charges')[traj_index]
 
     results = {}
     for i in range(len(atomic_species)):
@@ -283,7 +289,7 @@ def get_ChargeAndMagneticMoments(uuid):
 
     return df
 
-def get_TotalForces(uuid):
+def getTotalForces(uuid):
 
     """
 
@@ -317,6 +323,122 @@ def get_TotalForces(uuid):
     plt.show()
 
     return tf[-5:-1]
+
+def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
+
+    """
+
+    :code:`get_StructureAnalysis` is a function that can analyze the local structure of each atom in the structure.
+
+    Parameters:
+
+    uuid:
+        The uuid of the node.
+
+    bond_length:
+        The maximum bond length that we consider as a "neighbour", 2.5 is sufficiently large enough, but if can be adjusted by the user.
+
+    atom_index:
+        A list that tell the code which atom that we want to investigate, put the id of the atom in the list.
+
+    is_Metal:
+        A boolean variable. If you are only interested in the metal elements, then you put that to True, else False.
+
+    Return:
+        A dictionary that shows the distance of the central atom with its surrouding atoms. Since metals are important, so we mainly focus on Metal atoms. Later maybe I can add a boolean parameters to let the user choose.
+
+    """
+
+    node = load_node(uuid=uuid)
+
+    if 'CalcJobNode' in node.node_type: # node is a calcjob node
+        if node.is_finished:
+            structure = node.outputs.output_structure.get_ase() # since ase structure is more easy to use
+        else:
+            structure = node.inputs.structure.get_ase()
+    elif 'StructureData' in node.node_type: # node is a StructureData node
+        structure = node.get_ase()
+    else:
+        raise IOError('You need to input either a CalcJobNode or a StructureData object.')
+
+    cell = structure.cell
+
+    if len(atom_index) > 0:
+        investigate_Atoms = atom_index
+    else:
+        investigate_Atoms = [i for i in range(len(structure))] # get all the atoms
+
+    results = {} # the final dictionary
+
+    # calculate the distance between the atoms
+    for id in investigate_Atoms:
+        atom = structure[id]
+        name_atom = atom.symbol+str(id)
+        if is_Metal:
+            if isMetal(atom.symbol):
+                results[name_atom] = {}
+                for id2, atom2 in enumerate(structure):
+                    check, length, symbol = checkDistance(cell, atom, atom2, bond_length)
+                    if (id != id2) and check and (isMetal(atom.symbol)):
+                        name_atom2 = atom2.symbol + str(id2) + symbol
+                        results[name_atom][name_atom2] = length
+        else:
+            results[name_atom] = {}
+            for id2, atom2 in enumerate(structure):
+                check, length, symbol = checkDistance(cell, atom, atom2, bond_length)
+                if (id != id2) and check:
+                    name_atom2 = atom2.symbol + str(id2) + symbol
+                    results[name_atom][name_atom2] = length
+
+    # sort the bond length in the dictionary, easy for comparison:
+    for key, value in results.items():
+        tmp = {k: v for k, v in sorted(value.items(), key=lambda item: item[1])}
+        results[key] = tmp
+
+    return results
+
+def getStructure(uuid):
+
+    """
+
+    :code:`getStructure` can give you the structure by using ase_gui.
+
+    Parameters:
+
+    uuid:
+        The uuid of the node.
+
+    Return:
+        A ase-gui figure represents the structure, which you can view; An ase structure file which you can manipulate later.
+
+    """
+
+    node = load_node(uuid=uuid)
+
+    if 'CalcJobNode' in node.node_type: # node is a calcjob node
+        if node.is_finished:
+            structure = node.outputs.output_structure.get_ase() # since ase structure is more easy to use
+        else:
+            structure = node.inputs.structure.get_ase()
+    elif 'StructureData' in node.node_type: # node is a StructureData node
+        structure = node.get_ase()
+    else:
+        raise IOError('You need to input either a CalcJobNode or a StructureData object.')
+
+    from ase.visualize import view
+
+    v = view(structure, viewer='ngl')
+
+    # setting the output window for the nglview
+    # nglview is a really good tool, and I need to learn more about that.
+    v.view.add_ball_and_stick()
+    v.view.center()
+    v.view.layout.width = '800px'
+    v.view.layout.height = '800px'
+    v.view.add_label(color='blue', radius = 1.0, labelType='text', labelText = [structure[i].symbol + str(i) for i in range(len(structure))], zOffset=2.0, attachment='middle_center')
+    v.view.gui_style = 'ngl'
+
+    return v, structure
 
 def saveResults(results, filename):
 
@@ -361,3 +483,56 @@ def readResults(filename):
         results = json.load(json_file)
 
     return results
+
+# In the below are some functions that may help
+
+def checkDistance(cell, atom1, atom2, bond_length):
+
+    """
+
+    :code:`check_distance` function can help us determine whether the two atoms in the slab structure are close enough (distance < bond_length) or not. In here we should notice that all slab structures have periodic boundary condition (PBC), which means that not only we need to consider the position of atom2, we also need to consider 6 different atom positions that is in translational symmetry with atom2.
+
+    Parameters:
+
+    cell:
+        A 3x3 array. The cell parameters of the slab, which can be easily accessed by :code:`structure.cell`
+
+    atom1:
+        An ase.Atom object.
+
+    atom2:
+        An ase.Atom object.
+
+    bond_length:
+        The threshold of the bond length that we are interested in, can be set by the user.
+
+    Return:
+        True or False. If the distance is small than bond_length in one of seven conditions, then return True; otherwise return False.
+
+    """
+
+    def distance(v1, v2):
+        return np.linalg.norm(v1 - v2)
+
+    # in here no matter what x,y,z is, the results are the same, it just easy to write
+    x_cell = cell[0]
+    y_cell = cell[1]
+    z_cell = cell[2]
+
+    for ax in [0, 1, -1]:
+        for ay in [0, 1, -1]:
+            for az in [0, 1, -1]:
+                atom2_modifyPosition = atom2.position + ax*x_cell + ay*y_cell + az*z_cell
+                if distance(atom1.position, atom2_modifyPosition) <= bond_length:
+                    return True, distance(atom1.position, atom2_modifyPosition), 'ax:{}, ay:{}, az:{}'.format(ax, ay, az)
+
+    return False, -1, ''
+
+def isMetal(atom_symbol):
+
+    if atom_symbol in ['H', 'He', 'B', 'C', 'N', 'O', 'F', 'Ne', \
+                       'Si', 'P', 'S', 'Cl', 'Ar', 'Ge', 'As', 'Se', \
+                       'Br', 'Kr', 'Sb', 'Te', 'I', 'Xe', 'Rn']:
+                       return False
+    else:
+        return True

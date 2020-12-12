@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.io &mdash; hzdplugins 0.0.33 documentation</title>
+  <title>hzdplugins.aiidaplugins.io &mdash; hzdplugins 0.0.37 documentation</title>
   
 
   
@@ -152,7 +152,7 @@
 <span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">load_node</span>
 
-<div class="viewcode-block" id="qeCleanOneRemoteFolder"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qeCleanOneRemoteFolder">[docs]</a><span class="k">def</span> <span class="nf">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<div class="viewcode-block" id="qeCleanOneRemoteFolder"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qeCleanOneRemoteFolder">[docs]</a><span class="k">def</span> <span class="nf">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -163,8 +163,8 @@
 <span class="sd">    results:</span>
 <span class="sd">        the dictionary that contains all the information about the calculation for the project.</span>
 
-<span class="sd">    pk:</span>
-<span class="sd">        the pk value of certain node (CalcJob)</span>
+<span class="sd">    uuid:</span>
+<span class="sd">        the uuid value of certain node (CalcJob)</span>
 
 <span class="sd">    Return: 0 if everything works fine, or if something is wrong, then we need to use try-exception to output the error.</span>
 
@@ -172,12 +172,12 @@
 
     <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
-    <span class="c1"># check whether pk is in results_tmp or not</span>
-    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span> <span class="ow">in</span> <span class="n">results_tmp</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pk:</span><span class="si">{}</span><span class="s1"> --- Your input is not in the results dictionary, please check your number again.&#39;</span><span class="p">)</span>
+    <span class="c1"># check whether uuid is in results_tmp or not</span>
+    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span> <span class="ow">in</span> <span class="n">results_tmp</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;uuid:</span><span class="si">{}</span><span class="s1"> --- Your input is not in the results dictionary, please check your number again.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results_tmp</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
 
     <span class="n">authinfo</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_authinfo</span><span class="p">()</span>
     <span class="n">transport</span> <span class="o">=</span> <span class="n">authinfo</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span>
@@ -187,15 +187,18 @@
 
     <span class="c1"># check whether the calculation is finished (0 or 501) or not</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">exit_status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">exit_status</span> <span class="o">==</span> <span class="mi">501</span><span class="p">)</span> <span class="ow">or</span> <span class="n">finished</span><span class="p">:</span>
-        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exit_status</span><span class="p">)</span>
-        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finished</span>
+        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exit_status</span><span class="p">)</span>
+        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finished</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">is_excepted</span><span class="p">):</span>
+        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;excepted&#39;</span>
+        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finished</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pk:</span><span class="si">{}</span><span class="s1"> --- Sorry, your calculation is not finished yet, please wait until it is finished.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pk</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;uuid:</span><span class="si">{}</span><span class="s1"> --- Sorry, your calculation is not finished yet, please wait until it is finished.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">results_tmp</span>
 
     <span class="c1"># check whether the remote folder has already been cleaned, so we won&#39;t need to do that again</span>
-    <span class="k">if</span> <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pk:</span><span class="si">{}</span><span class="s1"> --- The remote folder has already been cleared.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pk</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;uuid:</span><span class="si">{}</span><span class="s1"> --- The remote folder has already been cleared.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">results_tmp</span>
 
     <span class="c1"># open transport portal</span>
@@ -234,11 +237,13 @@
                     <span class="n">transport</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">transport</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">item</span><span class="p">)</span> <span class="c1"># delete the wavefunction file</span>
                 <span class="k">if</span> <span class="s1">&#39;charge&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
                     <span class="n">transport</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">transport</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">item</span><span class="p">)</span> <span class="c1"># delete the charge-density file</span>
-        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pk:</span><span class="si">{}</span><span class="s1"> -- All the unnecessary files have been deleted.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pk</span><span class="p">))</span>
+        <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;uuid:</span><span class="si">{}</span><span class="s1"> -- All the unnecessary files have been deleted.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="p">))</span>
+        <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">results_tmp</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pk:</span><span class="si">{}</span><span class="s1"> --- There is no out folder in the working directory. Please check whether the calculation is sucessfully submitted and executed.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;uuid:</span><span class="si">{}</span><span class="s1"> --- There is no out folder in the working directory. Please check whether the calculation is sucessfully submitted and executed.&#39;</span><span class="p">)</span>
+        <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">results_tmp</span></div>
 
 <div class="viewcode-block" id="qecleanAllRemoteFolder"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qecleanAllRemoteFolder">[docs]</a><span class="k">def</span> <span class="nf">qecleanAllRemoteFolder</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -250,7 +255,7 @@
 <span class="sd">    Parameters:</span>
 
 <span class="sd">    results:</span>
-<span class="sd">        A dictionary which key is the pk (string) of each CalcJob node</span>
+<span class="sd">        A dictionary which key is the uuid (string) of each CalcJob node</span>
 
 <span class="sd">    args:</span>
 <span class="sd">        you can add a list of nodes that you want to clear the remote folder. e.g. [2020, 2030, 2040] etc. The function will only deal with the list object, other types of inputs are ignored. But if args is not set, then the function will deal with all the nodes in the results dictionary.</span>
@@ -263,18 +268,98 @@
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># because args is (), type is tuple</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">results_tmp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">pk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results_tmp</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span>
+            <span class="n">uuid</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results_tmp</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results_tmp</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">:</span>
-                    <span class="n">pk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="c1"># make sure that pk is integer</span>
-                    <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results_tmp</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span>
+                    <span class="n">uuid</span> <span class="o">=</span> <span class="n">item</span> <span class="c1"># make sure that uuid is integer</span>
+                    <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results_tmp</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="k">return</span> <span class="n">results_tmp</span></div>
+
+<div class="viewcode-block" id="qeRetriveAllFiles"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qeRetriveAllFiles">[docs]</a><span class="k">def</span> <span class="nf">qeRetriveAllFiles</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">localpath</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`qeRetriveAllFiles` can help us retrieve all the files from remote_folder_path</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    uuid:</span>
+<span class="sd">        The uuid of the computational node</span>
+
+<span class="sd">    localpath:</span>
+<span class="sd">        The absolute path of local folder, which we want to store our information in</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">os</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">authinfo</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_authinfo</span><span class="p">()</span>
+    <span class="n">transport</span> <span class="o">=</span> <span class="n">authinfo</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span>
+    <span class="n">remote_folder_path</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_remote_workdir</span><span class="p">()</span> <span class="c1"># get the path of remote folder, our working directory</span>
+
+    <span class="n">transport</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+    <span class="n">transport</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">remote_folder_path</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">localpath</span><span class="p">)</span>
+    <span class="n">localpath_uuid</span> <span class="o">=</span> <span class="n">localpath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">uuid</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;mkdir &#39;</span><span class="o">+</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">transport</span><span class="o">.</span><span class="n">gettree</span><span class="p">(</span><span class="n">remotepath</span><span class="o">=</span><span class="n">transport</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">localpath</span><span class="o">=</span><span class="n">localpath_uuid</span><span class="p">)</span>
+
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">transport</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+    <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="s1">&#39;The file from </span><span class="si">{}</span><span class="s1"> have been copied to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pwd</span><span class="p">,</span> <span class="n">localpath_uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="setCmdOnRemoteComputer"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.setCmdOnRemoteComputer">[docs]</a><span class="k">def</span> <span class="nf">setCmdOnRemoteComputer</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`setCmdOnRemoteComputer` can run command on remote computer from jupyterlab, which is really convenient, and also the command is programmable.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    cmd:</span>
+<span class="sd">        A string. which represents the command that needs to be run on the remote server.</span>
+
+<span class="sd">    uuid:</span>
+<span class="sd">        A string. Which represents the uuid of the job.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Three values: r, stdout, stderr</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">cmd_shortcut</span>
+
+    <span class="c1"># open the transport</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">authinfo</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_authinfo</span><span class="p">()</span>
+    <span class="n">transport</span> <span class="o">=</span> <span class="n">authinfo</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span>
+    <span class="n">remote_folder_path</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_remote_workdir</span><span class="p">()</span> <span class="c1"># get the path of remote folder, our working directory</span>
+
+    <span class="n">transport</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+    <span class="n">transport</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">remote_folder_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">cmd_shortcut</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd_shortcut</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span>
+
+    <span class="n">r</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">transport</span><span class="o">.</span><span class="n">exec_command_wait</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span></div>
 </pre></div>
 
            </div>

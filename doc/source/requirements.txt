@@ -5,3 +5,4 @@ pymatgen>=2020.11.11
 numpy>=1.19.4
 scipy>=1.5.4
 pandas>=1.1.4
+nglview>=2.7.7

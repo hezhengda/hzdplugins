@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>structure Modules &mdash; hzdplugins 0.0.33 documentation</title>
+  <title>structure Modules &mdash; hzdplugins 0.0.37 documentation</title>
   
 
   
@@ -85,9 +85,12 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="aiidaplugins.html">aiidaplugins Modules</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">structure Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-hzdplugins.structure.build">hzdplugins.structure.build module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aiidaplugins.html">aiidaplugins Modules</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">structure Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-hzdplugins.structure.build">hzdplugins.structure.build module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Log file for hzdplugins</a></li>
@@ -137,7 +140,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="modules.html">&lt;no title&gt;</a> &raquo;</li>
+          <li><a href="modules.html">Modules</a> &raquo;</li>
         
       <li>structure Modules</li>
     
@@ -162,6 +165,25 @@
 <h1>structure Modules<a class="headerlink" href="#structure-modules" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-hzdplugins.structure.build">
 <span id="hzdplugins-structure-build-module"></span><h2>hzdplugins.structure.build module<a class="headerlink" href="#module-hzdplugins.structure.build" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="hzdplugins.structure.build.addAdsorbates">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">addAdsorbates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">adsSiteDictionary</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#addAdsorbates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.addAdsorbates" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">addAdsorbates</span></code> will take care of these things:</p>
+<ul class="simple">
+<li><p>Add each adsorbate to a specific site, and with optimal adsorption distance and angle</p></li>
+<li><p>Put the bottom two layers of the slab fixed, other atoms can be relaxed</p></li>
+</ul>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>slab:</dt><dd><p>An aiida.orm.StructureData object. The slab that we want to adsorb some adsorbates on.</p>
+</dd>
+<dt>adsSiteDictionary:</dt><dd><p>An aiida.orm.Dict object. In which contains the adsorbates (for common adsorbates, I can assign the adsorption atom, geometry of the adsorbates and its adsorption angle in <code class="code docutils literal notranslate"><span class="pre">constants.py</span></code>) and adsorption sites, also I can add new adsorbates to the adsorbates library. (Do a very simple relax simulation of a molecule in the big cell, and just output the structure and assign the adsorption site. For mono-site adsorption, it is really easy, for bi-site adsorption, it is also easy since we can get the molecule to align; for tri-site or more-site adsorption, well, we can just put the molecule closer to the surface and let the program determine how does this molecule interact with the surface, for our usual research, I don’t think this is necessary.)</p>
+</dd>
+<dt>Return:</dt><dd><p>An aiida.orm.StructureData object. With the adsorbates and modified constrains on all the atoms, ready for the submit functions.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt id="hzdplugins.structure.build.adsorptionSites">
 <code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">adsorptionSites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">visualize</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#adsorptionSites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.adsorptionSites" title="Permalink to this definition">¶</a></dt>
@@ -217,6 +239,21 @@
 <dt>vacuum:</dt><dd><p>An aiida.orm.List object. Set how many layers you want for the vacuum layer.</p>
 </dd>
 <dt>Return: A series of uuids of StructureData object, which can be used for further investigations.</dt><dd><p>The reason why we use uuid instead of StructureData is that StructureData cannot be put in a list with List object, it will shout out error. Once we have the uuid number, we can get the structure by just using <cite>structure = load_node(uuid=uuid_structure)</cite>, it is very straightforward.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.newStructure">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">newStructure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">changeDict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#newStructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.newStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">newStructure</span></code> will create a new structure by replacing the changeList atom to new type of atoms, very useful if there are different chemical states of the same atom in the structure.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>structure:</dt><dd><p>A aiida.orm.StructureData object.</p>
+</dd>
+<dt>changeDict:</dt><dd><p>A dictionary where the i-th atom’s label will be replaced. e.g. ‘Fe’ to ‘Fe2’</p>
+</dd>
+<dt>Return:</dt><dd><p>A new aiida.orm.StructureData file which stores the difference</p>
 </dd>
 </dl>
 </dd></dl>

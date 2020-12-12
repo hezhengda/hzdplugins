@@ -14,3 +14,4 @@ hzdplugins/aiidaplugins/io.py
 hzdplugins/aiidaplugins/submit.py
 hzdplugins/structure/__init__.py
 hzdplugins/structure/build.py
+hzdplugins/structure/math.py

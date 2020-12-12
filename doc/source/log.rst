@@ -1,8 +1,14 @@
 Log file for hzdplugins
 =======================
 
-* v0.0.34: 2020.12.07
+* v0.0.34-37: 2020.12.12
     * add some new functionalities in `info.py` which can show the charge & magnetic moments, and also the total forces for each atomic step. Write `get_TotalForces` and `get_ChargeAndMagneticMoments`
+    * add the `info.py:getStructure` function which can help visualize the struture.
+    * correct the `info.py:checkDistance` function
+    * modify the `io.py` to deal with uuid rather than pk.
+    * add `math.py` in `hzdplugins/structure` to store some mathematical functions
+    * correct functions in `hzdplugins/aiidaplugins/submit.py`
+    * add `newStructure` function in `build.py` to deal with the system which we need to specify different chemical states or spin states. Very useful for complex cases.
 
 * v0.0.33: 2020.12.05
     * give some options for the plotting in `build.py` `adsorptionSites` function.

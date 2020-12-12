@@ -338,3 +338,54 @@ def addAdsorbates(slab, adsSiteDictionary):
     # end of cleaning process
 
     pass
+
+@calcfunction
+def newStructure(structure, changeDict):
+
+    """
+
+    :code:`newStructure` will create a new structure by replacing the changeList atom to new type of atoms, very useful if there are different chemical states of the same atom in the structure.
+
+    Parameters:
+
+    structure:
+        A aiida.orm.StructureData object.
+
+    changeDict:
+        A dictionary where the i-th atom's label will be replaced. e.g. 'Fe' to 'Fe2'
+
+    Return:
+        A new aiida.orm.StructureData file which stores the difference
+
+    """
+
+    # create the kind_names list
+    kind_names = []
+    structure_ase = structure.get_ase()
+    for atom in structure_ase:
+        kind_names.append(atom.symbol)
+
+    for id, symbol in changeDict.items():
+        kind_names[id] = symbol
+
+    # since I recreate kind_names from structure, then they must be the same.
+    # if len(structure.sites) != len(kind_names):
+    #     raise ValueError('The number of new kind names must be equal to the number of sites in the structure.')
+
+    new_structure = StructureData(
+        cell=structure.cell,
+        pbc=structure.pbc,
+    )
+
+    for site, kind_name in zip(structure.sites, kind_names):
+
+        kind = structure.get_kind(site.kind_name)
+
+        new_structure.append_atom(
+            name=kind_name,
+            symbols=kind.symbols,
+            weights=kind.weights,
+            position=site.position
+        )
+
+    return new_structure

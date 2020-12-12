@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.33 documentation</title>
+  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.37 documentation</title>
   
 
   
@@ -84,8 +84,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="aiidaplugins.html">aiidaplugins Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="structure.html">structure Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Log file for hzdplugins</a></li>
 </ul>
 
@@ -155,6 +154,19 @@
   <div class="section" id="log-file-for-hzdplugins">
 <h1>Log file for hzdplugins<a class="headerlink" href="#log-file-for-hzdplugins" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
+<li><dl class="simple">
+<dt>v0.0.34-37: 2020.12.12</dt><dd><ul>
+<li><p>add some new functionalities in <cite>info.py</cite> which can show the charge &amp; magnetic moments, and also the total forces for each atomic step. Write <cite>get_TotalForces</cite> and <cite>get_ChargeAndMagneticMoments</cite></p></li>
+<li><p>add the <cite>info.py:getStructure</cite> function which can help visualize the struture.</p></li>
+<li><p>correct the <cite>info.py:checkDistance</cite> function</p></li>
+<li><p>modify the <cite>io.py</cite> to deal with uuid rather than pk.</p></li>
+<li><p>add <cite>math.py</cite> in <cite>hzdplugins/structure</cite> to store some mathematical functions</p></li>
+<li><p>correct functions in <cite>hzdplugins/aiidaplugins/submit.py</cite></p></li>
+<li><p>add <cite>newStructure</cite> function in <cite>build.py</cite> to deal with the system which we need to specify different chemical states or spin states. Very useful for complex cases.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><dl class="simple">
 <dt>v0.0.33: 2020.12.05</dt><dd><ul>
 <li><p>give some options for the plotting in <cite>build.py</cite> <cite>adsorptionSites</cite> function.</p></li>

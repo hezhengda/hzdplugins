@@ -1,7 +1,7 @@
 from copy import deepcopy
 from aiida.orm import load_node
 
-def qeCleanOneRemoteFolder(results, pk):
+def qeCleanOneRemoteFolder(results, uuid):
 
     """
 
@@ -12,8 +12,8 @@ def qeCleanOneRemoteFolder(results, pk):
     results:
         the dictionary that contains all the information about the calculation for the project.
 
-    pk:
-        the pk value of certain node (CalcJob)
+    uuid:
+        the uuid value of certain node (CalcJob)
 
     Return: 0 if everything works fine, or if something is wrong, then we need to use try-exception to output the error.
 
@@ -21,12 +21,12 @@ def qeCleanOneRemoteFolder(results, pk):
 
     results_tmp = deepcopy(results)
 
-    # check whether pk is in results_tmp or not
-    if not(str(pk) in results_tmp.keys()):
-        print('pk:{} --- Your input is not in the results dictionary, please check your number again.')
+    # check whether uuid is in results_tmp or not
+    if not(str(uuid) in results_tmp.keys()):
+        print('uuid:{} --- Your input is not in the results dictionary, please check your number again.')
         return results_tmp
     else:
-        node = load_node(pk)
+        node = load_node(uuid=uuid)
 
     authinfo = node.get_authinfo()
     transport = authinfo.get_transport()
@@ -36,15 +36,18 @@ def qeCleanOneRemoteFolder(results, pk):
 
     # check whether the calculation is finished (0 or 501) or not
     if (exit_status == 0) or (exit_status == 501) or finished:
-        results_tmp[str(pk)]['exit_status'] = str(exit_status)
-        results_tmp[str(pk)]['is_finished'] = finished
+        results_tmp[str(uuid)]['exit_status'] = str(exit_status)
+        results_tmp[str(uuid)]['is_finished'] = finished
+    elif (node.is_excepted):
+        results_tmp[str(uuid)]['exit_status'] = 'excepted'
+        results_tmp[str(uuid)]['is_finished'] = finished
     else:
-        print('pk:{} --- Sorry, your calculation is not finished yet, please wait until it is finished.'.format(pk))
+        print('uuid:{} --- Sorry, your calculation is not finished yet, please wait until it is finished.'.format(uuid))
         return results_tmp
 
     # check whether the remote folder has already been cleaned, so we won't need to do that again
-    if results_tmp[str(pk)]['remove_remote_folder'] == True:
-        print('pk:{} --- The remote folder has already been cleared.'.format(pk))
+    if results_tmp[str(uuid)]['remove_remote_folder'] == True:
+        print('uuid:{} --- The remote folder has already been cleared.'.format(uuid))
         return results_tmp
 
     # open transport portal
@@ -83,11 +86,13 @@ def qeCleanOneRemoteFolder(results, pk):
                     transport.remove(transport.getcwd()+'/'+item) # delete the wavefunction file
                 if 'charge' in item:
                     transport.remove(transport.getcwd()+'/'+item) # delete the charge-density file
-        results_tmp[str(pk)]['remove_remote_folder'] = True
-        print('pk:{} -- All the unnecessary files have been deleted.'.format(pk))
+        results_tmp[str(uuid)]['remove_remote_folder'] = True
+        print('uuid:{} -- All the unnecessary files have been deleted.'.format(uuid))
+        transport.close()
         return results_tmp
     else:
-        print('pk:{} --- There is no out folder in the working directory. Please check whether the calculation is sucessfully submitted and executed.')
+        print('uuid:{} --- There is no out folder in the working directory. Please check whether the calculation is sucessfully submitted and executed.')
+        transport.close()
         return results_tmp
 
 def qecleanAllRemoteFolder(results, *args):
@@ -99,7 +104,7 @@ def qecleanAllRemoteFolder(results, *args):
     Parameters:
 
     results:
-        A dictionary which key is the pk (string) of each CalcJob node
+        A dictionary which key is the uuid (string) of each CalcJob node
 
     args:
         you can add a list of nodes that you want to clear the remote folder. e.g. [2020, 2030, 2040] etc. The function will only deal with the list object, other types of inputs are ignored. But if args is not set, then the function will deal with all the nodes in the results dictionary.
@@ -112,15 +117,95 @@ def qecleanAllRemoteFolder(results, *args):
 
     if len(args) == 0: # because args is (), type is tuple
         for key in results_tmp.keys():
-            pk = int(key)
-            results_tmp = qeCleanOneRemoteFolder(results_tmp, pk)
+            uuid = key
+            results_tmp = qeCleanOneRemoteFolder(results_tmp, uuid)
         return results_tmp
     else:
         for arg in args:
             if type(arg) == list:
                 for item in arg:
-                    pk = int(item) # make sure that pk is integer
-                    results_tmp = qeCleanOneRemoteFolder(results_tmp, pk)
+                    uuid = item # make sure that uuid is integer
+                    results_tmp = qeCleanOneRemoteFolder(results_tmp, uuid)
             else:
                 pass
         return results_tmp
+
+def qeRetriveAllFiles(uuid, localpath):
+
+    """
+
+    :code:`qeRetriveAllFiles` can help us retrieve all the files from remote_folder_path
+
+    Parameters:
+
+    uuid:
+        The uuid of the computational node
+
+    localpath:
+        The absolute path of local folder, which we want to store our information in
+
+    """
+
+    import os
+
+    node = load_node(uuid=uuid)
+
+    authinfo = node.get_authinfo()
+    transport = authinfo.get_transport()
+    remote_folder_path = node.get_remote_workdir() # get the path of remote folder, our working directory
+
+    transport.open()
+    transport.chdir(remote_folder_path)
+
+    os.chdir(localpath)
+    localpath_uuid = localpath + '/' + uuid
+    os.system('mkdir '+uuid)
+
+    transport.gettree(remotepath=transport.getcwd(), localpath=localpath_uuid)
+
+    pwd = transport.getcwd()
+
+    transport.close()
+
+    return 'The file from {} have been copied to {}'.format(pwd, localpath_uuid)
+
+def setCmdOnRemoteComputer(cmd, uuid):
+
+    """
+
+    :code:`setCmdOnRemoteComputer` can run command on remote computer from jupyterlab, which is really convenient, and also the command is programmable.
+
+    Parameters:
+
+    cmd:
+        A string. which represents the command that needs to be run on the remote server.
+
+    uuid:
+        A string. Which represents the uuid of the job.
+
+    Return:
+        Three values: r, stdout, stderr
+
+    """
+
+    from hzdplugins.aiidaplugins.constants import cmd_shortcut
+
+    # open the transport
+
+    node = load_node(uuid=uuid)
+
+    authinfo = node.get_authinfo()
+    transport = authinfo.get_transport()
+    remote_folder_path = node.get_remote_workdir() # get the path of remote folder, our working directory
+
+    transport.open()
+    transport.chdir(remote_folder_path)
+
+    if cmd in cmd_shortcut.keys():
+        cmd = cmd_shortcut[cmd]
+
+    r, stdout, stderr = transport.exec_command_wait(cmd)
+
+    transport.close()
+
+    return r, stdout, stderr

@@ -1,0 +1,47 @@
+import numpy as np
+
+def rotation_matrix_from_vectors(vec1, vec2):
+
+    """
+    Find the rotation matrix that aligns vec1 to vec2
+    This function is taken from Peter's answer on stackoverflow:
+    `Question Link <https://stackoverflow.com/questions/45142959/calculate-rotation-matrix-to-align-two-vectors-in-3d-space>`_
+    Parameters:
+    vec1:
+        Numpy array. A 3d "source" vector
+    vec2:
+        Numpy array. A 3d "destination" vector
+    Return:
+        A transform matrix (3x3) which when applied to vec1, aligns it with vec2.
+    """
+
+    a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
+
+    tmp = 0
+
+    for item, num_a in enumerate(a):
+        num_b = b[item]
+        if (num_a != 0) and (num_b != 0):
+            tmp += num_a / num_b
+
+    tmp = tmp / 3 # calculate the average
+
+    v = np.cross(a, b)
+    c = np.dot(a, b)
+    s = np.linalg.norm(v)
+
+    if abs(s) < 0.0000000000001: # which means vec1 and vec2 are on the same line, so their cross is 0
+        if tmp > 0:
+            return [[1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]]
+        else:
+            rotation_matrix = [[-1, 0, 0],
+                               [0, -1, 0],
+                               [0, 0, -1]]
+            return rotation_matrix
+
+    kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+    rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
+
+    return rotation_matrix

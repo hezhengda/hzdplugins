@@ -8,14 +8,11 @@ from aiida.engine.launch import submit
 from hzdplugins.aiidaplugins.constants import results_keys_set, slurm_options
 from aiida.orm.nodes.data.upf import get_pseudos_from_structure
 
-@calcfunction
-def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, metadata, add_parameters, del_parameters, cluster_options):
+def qePwOriginalSubmit(results, codename, structure, fixed_coords, kpoints, pseudo_family, pseudo_dict, metadata, add_parameters, del_parameters, cluster_options):
 
     """
 
     `qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.
-
-    **Notice**: Every input parameters should be in `aiida.orm` types.
 
     Parameters:
 
@@ -23,50 +20,46 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
         A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode
 
     codename:
-        An aiida.orm.Str object. A string represents the code for pw.x that you want to use
+        A string. A string represents the code for pw.x that you want to use
 
     structure:
         An aiida.orm.StructureData object. The structure of your system. It needs to be StructureData type.
 
+    fixed_coords:
+        A list. It's size should be Nx3, where N is the number of atoms in structure. e.g. [[True, False, False], [False, False, False]]. True represents that this coordinate is fixed, and False means this coordinate is free to move. Very useful in surface calculation.
+
     add_parameters:
-        An aiida.orm.Dict object. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
 
         If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
         e.g. {'CONTROL':{}, 'SYSTEM':{}}
 
     del_parameters:
-        An aiida.orm.Dict object. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
 
         e.g. {'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}
 
     kpoints:
-        An aiida.orm.List object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+        A list object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
 
     pseudo_family:
-        An aiida.orm.Str object. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
+        A string. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
+
+    pseudo_dict:
+        A dictionary. Which contains the pseudopotential files that we want to use in the simulation.
 
     cluster_options:
-        An aiida.orm.Dict object. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
+        A dictionary. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
 
     metadata:
-        An aiida.orm.Dict object. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
+        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
 
     Return:
         results: a modified results dictionary with the latest submitted job
         pk: the id of that CalcJob
 
     """
-
-    # clean the input from aiida.orm to regular datatypes
-    codename = codename.value
-    add_parameters = add_parameters.get_dict()
-    del_parameters = del_parameters.get_dict()
-    kpoints = kpoints.get_list()
-    pseudo_family = pseudo_family.value
-    metadata = metadata.get_dict()
-    cluster_options = cluster_options.get_dict()
-    # the end of the cleaning procedure
 
     results_tmp = deepcopy(results) # first we need to create a copy for our simulation
 
@@ -75,7 +68,16 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
     pw_builder = code.get_builder()
 
     # pseudopotential
-    pw_builder.pseudos = get_pseudos_from_structure(structure, family_name=pseudo_family)
+    # check whether pseudo_family and pseudo_dict are set at the same time, if true, then break
+    if len(pseudo_family) > 0 and len(pseudo_dict) > 0:
+        return ValueError("You cannot set pseudo_family and pseudo_dict at the same time")
+    if len(pseudo_family) == 0 and len(pseudo_dict) == 0:
+        return ValueError("You need to specify at least one in pseudo_family or pseudo_dict.")
+
+    if len(pseudo_family) != 0:
+        pw_builder.pseudos = get_pseudos_from_structure(structure, family_name=pseudo_family)
+    if len(pseudo_dict) != 0:
+        pw_builder.pseudos = pseudo_dict
 
     # set kpoints
     kpts = KpointsData()
@@ -113,8 +115,8 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
             'electron_maxstep': 1000,
             'conv_thr': 1.0e-6,
             'diagonalization': 'david',
-            'mixing_mode': 'local-TF',
-            'mixing_beta': 0.2,
+            'mixing_mode': 'plain',
+            'mixing_beta': 0.3,
             'mixing_ndim': 10
         }
     })
@@ -158,11 +160,26 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
         if 'queue_name' in cluster_options.keys():
             pw_builder.metadata.options.resources = cluster_options['queue_name']
 
+    # setting's dictionary
+    setting_dict = {
+        'CMDLINE': ['-npools', '4']
+    }
+
+    if len(fixed_coords) > 0: # we need to fix some atoms
+        setting_dict['fixed_coords'] = fixed_coords
+
+    setting_dict['additional_retrieve_list'] = ['aiida.out'] # retrieve output file
+
+    ## get atomic occupations
+    if 'lda_plus_u' in parameters_default['SYSTEM']:
+        if parameters_default['SYSTEM']['lda_plus_u'] == True:
+            setting_dict['parser_options'] = {'parse_atomic_occupations': True}
+
     # launch the simulation
     pw_builder.structure = structure
     pw_builder.kpoints = kpts
     pw_builder.parameters = parameters_default
-    pw_builder.settings = Dict(dict={'CMDLINE': ['-npools', '4']})
+    pw_builder.settings = Dict(dict=setting_dict)
     calc = submit(pw_builder)
 
     # results
@@ -182,63 +199,55 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, met
 
     return results_tmp, calc.uuid
 
-@calcfunction
-def qePwContinueSubmit(results, uuid, pseudo_family, codename, add_parameters, del_parameters, kpoints, cluster_options, metadata):
+def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, parent_folder, add_parameters, del_parameters, kpoints, cluster_options, metadata):
 
     """
 
     `qePwContinueSubmit` will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs.
 
-    **Notice**: Every input parameters should be in `aiida.orm` types.
-
     Parameters:
 
     uuid:
-        An aiida.orm.Str object. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
+        A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
 
     pseudo_family:
-        An aiida.orm.Str object. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.
+        A string. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.
+
+    pseudo_dict:
+        A dictionary. Which contains the pseudopotential files that we want to use in the simulation.
 
     codename:
-        An aiida.orm.Str object. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str('')
+        A string. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str('')
+
+    parent_folder:
+        A Boolean variable. If parent_folder is True, then the calculation will start with the output files from previous calculations.
 
     add_parameters:
-        An aiida.orm.Dict object. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
 
         If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
         e.g. {'CONTROL':{}, 'SYSTEM':{}}
 
     del_parameters:
-        An aiida.orm.Dict object. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
 
         e.g. {'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}
 
     kpoints:
-        An aiida.orm.List object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+        A list. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
 
     cluster_options:
-        An aiida.orm.Dict object. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
+        A dictionary. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
 
     metadata:
-        An aiida.orm.Dict object. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
+        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
 
     Return:
         results: a modified results dictionary with the latest submitted job
         uuid: the uuid of that CalcJob
 
     """
-
-    # clean the input from aiida.orm to regular datatypes
-    uuid = uuid.value
-    codename = codename.value
-    add_parameters = add_parameters.get_dict()
-    del_parameters = del_parameters.get_dict()
-    kpoints = kpoints.get_list()
-    pseudo_family = pseudo_family.value
-    metadata = metadata.get_dict()
-    cluster_options = cluster_options.get_dict()
-    # the end of the cleaning procedure
 
     results_tmp = deepcopy(results)
 
@@ -253,7 +262,14 @@ def qePwContinueSubmit(results, uuid, pseudo_family, codename, add_parameters, d
         restart_builder = code.get_builder()
 
     parameters_tmp = deepcopy(node.inputs.parameters)
-    structure = node.outputs.output_structure
+
+    parameters_dict = parameters_tmp.get_dict()
+    calc_type = parameters_dict['CONTROL']['calculation']
+
+    if calc_type == 'relax' or calc_type == 'vc-relax':
+        structure = node.outputs.output_structure
+    elif calc_type == 'scf' or calc_type == 'nscf':
+        structure = node.inputs.structure
 
     for key, value in add_parameters.items():
         for key2, value2 in value.items():
@@ -280,9 +296,17 @@ def qePwContinueSubmit(results, uuid, pseudo_family, codename, add_parameters, d
     else:
         kpts = node.inputs.kpoints
 
-    # reset the pseudo_family
-    if pseudo_family != '':
+    # pseudopotential
+    # check whether pseudo_family and pseudo_dict are set at the same time, if true, then break
+    if len(pseudo_family) > 0 and len(pseudo_dict) > 0:
+        return ValueError("You cannot set pseudo_family and pseudo_dict at the same time")
+    if len(pseudo_family) == 0 and len(pseudo_dict) == 0:
+        return ValueError("You need to specify at least one in pseudo_family or pseudo_dict.")
+
+    if len(pseudo_family) != 0:
         restart_builder.pseudos = get_pseudos_from_structure(structure, family_name=pseudo_family)
+    if len(pseudo_dict) != 0:
+        restart_builder.pseudos = pseudo_dict
 
     # reset cluster_options:
     if len(cluster_options) > 0:
@@ -316,6 +340,10 @@ def qePwContinueSubmit(results, uuid, pseudo_family, codename, add_parameters, d
     else:
         restart_builder.metadata.label = node.label
         restart_builder.metadata.description = node.description
+
+    # assign the parent_folder
+    if parent_folder == True:
+        restart_builder.parent_folder = node.outputs.remote_folder
 
     # submit the calculation
     restart_builder.structure = structure
