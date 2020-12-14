@@ -1,8 +1,8 @@
 structure Modules
 ========================
 
-hzdplugins.structure.build module
-#################################
+structure.build Module
+----------------------
 
 .. automodule:: hzdplugins.structure.build
     :members:

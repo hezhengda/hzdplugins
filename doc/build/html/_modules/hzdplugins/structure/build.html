@@ -83,6 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../log.html">Log file for hzdplugins</a></li>
 </ul>
@@ -149,28 +150,27 @@
            <div itemprop="articleBody">
             
   <h1>Source code for hzdplugins.structure.build</h1><div class="highlight"><pre>
-<span></span><span class="c1"># This module will be used in generating structures for Aiida simulation, it utilizes pymatgen, ase and catkit packages from other group, all the output structures should have Aiida StructureData type.</span>
-<span class="c1"># In order to maintain provenance, we need to use all the types provided by the aiida.orm, and all functions should be decorated by @calcfunction decorator in order to be captured by the aiida program</span>
+<span></span><span class="c1"># This module will be used in generating structures for Aiida simulation, it utilizes pymatgen, ase and catkit packages</span>
+<span class="c1"># from other group, all the output structures should have Aiida StructureData type.</span>
+<span class="c1"># In order to maintain provenance, we need to use all the types provided by the aiida.orm, and all functions should be</span>
+<span class="c1"># decorated by @calcfunction decorator in order to be captured by the aiida program</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">patches</span>
-<span class="kn">from</span> <span class="nn">matplotlib.path</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
-<span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">color_dictionary</span><span class="p">,</span> <span class="n">adsorbates</span>
-<span class="kn">from</span> <span class="nn">hzdplugins.structure.math</span> <span class="kn">import</span> <span class="n">rotation_matrix_euler</span>
-
-<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">StructureData</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">aiida.engine</span> <span class="kn">import</span> <span class="n">calcfunction</span>
-
+<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">StructureData</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span>
-
-<span class="kn">from</span> <span class="nn">pymatgen.core.surface</span> <span class="kn">import</span> <span class="n">SlabGenerator</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">patches</span>
+<span class="kn">from</span> <span class="nn">matplotlib.path</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">pymatgen.analysis.adsorption</span> <span class="kn">import</span> <span class="n">AdsorbateSiteFinder</span><span class="p">,</span> <span class="n">get_rot</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.surface</span> <span class="kn">import</span> <span class="n">SlabGenerator</span>
+
+<span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">color_dictionary</span><span class="p">,</span> <span class="n">adsorbates</span>
+
 
 <div class="viewcode-block" id="getValue"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.getValue">[docs]</a><span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
-
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`getValue` can help us to initialize the variables</span>
@@ -200,9 +200,9 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">var</span><span class="o">.</span><span class="n">get_list</span><span class="p">()</span></div>
 
+
 <div class="viewcode-block" id="bulkFromFile"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.bulkFromFile">[docs]</a><span class="nd">@calcfunction</span>
 <span class="k">def</span> <span class="nf">bulkFromFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">supercell</span><span class="p">):</span>
-
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    `bulkFromFile` function can help us create a Bulk from the file.</span>
@@ -210,7 +210,8 @@
 <span class="sd">    Parameters:</span>
 
 <span class="sd">    filename:</span>
-<span class="sd">        An aiida.orm.Str object. Usually when we create the structural file, we do it from the strcutural file such as .xyz or .cif, etc.</span>
+<span class="sd">        An aiida.orm.Str object. Usually when we create the structural file, we do it from the strcutural file such</span>
+<span class="sd">        as .xyz or .cif, etc.</span>
 
 <span class="sd">    supercell:</span>
 <span class="sd">        An aiida.orm.List object. A list that contains the dimension of supercell we would like.</span>
@@ -223,21 +224,24 @@
     <span class="n">filename</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">supercell</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">supercell</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span><span class="p">(</span><span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;You didn&#39;t provide an input file.&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;You didn&#39;t provide an input file.&quot;</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span><span class="p">(</span><span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;You didn&#39;t provide a correct type, please try to name your file .xyz, .cif or other data structure types.&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">(</span>
+            <span class="s2">&quot;You didn&#39;t provide a correct file_type, please try to name your file .xyz, .cif or other data structure &quot;</span>
+            <span class="s2">&quot;types.&quot;</span><span class="p">))</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">file_type</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">structure</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
+    <span class="n">structure</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">structure</span><span class="o">*</span><span class="n">supercell</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">structure</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="bulkFromString"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.bulkFromString">[docs]</a><span class="nd">@calcfunction</span>
-<span class="k">def</span> <span class="nf">bulkFromString</span><span class="p">(</span><span class="n">bulkStr</span><span class="p">,</span> <span class="n">crystal_structure</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">cubic</span><span class="p">,</span> <span class="n">supercell</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">covera</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">orthorhombic</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
+<span class="k">def</span> <span class="nf">bulkFromString</span><span class="p">(</span><span class="n">bulkStr</span><span class="p">,</span> <span class="n">crystal_structure</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">cubic</span><span class="p">,</span> <span class="n">supercell</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">covera</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">orthorhombic</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`bulkFromFile` function can help us create a Bulk from the string.</span>
@@ -248,7 +252,8 @@
 <span class="sd">        An aiida.orm.Str object. The string for the material</span>
 
 <span class="sd">    crystal_structure:</span>
-<span class="sd">        An aiida.orm.Str object. The crystal structure. It need to be in one of those: sc, fcc, bcc, tetragonal, bct, hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende, rocksalt, cesiumchloride, fluorite or wurtzite.</span>
+<span class="sd">        An aiida.orm.Str object. The crystal structure. It need to be in one of those: sc, fcc, bcc, tetragonal, bct,</span>
+<span class="sd">        hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende, rocksalt, cesiumchloride, fluorite or wurtzite.</span>
 
 <span class="sd">    a, b, c:</span>
 <span class="sd">        An aiida.orm.Float object. Lattice constants.</span>
@@ -273,15 +278,17 @@
     <span class="n">cubic</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">cubic</span><span class="p">)</span>
     <span class="n">supercell</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">supercell</span><span class="p">)</span>
 
-    <span class="n">bulk_ase</span> <span class="o">=</span> <span class="n">bulk</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">bulkStr</span><span class="p">,</span> <span class="n">crystalstructure</span><span class="o">=</span><span class="n">crystal_structure</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">covera</span><span class="o">=</span><span class="n">covera</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">orthorhombic</span><span class="o">=</span><span class="n">orthorhombic</span><span class="p">,</span> <span class="n">cubic</span><span class="o">=</span><span class="n">cubic</span><span class="p">)</span>
+    <span class="n">bulk_ase</span> <span class="o">=</span> <span class="n">bulk</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">bulkStr</span><span class="p">,</span> <span class="n">crystalstructure</span><span class="o">=</span><span class="n">crystal_structure</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">covera</span><span class="o">=</span><span class="n">covera</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
+                    <span class="n">orthorhombic</span><span class="o">=</span><span class="n">orthorhombic</span><span class="p">,</span> <span class="n">cubic</span><span class="o">=</span><span class="n">cubic</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">bulk_ase</span><span class="o">*</span><span class="n">supercell</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">bulk_ase</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">)</span></div>
 
-<span class="c1"># In research, not only we need to deal with solids, we also need to deal with surfaces, and add adsorbates on it, so in my module, it will be important to create any structures that I want easily and efficiently.</span>
+
+<span class="c1"># In research, not only we need to deal with solids, we also need to deal with surfaces, and add adsorbates on it,</span>
+<span class="c1"># so in my module, it will be important to create any structures that I want easily and efficiently.</span>
 
 <div class="viewcode-block" id="millerSurfaces"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.millerSurfaces">[docs]</a><span class="nd">@calcfunction</span>
-<span class="k">def</span> <span class="nf">millerSurfaces</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">miller_index</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">vacuum</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
+<span class="k">def</span> <span class="nf">millerSurfaces</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">miller_index</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">vacuum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    `millerSurfaces` can help us generate a list of slab structures that we could use in future studies</span>
@@ -301,7 +308,9 @@
 <span class="sd">        An aiida.orm.List object. Set how many layers you want for the vacuum layer.</span>
 
 <span class="sd">    Return: A series of uuids of StructureData object, which can be used for further investigations.</span>
-<span class="sd">        The reason why we use uuid instead of StructureData is that StructureData cannot be put in a list with List object, it will shout out error. Once we have the uuid number, we can get the structure by just using `structure = load_node(uuid=uuid_structure)`, it is very straightforward.</span>
+<span class="sd">        The reason why we use uuid instead of StructureData is that StructureData cannot be put in a list with List</span>
+<span class="sd">        object, it will shout out error. Once we have the uuid number, we can get the structure by just using</span>
+<span class="sd">        :code:`structure = load_node(uuid=uuid_structure)`, it is very straightforward.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -311,40 +320,42 @@
     <span class="n">layers_int</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">value</span>
     <span class="n">vacuum_int</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">value</span>
 
-    <span class="n">sg</span> <span class="o">=</span> <span class="n">SlabGenerator</span><span class="p">(</span><span class="n">initial_structure</span> <span class="o">=</span> <span class="n">bulk_pmgstructure</span><span class="p">,</span>
-                       <span class="n">miller_index</span> <span class="o">=</span> <span class="n">miller_index_list</span><span class="p">,</span>
-                       <span class="n">min_slab_size</span> <span class="o">=</span> <span class="n">layers_int</span><span class="p">,</span>
-                       <span class="n">min_vacuum_size</span> <span class="o">=</span> <span class="n">vacuum_int</span><span class="p">,</span>
-                       <span class="n">center_slab</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                       <span class="n">in_unit_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                       <span class="n">primitive</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                       <span class="n">max_normal_search</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">miller_index_list</span><span class="p">),</span>
-                       <span class="n">reorient_lattice</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">sg</span> <span class="o">=</span> <span class="n">SlabGenerator</span><span class="p">(</span><span class="n">initial_structure</span><span class="o">=</span><span class="n">bulk_pmgstructure</span><span class="p">,</span>
+                       <span class="n">miller_index</span><span class="o">=</span><span class="n">miller_index_list</span><span class="p">,</span>
+                       <span class="n">min_slab_size</span><span class="o">=</span><span class="n">layers_int</span><span class="p">,</span>
+                       <span class="n">min_vacuum_size</span><span class="o">=</span><span class="n">vacuum_int</span><span class="p">,</span>
+                       <span class="n">center_slab</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">in_unit_planes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">primitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">max_normal_search</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">miller_index_list</span><span class="p">),</span>
+                       <span class="n">reorient_lattice</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">listOfStructures</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_slabs</span><span class="p">()</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">:</span>
-        <span class="n">structure_node</span> <span class="o">=</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">pymatgen_structure</span> <span class="o">=</span> <span class="n">structure</span><span class="p">)</span>
+        <span class="n">structure_node</span> <span class="o">=</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">pymatgen_structure</span><span class="o">=</span><span class="n">structure</span><span class="p">)</span>
         <span class="n">structure_node</span><span class="o">.</span><span class="n">store</span><span class="p">()</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure_node</span><span class="o">.</span><span class="n">uuid</span><span class="p">)</span> <span class="c1"># since uuid is the unique identifier for each node across the platform</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure_node</span><span class="o">.</span><span class="n">uuid</span><span class="p">)</span>  <span class="c1"># since uuid is the unique identifier for each node across the platform</span>
 
     <span class="n">listGenerator</span> <span class="o">=</span> <span class="n">List</span><span class="p">()</span>
     <span class="n">listGenerator</span><span class="o">.</span><span class="n">set_list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">listGenerator</span></div>
 
+
 <div class="viewcode-block" id="adsorptionSites"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.adsorptionSites">[docs]</a><span class="nd">@calcfunction</span>
 <span class="k">def</span> <span class="nf">adsorptionSites</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    `AdsorptionSites` can help us visualize the position and tag of each adsorption sites, then we can determine where we want to put the adsorbates.</span>
+<span class="sd">    `AdsorptionSites` can help us visualize the position and tag of each adsorption sites, then we can determine</span>
+<span class="sd">    where we want to put the adsorbates.</span>
 
 <span class="sd">    Parameters:</span>
 
 <span class="sd">    slab:</span>
-<span class="sd">        An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.</span>
+<span class="sd">        An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the</span>
+<span class="sd">        slab.</span>
 
 <span class="sd">    kwargs:</span>
 <span class="sd">        * distance: the distance between adsorption site and the surface</span>
@@ -354,18 +365,20 @@
 <span class="sd">    Return:</span>
 
 <span class="sd">    Adsorption site dictionary:</span>
-<span class="sd">        An aiida.orm.Dict object. Contains the information of all the positions of adsorption sites, which corresponse to the matplotlib figure.</span>
+<span class="sd">        An aiida.orm.Dict object. Contains the information of all the positions of adsorption sites,</span>
+<span class="sd">        which corresponse to the matplotlib figure.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># the inspiration for this function was from pymatgen.analysis.adsorption.AdsorbateSiteFinder.plot_slab() function, which is really intuitive way of showing the structure and the adsorption sites.</span>
+    <span class="c1"># the inspiration for this function was from pymatgen.analysis.adsorption.AdsorbateSiteFinder.plot_slab()</span>
+    <span class="c1"># function, which is really intuitive way of showing the structure and the adsorption sites.</span>
     <span class="c1"># since this function does not create any useful data, so it doesn&#39;t be decorated with @calfunction decorator</span>
 
     <span class="c1"># get the structure and adsorption sites</span>
     <span class="n">slab</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">get_pymatgen_structure</span><span class="p">()</span>
     <span class="c1"># end of the conversion</span>
 
-    <span class="n">asf</span> <span class="o">=</span> <span class="n">AdsorbateSiteFinder</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">selective_dynamics</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">asf</span> <span class="o">=</span> <span class="n">AdsorbateSiteFinder</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">selective_dynamics</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s1">&#39;distance&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">distance</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span>
@@ -382,15 +395,15 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">near_reduce</span> <span class="o">=</span> <span class="mf">0.01</span>
 
-    <span class="n">adsorption_sites</span> <span class="o">=</span> <span class="n">asf</span><span class="o">.</span><span class="n">find_adsorption_sites</span><span class="p">(</span><span class="n">distance</span> <span class="o">=</span> <span class="n">distance</span><span class="p">,</span> <span class="n">symm_reduce</span> <span class="o">=</span> <span class="n">symm_reduce</span><span class="p">,</span> <span class="n">near_reduce</span> <span class="o">=</span> <span class="n">near_reduce</span><span class="p">)</span>
+    <span class="n">adsorption_sites</span> <span class="o">=</span> <span class="n">asf</span><span class="o">.</span><span class="n">find_adsorption_sites</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span> <span class="n">symm_reduce</span><span class="o">=</span><span class="n">symm_reduce</span><span class="p">,</span> <span class="n">near_reduce</span><span class="o">=</span><span class="n">near_reduce</span><span class="p">)</span>
 
     <span class="n">dictGenerator</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">()</span>
     <span class="n">dictGenerator</span><span class="o">.</span><span class="n">set_dict</span><span class="p">(</span><span class="n">adsorption_sites</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dictGenerator</span></div>
 
-<div class="viewcode-block" id="visualizeSlab"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.visualizeSlab">[docs]</a><span class="k">def</span> <span class="nf">visualizeSlab</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">plot_adsSite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">adsorption_sites</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
+<div class="viewcode-block" id="visualizeSlab"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.visualizeSlab">[docs]</a><span class="k">def</span> <span class="nf">visualizeSlab</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">plot_adsSite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">adsorption_sites</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`visualizeSlab` will show the slab</span>
@@ -425,7 +438,7 @@
     <span class="k">if</span> <span class="s1">&#39;repeat&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">repeat</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;repeat&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">repeat</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># create supercell 3x3x1</span>
+        <span class="n">repeat</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># create supercell 3x3x1</span>
 
     <span class="k">if</span> <span class="s1">&#39;decay&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">decay</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;decay&#39;</span><span class="p">]</span>
@@ -470,7 +483,7 @@
                 <span class="n">coord</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">lattsum</span> <span class="o">*</span> <span class="p">(</span><span class="n">repeat</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">color_dictionary</span><span class="p">[</span><span class="n">sites</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">species_string</span><span class="p">])</span><span class="o">/</span><span class="mi">255</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">color_dictionary</span><span class="p">[</span><span class="n">sites</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">species_string</span><span class="p">])</span> <span class="o">/</span> <span class="mi">255</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span>
             <span class="n">patches</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span>
                 <span class="n">coord</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">lattsum</span> <span class="o">*</span> <span class="p">(</span><span class="n">repeat</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span>
@@ -498,12 +511,12 @@
                 <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="n">zorder</span><span class="o">=</span><span class="mi">10000</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">site_id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">ads_site</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ads_site</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">site_id</span><span class="p">),</span>
                         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span>
                         <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
                         <span class="n">zorder</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
             <span class="c1"># bridge site</span>
             <span class="n">ads_sites</span> <span class="o">=</span> <span class="n">adsorption_sites</span><span class="p">[</span><span class="s1">&#39;bridge&#39;</span><span class="p">]</span>
@@ -518,12 +531,12 @@
                 <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="n">zorder</span><span class="o">=</span><span class="mi">10000</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">site_id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">ads_site</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ads_site</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">site_id</span><span class="p">),</span>
                         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span>
                         <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
                         <span class="n">zorder</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
             <span class="c1"># hollow site</span>
             <span class="n">ads_sites</span> <span class="o">=</span> <span class="n">adsorption_sites</span><span class="p">[</span><span class="s1">&#39;hollow&#39;</span><span class="p">]</span>
@@ -538,28 +551,28 @@
                 <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="n">zorder</span><span class="o">=</span><span class="mi">10000</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">site_id</span><span class="p">,</span> <span class="n">ads_site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ads_sites</span><span class="p">):</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">ads_site</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ads_site</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">site_id</span><span class="p">),</span>
                         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span>
                         <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
                         <span class="n">zorder</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
 
-    <span class="c1"># Draw unit cell</span>
-    <span class="k">if</span> <span class="n">draw_unit_cell</span><span class="p">:</span>
-        <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lattsum</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="n">verts</span> <span class="o">+=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
-        <span class="n">verts</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">verts</span>
-        <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="o">.</span><span class="n">MOVETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">CLOSEPOLY</span><span class="p">]</span>
-        <span class="n">verts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vert</span><span class="p">)</span> <span class="o">+</span> <span class="n">corner</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">vert</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">]</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">codes</span><span class="p">)</span>
-        <span class="n">patch</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">PathPatch</span><span class="p">(</span>
-            <span class="n">path</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">2</span>
-        <span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
+        <span class="c1"># Draw unit cell</span>
+        <span class="k">if</span> <span class="n">draw_unit_cell</span><span class="p">:</span>
+            <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lattsum</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">verts</span> <span class="o">+=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+            <span class="n">verts</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">verts</span>
+            <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="o">.</span><span class="n">MOVETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">CLOSEPOLY</span><span class="p">]</span>
+            <span class="n">verts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vert</span><span class="p">)</span> <span class="o">+</span> <span class="n">corner</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">vert</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">]</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">codes</span><span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">PathPatch</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
     <span class="n">center</span> <span class="o">=</span> <span class="n">corner</span> <span class="o">+</span> <span class="n">lattsum</span> <span class="o">/</span> <span class="mf">2.0</span>
@@ -572,9 +585,9 @@
 
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
+
 <div class="viewcode-block" id="addAdsorbates"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.addAdsorbates">[docs]</a><span class="nd">@calcfunction</span>
 <span class="k">def</span> <span class="nf">addAdsorbates</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">adsSiteDictionary</span><span class="p">):</span>
-
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`addAdsorbates` will take care of these things:</span>
@@ -588,7 +601,14 @@
 <span class="sd">        An aiida.orm.StructureData object. The slab that we want to adsorb some adsorbates on.</span>
 
 <span class="sd">    adsSiteDictionary:</span>
-<span class="sd">        An aiida.orm.Dict object. In which contains the adsorbates (for common adsorbates, I can assign the adsorption atom, geometry of the adsorbates and its adsorption angle in :code:`constants.py`) and adsorption sites, also I can add new adsorbates to the adsorbates library. (Do a very simple relax simulation of a molecule in the big cell, and just output the structure and assign the adsorption site. For mono-site adsorption, it is really easy, for bi-site adsorption, it is also easy since we can get the molecule to align; for tri-site or more-site adsorption, well, we can just put the molecule closer to the surface and let the program determine how does this molecule interact with the surface, for our usual research, I don&#39;t think this is necessary.)</span>
+<span class="sd">        An aiida.orm.Dict object. In which contains the adsorbates (for common adsorbates, I can assign the</span>
+<span class="sd">        adsorption atom, geometry of the adsorbates and its adsorption angle in :code:`constants.py`) and adsorption</span>
+<span class="sd">        sites, also I can add new adsorbates to the adsorbates library. (Do a very simple relax simulation of a</span>
+<span class="sd">        molecule in the big cell, and just output the structure and assign the adsorption site. For mono-site</span>
+<span class="sd">        adsorption, it is really easy, for bi-site adsorption, it is also easy since we can get the molecule to</span>
+<span class="sd">        align; for tri-site or more-site adsorption, well, we can just put the molecule closer to the surface and let</span>
+<span class="sd">        the program determine how does this molecule interact with the surface, for our usual research, I don&#39;t think</span>
+<span class="sd">        this is necessary.)</span>
 
 <span class="sd">        .. code-block:: python</span>
 
@@ -598,7 +618,8 @@
 <span class="sd">            }</span>
 
 <span class="sd">    Return:</span>
-<span class="sd">        An aiida.orm.StructureData object. With the adsorbates and modified constrains on all the atoms, ready for the submit functions.</span>
+<span class="sd">        An aiida.orm.StructureData object. With the adsorbates and modified constrains on all the atoms,</span>
+<span class="sd">        ready for the submit functions.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -617,7 +638,7 @@
             <span class="n">ads_site</span> <span class="o">=</span> <span class="n">adsorbates</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;ads_site&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_site</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">siteList</span><span class="p">:</span>
-                <span class="n">slab_tmp</span> <span class="o">=</span> <span class="n">hzd_add_adsMono</span><span class="p">(</span><span class="n">slab_tmp</span><span class="p">,</span> <span class="n">molecule</span> <span class="o">=</span> <span class="n">adsorbate</span><span class="p">,</span> <span class="n">ads_coord</span> <span class="o">=</span> <span class="p">[</span><span class="n">site</span><span class="p">],</span> <span class="n">ads_site</span> <span class="o">=</span> <span class="n">ads_site</span><span class="p">)</span>
+                <span class="n">slab_tmp</span> <span class="o">=</span> <span class="n">hzd_add_adsMono</span><span class="p">(</span><span class="n">slab_tmp</span><span class="p">,</span> <span class="n">molecule</span><span class="o">=</span><span class="n">adsorbate</span><span class="p">,</span> <span class="n">ads_coord</span><span class="o">=</span><span class="p">[</span><span class="n">site</span><span class="p">],</span> <span class="n">ads_site</span><span class="o">=</span><span class="n">ads_site</span><span class="p">)</span>
         <span class="c1"># elif len(ads_site) == 2:</span>
         <span class="c1">#     # treate it as mono-dent</span>
         <span class="c1">#     for site in siteList:</span>
@@ -627,12 +648,13 @@
 
     <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">pymatgen_structure</span><span class="o">=</span><span class="n">slab_tmp</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="newStructure"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.newStructure">[docs]</a><span class="nd">@calcfunction</span>
 <span class="k">def</span> <span class="nf">newStructure</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">changeDict</span><span class="p">):</span>
-
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    :code:`newStructure` will create a new structure by replacing the changeList atom to new type of atoms, very useful if there are different chemical states of the same atom in the structure.</span>
+<span class="sd">    :code:`newStructure` will create a new structure by replacing the changeList atom to new type of atoms,</span>
+<span class="sd">    very useful if there are different chemical states of the same atom in the structure.</span>
 
 <span class="sd">    Parameters:</span>
 
@@ -653,8 +675,8 @@
     <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">structure_ase</span><span class="p">:</span>
         <span class="n">kind_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">changeDict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">kind_names</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">symbol</span>
+    <span class="k">for</span> <span class="n">kind_id</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">changeDict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">kind_names</span><span class="p">[</span><span class="n">kind_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">symbol</span>
 
     <span class="c1"># since I recreate kind_names from structure, then they must be the same.</span>
     <span class="c1"># if len(structure.sites) != len(kind_names):</span>
@@ -666,7 +688,6 @@
     <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">site</span><span class="p">,</span> <span class="n">kind_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">sites</span><span class="p">,</span> <span class="n">kind_names</span><span class="p">):</span>
-
         <span class="n">kind</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_kind</span><span class="p">(</span><span class="n">site</span><span class="o">.</span><span class="n">kind_name</span><span class="p">)</span>
 
         <span class="n">new_structure</span><span class="o">.</span><span class="n">append_atom</span><span class="p">(</span>
@@ -678,16 +699,17 @@
 
     <span class="k">return</span> <span class="n">new_structure</span></div>
 
-<span class="c1"># The functions below need to be used with care, because they are not part of the open API.</span>
-<div class="viewcode-block" id="getMoleculeByName"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.getMoleculeByName">[docs]</a><span class="k">def</span> <span class="nf">getMoleculeByName</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
 
+<span class="c1"># The functions below need to be used with care, because they are not part of the open API.</span>
+<div class="viewcode-block" id="getMoleculeByName"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.getMoleculeByName">[docs]</a><span class="k">def</span> <span class="nf">getMoleculeByName</span><span class="p">(</span><span class="n">ads_str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    :code:`getMoleculeByName` can return the Molecule object of a specific adsorbates, could be very useful for the simulations.</span>
+<span class="sd">    :code:`getMoleculeByName` can return the Molecule object of a specific adsorbates, could be very useful for the</span>
+<span class="sd">    simulations.</span>
 
 <span class="sd">    Parameters:</span>
 
-<span class="sd">    str:</span>
+<span class="sd">    ads_str:</span>
 <span class="sd">        A string. Which we will find whether it matches the adsorbates in the database</span>
 
 <span class="sd">    Return:</span>
@@ -698,22 +720,23 @@
     <span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Molecule</span>
     <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">adsorbates</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># means it is an atom</span>
-        <span class="k">if</span> <span class="n">Element</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="c1"># means str is an element</span>
-            <span class="k">return</span> <span class="n">Molecule</span><span class="p">(</span><span class="n">species</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_str</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># means it is an atom</span>
+        <span class="k">if</span> <span class="n">Element</span><span class="p">(</span><span class="n">ads_str</span><span class="p">):</span>  <span class="c1"># means ads_str is an element</span>
+            <span class="k">return</span> <span class="n">Molecule</span><span class="p">(</span><span class="n">species</span><span class="o">=</span><span class="n">ads_str</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You have entered a wrong string for an element, please try again.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">str</span> <span class="ow">in</span> <span class="n">adsorbates</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">adsorbates</span><span class="p">[</span><span class="nb">str</span><span class="p">][</span><span class="s1">&#39;mol&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ads_str</span> <span class="ow">in</span> <span class="n">adsorbates</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">adsorbates</span><span class="p">[</span><span class="n">ads_str</span><span class="p">][</span><span class="s1">&#39;mol&#39;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Sorry, the adsorbates you are asking for haven&#39;t been added in the package yet.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="setFixedCoords"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.setFixedCoords">[docs]</a><span class="k">def</span> <span class="nf">setFixedCoords</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
 
+<div class="viewcode-block" id="setFixedCoords"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.setFixedCoords">[docs]</a><span class="k">def</span> <span class="nf">setFixedCoords</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    :code:`setFixedCoords` is a function that can return a list that shows which atom we want to freeze during the simulation</span>
+<span class="sd">    :code:`setFixedCoords` is a function that can return a list that shows which atom we want to freeze during the</span>
+<span class="sd">    simulation</span>
 
 <span class="sd">    Parameters:</span>
 
@@ -721,7 +744,8 @@
 <span class="sd">        An aiida.orm.StructureData object.</span>
 
 <span class="sd">    height:</span>
-<span class="sd">        A float. which shows the boundary of the fixed atom. if the z-component of the position of the atom is below height, then we freeze it.</span>
+<span class="sd">        A float. which shows the boundary of the fixed atom. if the z-component of the position of the atom is below</span>
+<span class="sd">        height, then we freeze it.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        A Nx3 list which holds all the information about the fixed atoms, can be directly passed to the setting_dict.</span>
@@ -739,8 +763,8 @@
 
     <span class="k">return</span> <span class="n">fixed_coords</span></div>
 
-<div class="viewcode-block" id="hzd_add_adsMono"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.hzd_add_adsMono">[docs]</a><span class="k">def</span> <span class="nf">hzd_add_adsMono</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">ads_coord</span><span class="p">,</span> <span class="n">ads_site</span><span class="p">):</span>
 
+<div class="viewcode-block" id="hzd_add_adsMono"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.hzd_add_adsMono">[docs]</a><span class="k">def</span> <span class="nf">hzd_add_adsMono</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">ads_coord</span><span class="p">,</span> <span class="n">ads_site</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`hzd_add_ads` is a help function that can help me add adsorbates.</span>
@@ -757,7 +781,8 @@
 <span class="sd">        The position of adsorption site</span>
 
 <span class="sd">    ads_site:</span>
-<span class="sd">        The adsorption site of the molecule. If there is only 1 site in the molecule, that means it is mono-ads, if there are 2 sites in the molecule, then it can be mono-ads or bi-ads (needs to treat differently).</span>
+<span class="sd">        The adsorption site of the molecule. If there is only 1 site in the molecule, that means it is mono-ads,</span>
+<span class="sd">        if there are 2 sites in the molecule, then it can be mono-ads or bi-ads (needs to treat differently).</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        A modified slab. That all the adsorbates are in [True, True, True] (selective dynamics)</span>
@@ -771,22 +796,24 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_coord</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_site</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Sorry, the adsorption site on the slab and on the molecule are different, they must have the same length.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Sorry, the adsorption site on the slab and on the molecule are different, they must have the same length.&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_site</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># momo-ads</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_site</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># momo-ads</span>
         <span class="n">coord_ads_site</span> <span class="o">=</span> <span class="n">molecule</span><span class="p">[</span><span class="n">ads_site</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">coords</span>
         <span class="n">vec</span> <span class="o">=</span> <span class="n">ads_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">coord_ads_site</span>
         <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">molecule_tmp</span><span class="p">:</span>
             <span class="n">site</span><span class="o">.</span><span class="n">coords</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">coords</span> <span class="o">+</span> <span class="n">vec</span>
         <span class="c1"># molecule_tmp = hzd_rotate(molecule_tmp, ads_site[0]) # make sure that the ads_site[0] are in the lowest point.</span>
         <span class="n">molecule_tmp</span><span class="o">.</span><span class="n">add_site_property</span><span class="p">(</span>
-            <span class="s2">&quot;surface_properties&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;adsorbate&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">molecule_tmp</span><span class="o">.</span><span class="n">num_sites</span>
+            <span class="s2">&quot;surface_properties&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;adsorbate&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">molecule_tmp</span><span class="o">.</span><span class="n">num_sites</span>
         <span class="p">)</span>
         <span class="n">molecule_tmp</span><span class="o">.</span><span class="n">add_site_property</span><span class="p">(</span>
-            <span class="s1">&#39;selective dynamics&#39;</span><span class="p">,</span> <span class="p">[[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]]</span><span class="o">*</span><span class="n">molecule_tmp</span><span class="o">.</span><span class="n">num_sites</span>
+            <span class="s1">&#39;selective dynamics&#39;</span><span class="p">,</span> <span class="p">[[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]]</span> <span class="o">*</span> <span class="n">molecule_tmp</span><span class="o">.</span><span class="n">num_sites</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">molecule_tmp</span><span class="p">:</span>
-            <span class="n">slab_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">species</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">specie</span><span class="p">,</span> <span class="n">coords</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">properties</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
+            <span class="n">slab_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">species</span><span class="o">=</span><span class="n">site</span><span class="o">.</span><span class="n">specie</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">site</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">properties</span><span class="o">=</span><span class="n">site</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">slab_tmp</span></div>
 </pre></div>

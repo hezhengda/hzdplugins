@@ -1,24 +1,24 @@
 aiidaplugins Modules
 ========================
 
-hzdplugins.aiidaplugins.io module
-#################################
+addiaplugins.io Module
+----------------------
 
 .. automodule:: hzdplugins.aiidaplugins.io
     :members:
     :undoc-members:
     :show-inheritance:
 
-hzdplugins.aiidaplugins.info module
-###################################
+addiaplugins.info Module
+-------------------------
 
 .. automodule:: hzdplugins.aiidaplugins.info
     :members:
     :undoc-members:
     :show-inheritance:
 
-hzdplugins.aiidaplugins.submit module
-#####################################
+addiaplugins.submit Module
+----------------------------
 
 .. automodule:: hzdplugins.aiidaplugins.submit
     :members:
