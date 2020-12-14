@@ -135,14 +135,20 @@ def assignValue(results):
         results_tmp[uuid_node]['system'] = node.label
         results_tmp[uuid_node]['cluster'] = node.computer.label
 
-        if 'CONTROL' in node.inputs.parameters.get_dict().keys(): # it is pw.x calculation
+        keys = [key.lower() for key in node.inputs.parameters.get_dict().keys()] # get all the keys in lower case, easy for comparison
+
+        if 'control' in keys: # it is pw.x calculation
             results_tmp[uuid_node]['comp_type'] = node.inputs.parameters.get_dict()['CONTROL']['calculation']
             results_tmp[uuid_node]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
             compcode = 'pw'
 
-        if 'projwfc' in node.inputs.parameters.get_dict().keys(): # it is projwfc calculation
+        if 'projwfc' in keys: # it is projwfc calculation
             results_tmp[uuid_node]['comp_type'] = 'PDOS'
             compcode = 'projwfc'
+
+        if 'inputph' in keys:
+            results_tmp[uuid_node]['comp_type'] = 'PH'
+            compcode = 'ph'
 
         if (node.is_finished_ok) or (node.exit_status == 0) or (node.exit_status == 501):
             if compcode == 'pw':
@@ -156,6 +162,10 @@ def assignValue(results):
                 results_tmp[uuid_node]['is_finished'] = node.is_finished
                 results_tmp[uuid_node]['is_finished_ok'] = node.is_finished_ok
                 results_tmp[uuid_node]['exit_status'] = str(node.exit_status)
+            if compcode == 'ph':
+                results_tmp[uuid_node]['is_finished'] = node.is_finished
+                results_tmp[uuid_node]['is_finished_ok'] = node.is_finished_ok
+                results_tmp[uuid_node]['exit_status'] = str(node.exit_status)                
         else:
             results_tmp[uuid_node]['E/eV'] = None
             results_tmp[uuid_node]['is_finished'] = node.is_finished
@@ -439,6 +449,140 @@ def getStructure(uuid):
     v.view.gui_style = 'ngl'
 
     return v, structure
+
+def getPdos(uuid, index, is_spin, set_angular_momentum = [0, 1, 2]):
+
+    """
+
+    :code:`getPdos` will give you the PDOS that you want, in order to do the analysis later.
+
+    Parameters:
+
+    uuid:
+        A string. The uuid of the computational node.
+
+    index:
+        A list. Shows the atoms that we want to investigate.
+
+    is_spin:
+        A Boolean. If is_spin is True, then we need to look for spin-up and spin-down, but if is_spin is false, then we only need to care about the orbital, not the spin.
+
+    Return:
+        A list and A dictionary. A list is the energy list, which is modified by the Fermi energy. The second return is a dictionary. First key is the index of atom in the cell, second key is the angular_momentum, third key is the magnetic number, and in there is the pdos of certain magnetic number, for each angular_momentum, we will have a 'tot' element which shows the combination of all the magnetic number.
+
+        The structure can be represented as:
+        res = {
+            1: {
+                's': {
+                    's':
+                    'tot':
+                },
+                'p': {
+                    'px':,
+                    'py',
+                    'pz'
+                    'tot':
+                }
+                ...
+            }
+        }
+
+    """
+
+    # for the name of the orbital
+    from aiida.tools.data.orbital.realhydrogen import RealhydrogenOrbital as RHO
+    import numpy as np
+
+    # preparation
+    results = {}
+    node = load_node(uuid=uuid)
+
+    keys = node.inputs.parameters.get_dict().keys()
+
+    # check whether the user chooses the correct node.
+    if 'projwfc' in keys or 'PROJWFC' in keys:
+        pass
+    else:
+        return ValueError("You should pick a projwfc calculation node.")
+
+    # check whether the calculation is using spin-polarization
+    if is_spin:
+        projections_up = node.outputs.projections_up
+        projections_dw = node.outputs.projections_down
+    else:
+        pass # wait till I have more information
+
+    # basic dictionary
+    dict_ang_mom = {
+        0: 's',
+        1: 'p',
+        2: 'd',
+        3: 'f'
+    }
+
+    # get energy
+    energy = node.outputs.Dos.get_array('x_array')
+
+    for id in index:
+
+        results[id] = {}
+
+        for angular_momentum in set_angular_momentum: # 0->s; 1->p; 2->d; 3->f
+
+            am_label = dict_ang_mom[angular_momentum]
+            results[id][am_label] = {}
+
+            if is_spin:
+                tot_up = np.zeros(len(energy))
+                tot_dw = np.zeros(len(energy))
+            else:
+                pass
+
+            for magnetic_number in range(2*(angular_momentum+1)-1):
+
+                print('Assign the pdos (angular_momentum = {}, magnetic_number = {}) to the atom {}'.format(angular_momentum, magnetic_number, id))
+
+                start_id = id*(2*angular_momentum-1)+magnetic_number
+                orbital_name = RHO.get_name_from_quantum_numbers(angular_momentum=angular_momentum,
+                                                                 magnetic_number=magnetic_number).lower()
+                results[id][am_label][orbital_name] = {}
+
+                if is_spin:
+                    results[id][am_label][orbital_name]['up'] = projections_up.get_pdos(angular_momentum=angular_momentum, magnetic_number=magnetic_number)[start_id][1]
+                    tot_up = tot_up + results[id][am_label][orbital_name]['up']
+                    results[id][am_label][orbital_name]['dw'] = projections_dw.get_pdos(angular_momentum=angular_momentum, magnetic_number=magnetic_number)[start_id][1]
+                    tot_dw = tot_dw + results[id][am_label][orbital_name]['dw']
+                else:
+                    pass
+
+            results[id][am_label]['tot'] = {}
+            results[id][am_label]['tot']['up'] = tot_up
+            results[id][am_label]['tot']['dw'] = tot_dw
+
+    return energy, results
+
+def getDos(uuid):
+
+    """
+
+    :code:`getDos` can return the DOS of the system
+
+    Parameters:
+
+    uuid:
+        The uuid of the projwfc calc node
+
+    Return:
+        Two arrays: energy and dos.
+
+    """
+
+    node = load_node(uuid=uuid)
+
+    energy = node.outputs.Dos.get_array('x_array')
+    dos = node.outputs.Dos.get_array('y_array_0')
+
+    return energy, dos
 
 def saveResults(results, filename):
 

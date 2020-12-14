@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>structure Modules &mdash; hzdplugins 0.0.37 documentation</title>
+  <title>structure Modules &mdash; hzdplugins 0.0.38 documentation</title>
   
 
   
@@ -174,10 +174,16 @@
 <li><p>Put the bottom two layers of the slab fixed, other atoms can be relaxed</p></li>
 </ul>
 <p>Parameters:</p>
-<dl class="simple">
+<dl>
 <dt>slab:</dt><dd><p>An aiida.orm.StructureData object. The slab that we want to adsorb some adsorbates on.</p>
 </dd>
 <dt>adsSiteDictionary:</dt><dd><p>An aiida.orm.Dict object. In which contains the adsorbates (for common adsorbates, I can assign the adsorption atom, geometry of the adsorbates and its adsorption angle in <code class="code docutils literal notranslate"><span class="pre">constants.py</span></code>) and adsorption sites, also I can add new adsorbates to the adsorbates library. (Do a very simple relax simulation of a molecule in the big cell, and just output the structure and assign the adsorption site. For mono-site adsorption, it is really easy, for bi-site adsorption, it is also easy since we can get the molecule to align; for tri-site or more-site adsorption, well, we can just put the molecule closer to the surface and let the program determine how does this molecule interact with the surface, for our usual research, I don’t think this is necessary.)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">adsSiteDictionary</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">site1</span><span class="p">,</span> <span class="n">site2</span><span class="p">,</span> <span class="n">site3</span><span class="p">]</span> <span class="c1"># each site is a 3x1 list [a, b, c]</span>
+    <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">site1</span><span class="p">,</span> <span class="n">site2</span><span class="p">,</span> <span class="n">site3</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 <dt>Return:</dt><dd><p>An aiida.orm.StructureData object. With the adsorbates and modified constrains on all the atoms, ready for the submit functions.</p>
 </dd>
@@ -186,34 +192,30 @@
 
 <dl class="py function">
 <dt id="hzdplugins.structure.build.adsorptionSites">
-<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">adsorptionSites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">visualize</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#adsorptionSites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.adsorptionSites" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">adsorptionSites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#adsorptionSites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.adsorptionSites" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>AdsorptionSites</cite> can help us visualize the position and tag of each adsorption sites, then we can determine where we want to put the adsorbates.</p>
 <p>Parameters:</p>
 <dl class="simple">
 <dt>slab:</dt><dd><p>An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.</p>
 </dd>
-<dt>visualize:</dt><dd><p>An aiida.orm.Bool object. A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.</p>
-</dd>
-<dt>kwargs:</dt><dd><p>There are four variables which can be set for tuning the output figure
-* repeat (Int): how many unit cell do we want to show (how large the supercell we want to show)
-* decay (Float in [0,1]): the decay of alpha-value among different layers
-* scale (Float): radius scaling for sites (larger scale, larger circles)
-* window (Float): window for setting the axes limit</p>
+<dt>kwargs:</dt><dd><ul class="simple">
+<li><p>distance: the distance between adsorption site and the surface</p></li>
+<li><p>symm_reduce: the symmetry reduce (default = 0.01)</p></li>
+<li><p>near_reduce: the near reduce (default = 0.01)</p></li>
+</ul>
 </dd>
 </dl>
 <p>Return:</p>
 <dl class="simple">
-<dt>Matplotlib figure:</dt><dd><p>A matplotlib figure, which represents the distribution of the adsorption sites and its corresponding id.</p>
-</dd>
 <dt>Adsorption site dictionary:</dt><dd><p>An aiida.orm.Dict object. Contains the information of all the positions of adsorption sites, which corresponse to the matplotlib figure.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="hzdplugins.structure.build.bulk">
-<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">supercell</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.bulk" title="Permalink to this definition">¶</a></dt>
-<dd><p><cite>bulk</cite> function can help us create a Bulk from the file.</p>
+<dt id="hzdplugins.structure.build.bulkFromFile">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">bulkFromFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">supercell</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#bulkFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.bulkFromFile" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>bulkFromFile</cite> function can help us create a Bulk from the file.</p>
 <p>Parameters:</p>
 <dl class="simple">
 <dt>filename:</dt><dd><p>An aiida.orm.Str object. Usually when we create the structural file, we do it from the strcutural file such as .xyz or .cif, etc.</p>
@@ -222,6 +224,61 @@
 </dd>
 </dl>
 <p>Return: A StructureData file that can be used directly in Aiida.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.bulkFromString">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">bulkFromString</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bulkStr</span></em>, <em class="sig-param"><span class="n">crystal_structure</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">cubic</span></em>, <em class="sig-param"><span class="n">supercell</span></em>, <em class="sig-param"><span class="n">b</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">covera</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">u</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orthorhombic</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#bulkFromString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.bulkFromString" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">bulkFromFile</span></code> function can help us create a Bulk from the string.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>bulkStr:</dt><dd><p>An aiida.orm.Str object. The string for the material</p>
+</dd>
+<dt>crystal_structure:</dt><dd><p>An aiida.orm.Str object. The crystal structure. It need to be in one of those: sc, fcc, bcc, tetragonal, bct, hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende, rocksalt, cesiumchloride, fluorite or wurtzite.</p>
+</dd>
+<dt>a, b, c:</dt><dd><p>An aiida.orm.Float object. Lattice constants.</p>
+</dd>
+<dt>supercell:</dt><dd><p>An aiida.orm.List object. The supercell that we want to get.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.getMoleculeByName">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">getMoleculeByName</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#getMoleculeByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.getMoleculeByName" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">getMoleculeByName</span></code> can return the Molecule object of a specific adsorbates, could be very useful for the simulations.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>str:</dt><dd><p>A string. Which we will find whether it matches the adsorbates in the database</p>
+</dd>
+<dt>Return:</dt><dd><p>A Molecule Object, which can be used for adding the adsorbates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.getValue">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">getValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">var</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#getValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.getValue" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">getValue</span></code> can help us to initialize the variables</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.hzd_add_adsMono">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">hzd_add_adsMono</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">molecule</span></em>, <em class="sig-param"><span class="n">ads_coord</span></em>, <em class="sig-param"><span class="n">ads_site</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#hzd_add_adsMono"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.hzd_add_adsMono" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">hzd_add_ads</span></code> is a help function that can help me add adsorbates.</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>slab:</dt><dd><p>Pymatgen Structure object. A slab that we are interested in.</p>
+</dd>
+<dt>molecule:</dt><dd><p>The adsorbate that we want to add</p>
+</dd>
+<dt>ads_coord:</dt><dd><p>The position of adsorption site</p>
+</dd>
+<dt>ads_site:</dt><dd><p>The adsorption site of the molecule. If there is only 1 site in the molecule, that means it is mono-ads, if there are 2 sites in the molecule, then it can be mono-ads or bi-ads (needs to treat differently).</p>
+</dd>
+<dt>Return:</dt><dd><p>A modified slab. That all the adsorbates are in [True, True, True] (selective dynamics)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -254,6 +311,42 @@
 <dt>changeDict:</dt><dd><p>A dictionary where the i-th atom’s label will be replaced. e.g. ‘Fe’ to ‘Fe2’</p>
 </dd>
 <dt>Return:</dt><dd><p>A new aiida.orm.StructureData file which stores the difference</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.setFixedCoords">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">setFixedCoords</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">height</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#setFixedCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.setFixedCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">setFixedCoords</span></code> is a function that can return a list that shows which atom we want to freeze during the simulation</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>slab:</dt><dd><p>An aiida.orm.StructureData object.</p>
+</dd>
+<dt>height:</dt><dd><p>A float. which shows the boundary of the fixed atom. if the z-component of the position of the atom is below height, then we freeze it.</p>
+</dd>
+<dt>Return:</dt><dd><p>A Nx3 list which holds all the information about the fixed atoms, can be directly passed to the setting_dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.structure.build.visualizeSlab">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">visualizeSlab</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">plot_adsSite</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">adsorption_sites</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#visualizeSlab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.visualizeSlab" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">visualizeSlab</span></code> will show the slab</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>slab:</dt><dd><p>An aiida.orm.StructureData object.</p>
+</dd>
+<dt>plot_adsSite:</dt><dd><p>An aiida.orm.Bool object. If true, then add adsorption sites, if false, then adsorption site not show</p>
+</dd>
+<dt>adsorption_sites:</dt><dd><p>An aiida.orm.Dict object. Shows the adsorption sites.</p>
+</dd>
+<dt>kwargs:</dt><dd><p>Settings for the plot:
+* repeat: Int
+* decay: Float
+* scale: Float
+* window: Float</p>
 </dd>
 </dl>
 </dd></dl>

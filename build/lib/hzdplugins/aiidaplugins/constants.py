@@ -8,84 +8,108 @@ slurm_options = {}
 
 # 'claix-mac'
 slurm_options['rwth-claix-mac'] = {
-    'resources': {'num_machines': 2}, # on rwth_claix, each node has 48 cores.
-    'max_wallclock_seconds': 86400,
-    'account': 'jara0037',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'c18m'
+    'qe':{
+        'resources': {'num_machines': 2}, # on rwth_claix, each node has 48 cores.
+        'max_wallclock_seconds': 86400,
+        'account': 'jara0037',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'c18m'
+    },
+    'projwfc': {
+        'resources': {'num_machines': 1}, # on rwth_claix, each node has 48 cores.
+        'max_wallclock_seconds': 86400,
+        'account': 'jara0037',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'c18m'
+    }
 }
 
 # 'juwels-mac'
 slurm_options['juwels-mac'] = {
-    'resources': {'num_machines': 2}, # on juwels, each node has 48 cores.
-    'max_wallclock_seconds': 86400,
-    'account': 'fzj-mac',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'batch'
+    'qe': {
+        'resources': {'num_machines': 2}, # on juwels, each node has 48 cores.
+        'max_wallclock_seconds': 86400,
+        'account': 'fzj-mac',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'batch'
+    }
 }
 
 # 'jusuf-mac'
 slurm_options['jusuf-mac'] = {
-    'resources': {'num_machines': 2}, # on jusuf, each node has 128 cores
-    'max_wallclock_seconds': 86400,
-    'account': 'jiek61',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'batch'
+    'qe': {
+        'resources': {'num_machines': 2}, # on jusuf, each node has 128 cores
+        'max_wallclock_seconds': 86400,
+        'account': 'jiek61',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'batch'
+    }
 }
 
 # 'jureca_booster-mac'
 slurm_options['jureca-booster-mac'] = {
-    'resources': {'num_machines': 2}, # on jureca_booster, each node has 68 cores
-    'max_wallclock_seconds': 86400,
-    'account': 'jiek61',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'booster'
+    'qe': {
+        'resources': {'num_machines': 2}, # on jureca_booster, each node has 68 cores
+        'max_wallclock_seconds': 86400,
+        'account': 'jiek61',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'booster'
+    }
 }
 
 ###### The following are the settings for the ubuntu settings
 
 # 'claix'
 slurm_options['rwth-claix'] = {
-    'resources': {'num_machines': 2}, # on rwth_claix, each node has 48 cores.
-    'max_wallclock_seconds': 86400,
-    'account': 'jara0037',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'c18m'
+    'qe': {
+        'resources': {'num_machines': 2}, # on rwth_claix, each node has 48 cores.
+        'max_wallclock_seconds': 86400,
+        'account': 'jara0037',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'c18m'
+    }
 }
 
 # 'juwels'
 slurm_options['juwels'] = {
-    'resources': {'num_machines': 2}, # on juwels, each node has 48 cores.
-    'max_wallclock_seconds': 86400,
-    'account': 'fzj-mac',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'batch'
+    'qe': {
+        'resources': {'num_machines': 2}, # on juwels, each node has 48 cores.
+        'max_wallclock_seconds': 86400,
+        'account': 'fzj-mac',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'batch'
+    }
 }
 
 # 'jusuf'
 slurm_options['jusuf'] = {
-    'resources': {'num_machines': 1}, # on jusuf, each node has 128 cores
-    'max_wallclock_seconds': 86400,
-    'account': 'jiek61',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'batch'
+    'qe': {
+        'resources': {'num_machines': 1}, # on jusuf, each node has 128 cores
+        'max_wallclock_seconds': 86400,
+        'account': 'jiek61',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'batch'
+    }
 }
 
 # 'jureca_booster'
 slurm_options['jureca-booster'] = {
-    'resources': {'num_machines': 2}, # on jureca_booster, each node has 68 cores
-    'max_wallclock_seconds': 86400,
-    'account': 'jiek61',
-    'scheduler_stderr': 'stderr',
-    'scheduler_stdout': 'stdout',
-    'queue_name': 'booster'
+    'qe': {
+        'resources': {'num_machines': 2}, # on jureca_booster, each node has 68 cores
+        'max_wallclock_seconds': 86400,
+        'account': 'jiek61',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'booster'
+    }
 }
 
 # the color scheme for plotting on the Matplotlib
@@ -204,4 +228,55 @@ color_dictionary = {
 cmd_shortcut = {
     'gf': "grep 'scf accuracy' aiida.out",
     'gforce': "grep 'Total force' aiida.out"
+}
+
+def molToMolecule(filename):
+
+    """
+
+    :code:`molToMolecule` can help us read the .mol file and return a pymatgen Molecule object.
+
+    Parameters:
+
+    filename:
+        The filename (relative path) that we want.
+
+    Return:
+
+    A pymatgen Molecule object
+
+    """
+
+    from pymatgen.io.ase import AseAtomsAdaptor
+    from ase.io import read
+
+    mol = read(filename, format='mol')
+
+    return AseAtomsAdaptor.get_molecule(mol)
+
+# all the adsorbates that I have been interested in so far:
+import pkg_resources
+
+def path(filename):
+    return pkg_resources.resource_filename('hzdplugins', 'aiidaplugins/adsorbates/'+filename)
+
+adsorbates = {
+    'OH': {'mol':molToMolecule(filename=path('OH.mol')), 'ads_site': [0]},
+    'OOH': {'mol':molToMolecule(filename=path('OOH.mol')), 'ads_site': [2]},
+
+    'CH3': {'mol':molToMolecule(filename=path('CH3.mol')), 'ads_site': [0]},
+    'CH2': {'mol':molToMolecule(filename=path('CH2.mol')), 'ads_site': [0]},
+    'CH': {'mol':molToMolecule(filename=path('CH.mol')), 'ads_site': [0]},
+
+    'NH2': {'mol':molToMolecule(filename=path('NH2.mol')), 'ads_site': [0]},
+    'NH': {'mol':molToMolecule(filename=path('NH.mol')), 'ads_site': [0]},
+
+    'CH2OH': {'mol':molToMolecule(filename=path('CH2OH.mol')), 'ads_site': [0]},
+    'CH3O': {'mol':molToMolecule(filename=path('CH3O.mol')), 'ads_site': [1]},
+    'CHOH': {'mol':molToMolecule(filename=path('CHOH.mol')), 'ads_site': [0]},
+    'COH': {'mol':molToMolecule(filename=path('COH.mol')), 'ads_site':[0]},
+    'CHO': {'mol':molToMolecule(filename=path('CHO.mol')), 'ads_site':[0]},
+
+    'HCOO': {'mol':molToMolecule(filename=path('HCOO.mol')), 'ads_site': [2]},
+    'COOH': {'mol':molToMolecule(filename=path('COOH.mol')), 'ads_site': [0]}
 }

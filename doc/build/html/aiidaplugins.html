@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.37 documentation</title>
+  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.38 documentation</title>
   
 
   
@@ -272,6 +272,54 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.getDos">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getDos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uuid</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getDos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getDos" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">getDos</span></code> can return the DOS of the system</p>
+<p>Parameters:</p>
+<dl class="simple">
+<dt>uuid:</dt><dd><p>The uuid of the projwfc calc node</p>
+</dd>
+<dt>Return:</dt><dd><p>Two arrays: energy and dos.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.getPdos">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getPdos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">is_spin</span></em>, <em class="sig-param"><span class="n">set_angular_momentum</span><span class="o">=</span><span class="default_value">[0, 1, 2]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getPdos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getPdos" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">getPdos</span></code> will give you the PDOS that you want, in order to do the analysis later.</p>
+<p>Parameters:</p>
+<dl>
+<dt>uuid:</dt><dd><p>A string. The uuid of the computational node.</p>
+</dd>
+<dt>index:</dt><dd><p>A list. Shows the atoms that we want to investigate.</p>
+</dd>
+<dt>is_spin:</dt><dd><p>A Boolean. If is_spin is True, then we need to look for spin-up and spin-down, but if is_spin is false, then we only need to care about the orbital, not the spin.</p>
+</dd>
+<dt>Return:</dt><dd><p>A list and A dictionary. A list is the energy list, which is modified by the Fermi energy. The second return is a dictionary. First key is the index of atom in the cell, second key is the angular_momentum, third key is the magnetic number, and in there is the pdos of certain magnetic number, for each angular_momentum, we will have a ‘tot’ element which shows the combination of all the magnetic number.</p>
+<p>The structure can be represented as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+            <span class="s1">&#39;tot&#39;</span><span class="p">:</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;px&#39;</span><span class="p">:,</span>
+            <span class="s1">&#39;py&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pz&#39;</span>
+            <span class="s1">&#39;tot&#39;</span><span class="p">:</span>
+        <span class="p">}</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="hzdplugins.aiidaplugins.info.getStructure">
 <code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getStructure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uuid</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getStructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getStructure" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">getStructure</span></code> can give you the structure by using ase_gui.</p>
@@ -410,11 +458,77 @@
 <div class="section" id="module-hzdplugins.aiidaplugins.submit">
 <span id="hzdplugins-aiidaplugins-submit-module"></span><h2>hzdplugins.aiidaplugins.submit module<a class="headerlink" href="#module-hzdplugins.aiidaplugins.submit" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
+<dt id="hzdplugins.aiidaplugins.submit.nebOriginalSubmit">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">nebOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#nebOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.nebOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiidaplugins.submit.phOriginalSubmit">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">phOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">qpoints</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#phOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.phOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">phOriginalSubmit</span></code> can submit a ph.x simulation to get the PDOS. It must follow a scf simulation.</p>
+<p>Parameters:</p>
+<dl>
+<dt>results:</dt><dd><p>A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode</p>
+</dd>
+<dt>uuid:</dt><dd><p>A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode</p>
+</dd>
+<dt>codename:</dt><dd><p>A string. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str(‘’)</p>
+</dd>
+<dt>qpoints:</dt><dd><p>A list that may contain 1 / 2 lists. To show the qpoints we want to use. e.g. qpoints = [[0.0, 0.0, 0.0]] or qpoints = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], first one is mesh, second is offset.</p>
+</dd>
+<dt>add_parameters:</dt><dd><p>A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</p>
+<p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
+<p>e.g. {‘INPUTPH’:{}}</p>
+</dd>
+<dt>del_parameters:</dt><dd><p>A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then ‘nspin’ needs to be deleted. Same structure as add_parameters.</p>
+<p>e.g. {‘INPUTPH’: [key1, key2, key3]}</p>
+</dd>
+<dt>metadata:</dt><dd><p>A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
+</dd>
+<dt>Return:</dt><dd><p>A results dictionary that has the information about calc.uuid, and the calc.uuid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiidaplugins.submit.ppOriginalSubmit">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">ppOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#ppOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.ppOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">projwfcOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#projwfcOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">projwfcOriginalSubmit</span></code> can submit a projwfc simulation to get the PDOS. It must follow a nscf simulation</p>
+<p>Parameters:</p>
+<dl>
+<dt>results:</dt><dd><p>A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode</p>
+</dd>
+<dt>uuid:</dt><dd><p>A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode</p>
+</dd>
+<dt>codename:</dt><dd><p>A string. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str(‘’)</p>
+</dd>
+<dt>add_parameters:</dt><dd><p>A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</p>
+<p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
+<p>e.g. {‘PROJWFC’:{}}</p>
+</dd>
+<dt>del_parameters:</dt><dd><p>A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then ‘nspin’ needs to be deleted. Same structure as add_parameters.</p>
+<p>e.g. {‘PROJWFC’: [key1, key2, key3]}</p>
+</dd>
+<dt>metadata:</dt><dd><p>A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
+</dd>
+<dt>Return:</dt><dd><p>A results dictionary that has the information about calc.uuid, and the calc.uuid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="hzdplugins.aiidaplugins.submit.qePwContinueSubmit">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwContinueSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">pseudo_dict</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">parent_folder</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">kpoints</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwContinueSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwContinueSubmit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwContinueSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">pseudo_dict</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">parent_folder</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">kpoints</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">settings_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwContinueSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwContinueSubmit" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>qePwContinueSubmit</cite> will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs.</p>
 <p>Parameters:</p>
 <dl>
+<dt>results:</dt><dd><p>A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode</p>
+</dd>
 <dt>uuid:</dt><dd><p>A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode</p>
 </dd>
 <dt>pseudo_family:</dt><dd><p>A string. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.</p>
@@ -438,6 +552,8 @@
 </dd>
 <dt>metadata:</dt><dd><p>A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
 </dd>
+<dt>settings_dict:</dt><dd><p>A dictionary. which contains the additional information for the pw.x calculation. e.g. Fixed atom, retrieving more files, parser options, etc. And the command-line options.</p>
+</dd>
 <dt>Return:</dt><dd><p>results: a modified results dictionary with the latest submitted job
 uuid: the uuid of that CalcJob</p>
 </dd>
@@ -446,7 +562,7 @@ uuid: the uuid of that CalcJob</p>
 
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">fixed_coords</span></em>, <em class="sig-param"><span class="n">kpoints</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">pseudo_dict</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">qePwOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">kpoints</span></em>, <em class="sig-param"><span class="n">pseudo_family</span></em>, <em class="sig-param"><span class="n">pseudo_dict</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em>, <em class="sig-param"><span class="n">settings_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#qePwOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>qePwOriginalSubmit</cite> will submit an original computational task to the desired computer by using certain code.</p>
 <p>Parameters:</p>
 <dl>
@@ -455,8 +571,6 @@ uuid: the uuid of that CalcJob</p>
 <dt>codename:</dt><dd><p>A string. A string represents the code for pw.x that you want to use</p>
 </dd>
 <dt>structure:</dt><dd><p>An aiida.orm.StructureData object. The structure of your system. It needs to be StructureData type.</p>
-</dd>
-<dt>fixed_coords:</dt><dd><p>A list. It’s size should be Nx3, where N is the number of atoms in structure. e.g. [[True, False, False], [False, False, False]]. True represents that this coordinate is fixed, and False means this coordinate is free to move. Very useful in surface calculation.</p>
 </dd>
 <dt>add_parameters:</dt><dd><p>A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.</p>
 <p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
@@ -474,6 +588,8 @@ uuid: the uuid of that CalcJob</p>
 <dt>cluster_options:</dt><dd><p>A dictionary. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name</p>
 </dd>
 <dt>metadata:</dt><dd><p>A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.</p>
+</dd>
+<dt>settings_dict:</dt><dd><p>A dictionary. which contains the additional information for the pw.x calculation. e.g. Fixed atom, retrieving more files, parser options, etc. And the command-line options.</p>
 </dd>
 <dt>Return:</dt><dd><p>results: a modified results dictionary with the latest submitted job
 pk: the id of that CalcJob</p>

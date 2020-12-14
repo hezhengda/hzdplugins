@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.37 documentation</title>
+  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.38 documentation</title>
   
 
   
@@ -154,6 +154,16 @@
   <div class="section" id="log-file-for-hzdplugins">
 <h1>Log file for hzdplugins<a class="headerlink" href="#log-file-for-hzdplugins" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
+<li><dl class="simple">
+<dt>v0.0.38: 2020.12.12</dt><dd><ul>
+<li><p>add <cite>projwfcOriginalSubmit</cite>, <cite>phOriginalSubmit</cite> in <cite>submit.py</cite></p></li>
+<li><p>add <cite>getPdos</cite> in <cite>info.py</cite> to get the pdos for certain atom</p></li>
+<li><p>add <cite>getDos</cite> in <cite>info.py</cite></p></li>
+<li><p>Since rotating the adsorbate by algorithm is very time-consuming and not efficient, so I just create the geometric structure of usual adsorbates in the <cite>hzdplugins.aiidaplugins.adsorbates</cite> folder. All formats are <cite>mol</cite>, which is very easy to be read by ase.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><dl class="simple">
 <dt>v0.0.34-37: 2020.12.12</dt><dd><ul>
 <li><p>add some new functionalities in <cite>info.py</cite> which can show the charge &amp; magnetic moments, and also the total forces for each atomic step. Write <cite>get_TotalForces</cite> and <cite>get_ChargeAndMagneticMoments</cite></p></li>

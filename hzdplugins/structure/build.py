@@ -7,7 +7,8 @@ from matplotlib import patches
 from matplotlib.path import Path
 from copy import deepcopy
 
-from hzdplugins.aiidaplugins.constants import color_dictionary
+from hzdplugins.aiidaplugins.constants import color_dictionary, adsorbates
+from hzdplugins.structure.math import rotation_matrix_euler
 
 from aiida.orm import StructureData, Str, List, Bool, Dict
 from aiida.engine import calcfunction
@@ -17,12 +18,43 @@ from ase.io import read
 from pymatgen.core.surface import SlabGenerator
 from pymatgen.analysis.adsorption import AdsorbateSiteFinder, get_rot
 
-@calcfunction
-def bulk(filename, supercell):
+def getValue(var):
 
     """
 
-    `bulk` function can help us create a Bulk from the file.
+    :code:`getValue` can help us to initialize the variables
+
+    """
+
+    from aiida.orm import Int, Float, Bool, Str, Dict, List
+
+    if var is None:
+        return None
+
+    if isinstance(var, Int):
+        return var.value
+
+    if isinstance(var, Float):
+        return var.value
+
+    if isinstance(var, Bool):
+        return var.value
+
+    if isinstance(var, Str):
+        return var.value
+
+    if isinstance(var, Dict):
+        return var.get_dict()
+
+    if isinstance(var, List):
+        return var.get_list()
+
+@calcfunction
+def bulkFromFile(filename, supercell):
+
+    """
+
+    `bulkFromFile` function can help us create a Bulk from the file.
 
     Parameters:
 
@@ -37,8 +69,8 @@ def bulk(filename, supercell):
     """
 
     # transfer from aiida.orm types to the common python types
-    filename = filename.value
-    supercell_list = supercell.get_list()
+    filename = getValue(filename)
+    supercell = getValue(supercell)
 
     if len(filename)==0:
         raise(IOError("You didn't provide an input file."))
@@ -50,7 +82,49 @@ def bulk(filename, supercell):
 
     structure = read(filename, format=type)
 
-    return StructureData(ase=structure*supercell_list)
+    return StructureData(ase=structure*supercell)
+
+@calcfunction
+def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=None, alpha=None, covera=None, u=None, orthorhombic=None):
+
+    """
+
+    :code:`bulkFromFile` function can help us create a Bulk from the string.
+
+    Parameters:
+
+    bulkStr:
+        An aiida.orm.Str object. The string for the material
+
+    crystal_structure:
+        An aiida.orm.Str object. The crystal structure. It need to be in one of those: sc, fcc, bcc, tetragonal, bct, hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende, rocksalt, cesiumchloride, fluorite or wurtzite.
+
+    a, b, c:
+        An aiida.orm.Float object. Lattice constants.
+
+    supercell:
+        An aiida.orm.List object. The supercell that we want to get.
+
+    """
+
+    from ase.build import bulk
+
+    # convert all aiida
+    bulkStr = getValue(bulkStr)
+    crystal_structure = getValue(crystal_structure)
+    a = getValue(a)
+    b = getValue(b)
+    c = getValue(c)
+    alpha = getValue(alpha)
+    covera = getValue(covera)
+    u = getValue(u)
+    orthorhombic = getValue(orthorhombic)
+    cubic = getValue(cubic)
+    supercell = getValue(supercell)
+
+    bulk_ase = bulk(name=bulkStr, crystalstructure=crystal_structure, a=a, b=b, c=c, alpha=alpha, covera=covera, u=u, orthorhombic=orthorhombic, cubic=cubic)
+
+    return StructureData(ase=bulk_ase*supercell)
 
 # In research, not only we need to deal with solids, we also need to deal with surfaces, and add adsorbates on it, so in my module, it will be important to create any structures that I want easily and efficiently.
 
@@ -93,6 +167,7 @@ def millerSurfaces(bulk, miller_index, layers, vacuum, **kwargs):
                        center_slab = True,
                        in_unit_planes = True,
                        primitive = False,
+                       max_normal_search = max(miller_index_list),
                        reorient_lattice = True)
 
     listOfStructures = sg.get_slabs()
@@ -109,7 +184,7 @@ def millerSurfaces(bulk, miller_index, layers, vacuum, **kwargs):
     return listGenerator
 
 @calcfunction
-def adsorptionSites(slab, visualize, **kwargs):
+def adsorptionSites(slab, **kwargs):
 
     """
 
@@ -120,20 +195,12 @@ def adsorptionSites(slab, visualize, **kwargs):
     slab:
         An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the slab.
 
-    visualize:
-        An aiida.orm.Bool object. A Boolean variable. If it is True, that means we want to output the figure of adsorption sites. If it is false, then we only want to return the list of adsorption sites.
-
     kwargs:
-        There are four variables which can be set for tuning the output figure
-        * repeat (Int): how many unit cell do we want to show (how large the supercell we want to show)
-        * decay (Float in [0,1]): the decay of alpha-value among different layers
-        * scale (Float): radius scaling for sites (larger scale, larger circles)
-        * window (Float): window for setting the axes limit
+        * distance: the distance between adsorption site and the surface
+        * symm_reduce: the symmetry reduce (default = 0.01)
+        * near_reduce: the near reduce (default = 0.01)
 
     Return:
-
-    Matplotlib figure:
-        A matplotlib figure, which represents the distribution of the adsorption sites and its corresponding id.
 
     Adsorption site dictionary:
         An aiida.orm.Dict object. Contains the information of all the positions of adsorption sites, which corresponse to the matplotlib figure.
@@ -145,83 +212,128 @@ def adsorptionSites(slab, visualize, **kwargs):
 
     # get the structure and adsorption sites
     slab = slab.get_pymatgen_structure()
-    visualize = visualize.value
     # end of the conversion
 
     asf = AdsorbateSiteFinder(slab, selective_dynamics = False)
-    adsorption_sites = asf.find_adsorption_sites(distance = 1.2)
+
+    if 'distance' in kwargs.keys():
+        distance = kwargs['distance']
+    else:
+        distance = 1.2
+
+    if 'symm_reduce' in kwargs.keys():
+        symm_reduce = kwargs['symm_reduce']
+    else:
+        symm_reduce = 0.01
+
+    if 'near_reduce' in kwargs.keys():
+        near_reduce = kwargs['near_reduce']
+    else:
+        near_reduce = 0.01
+
+    adsorption_sites = asf.find_adsorption_sites(distance = distance, symm_reduce = symm_reduce, near_reduce = near_reduce)
 
     dictGenerator = Dict()
     dictGenerator.set_dict(adsorption_sites)
 
-    if visualize == False:
-        pass
+    return dictGenerator
+
+def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, **kwargs):
+
+    """
+
+    :code:`visualizeSlab` will show the slab
+
+    Parameters:
+
+    slab:
+        An aiida.orm.StructureData object.
+
+    plot_adsSite:
+        An aiida.orm.Bool object. If true, then add adsorption sites, if false, then adsorption site not show
+
+    adsorption_sites:
+        An aiida.orm.Dict object. Shows the adsorption sites.
+
+    kwargs:
+        Settings for the plot:
+        * repeat: Int
+        * decay: Float
+        * scale: Float
+        * window: Float
+
+    """
+
+    # start plotting the figure, this part of the code was largely adopted from pymatgen github repository
+
+    slab = slab.get_pymatgen_structure()
+    if plot_adsSite:
+        adsorption_sites = adsorption_sites.get_dict()
+
+    # parameters for the plotting
+    if 'repeat' in kwargs.keys():
+        repeat = kwargs['repeat']
     else:
-        # start plotting the figure, this part of the code was largely adopted from pymatgen github repository
+        repeat = 2 # create supercell 3x3x1
 
-        # parameters for the plotting
-        if 'repeat' in kwargs.keys():
-            repeat = kwargs['repeat']
-        else:
-            repeat = 2 # create supercell 3x3x1
+    if 'decay' in kwargs.keys():
+        decay = kwargs['decay']
+    else:
+        decay = 0.2
 
-        if 'decay' in kwargs.keys():
-            decay = kwargs['decay']
-        else:
-            decay = 0.2
+    if 'scale' in kwargs.keys():
+        scale = kwargs['scale']
+    else:
+        scale = 0.8
 
-        if 'scale' in kwargs.keys():
-            scale = kwargs['scale']
-        else:
-            scale = 0.8
+    if 'window' in kwargs.keys():
+        window = kwargs['window']
+    else:
+        window = 1.5
 
-        if 'window' in kwargs.keys():
-            window = kwargs['window']
-        else:
-            window = 1.5
+    draw_unit_cell = True
 
-        draw_unit_cell = True
+    fig, ax = plt.subplots(figsize=(10, 10))
 
-        fig, ax = plt.subplots(figsize=(10, 10))
+    orig_slab = deepcopy(slab)
+    orig_cell = deepcopy(slab.lattice.matrix)
 
-        orig_slab = deepcopy(slab)
-        orig_cell = deepcopy(slab.lattice.matrix)
+    slab.make_supercell([repeat, repeat, 1])
 
-        slab.make_supercell([repeat, repeat, 1])
+    # sort the coordinates by the z component
+    coords = np.array(sorted(slab.cart_coords, key=lambda x: x[2]))
+    sites = sorted(slab.sites, key=lambda x: x.coords[2])
 
-        # sort the coordinates by the z component
-        coords = np.array(sorted(slab.cart_coords, key=lambda x: x[2]))
-        sites = sorted(slab.sites, key=lambda x: x.coords[2])
+    alphas = 1 - decay * (np.max(coords[:, 2]) - coords[:, 2])
+    alphas = alphas.clip(min=0)
+    corner = [0, 0, slab.lattice.get_fractional_coords(coords[-1])[-1]]
+    corner = slab.lattice.get_cartesian_coords(corner)[:2]
+    verts = orig_cell[:2, :2]
+    lattsum = verts[0] + verts[1]
 
-        alphas = 1 - decay * (np.max(coords[:, 2]) - coords[:, 2])
-        alphas = alphas.clip(min=0)
-        corner = [0, 0, slab.lattice.get_fractional_coords(coords[-1])[-1]]
-        corner = slab.lattice.get_cartesian_coords(corner)[:2]
-        verts = orig_cell[:2, :2]
-        lattsum = verts[0] + verts[1]
-
-        # Draw circles at sites and stack them accordingly
-        for n, coord in enumerate(coords):
-            r = sites[n].specie.atomic_radius * scale
-            ax.add_patch(
-                patches.Circle(
-                    coord[:2] - lattsum * (repeat // 2), r, color="w", zorder=2 * n
-                )
+    # Draw circles at sites and stack them accordingly
+    for n, coord in enumerate(coords):
+        r = sites[n].specie.atomic_radius * scale
+        ax.add_patch(
+            patches.Circle(
+                coord[:2] - lattsum * (repeat // 2), r, color="w", zorder=2 * n
             )
-            color = np.array(color_dictionary[sites[n].species_string])/255
-            ax.add_patch(
-                patches.Circle(
-                    coord[:2] - lattsum * (repeat // 2),
-                    r,
-                    facecolor=color,
-                    alpha=alphas[n],
-                    edgecolor="k",
-                    lw=0.3,
-                    zorder=2 * n + 1,
-                )
+        )
+        color = np.array(color_dictionary[sites[n].species_string])/255
+        ax.add_patch(
+            patches.Circle(
+                coord[:2] - lattsum * (repeat // 2),
+                r,
+                facecolor=color,
+                alpha=alphas[n],
+                edgecolor="k",
+                lw=0.3,
+                zorder=2 * n + 1,
             )
+        )
 
-        # Adsorption sites
+        if plot_adsSite:
+            # Adsorption sites
             # top site
             ads_sites = adsorption_sites['ontop']
             sop = get_rot(orig_slab)
@@ -282,32 +394,32 @@ def adsorptionSites(slab, visualize, **kwargs):
                         fontsize=16,
                         ha='center',va='center',
                         zorder=20000)
+        else:
+            pass
 
-        # Draw unit cell
-        if draw_unit_cell:
-            verts = np.insert(verts, 1, lattsum, axis=0).tolist()
-            verts += [[0.0, 0.0]]
-            verts = [[0.0, 0.0]] + verts
-            codes = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY]
-            verts = [(np.array(vert) + corner).tolist() for vert in verts]
-            path = Path(verts, codes)
-            patch = patches.PathPatch(
-                path, facecolor="none", lw=2, alpha=0.5, zorder=2 * n + 2
-            )
-            ax.add_patch(patch)
+    # Draw unit cell
+    if draw_unit_cell:
+        verts = np.insert(verts, 1, lattsum, axis=0).tolist()
+        verts += [[0.0, 0.0]]
+        verts = [[0.0, 0.0]] + verts
+        codes = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY]
+        verts = [(np.array(vert) + corner).tolist() for vert in verts]
+        path = Path(verts, codes)
+        patch = patches.PathPatch(
+            path, facecolor="none", lw=2, alpha=0.5, zorder=2 * n + 2
+        )
+        ax.add_patch(patch)
 
-        ax.set_aspect("equal")
-        center = corner + lattsum / 2.0
-        extent = np.max(lattsum)
-        lim_array = [center - extent * window, center + extent * window]
-        x_lim = [ele[0] for ele in lim_array]
-        y_lim = [ele[1] for ele in lim_array]
-        ax.set_xlim(x_lim)
-        ax.set_ylim(y_lim)
+    ax.set_aspect("equal")
+    center = corner + lattsum / 2.0
+    extent = np.max(lattsum)
+    lim_array = [center - extent * window, center + extent * window]
+    x_lim = [ele[0] for ele in lim_array]
+    y_lim = [ele[1] for ele in lim_array]
+    ax.set_xlim(x_lim)
+    ax.set_ylim(y_lim)
 
-        plt.show()
-
-    return dictGenerator
+    plt.show()
 
 @calcfunction
 def addAdsorbates(slab, adsSiteDictionary):
@@ -327,6 +439,13 @@ def addAdsorbates(slab, adsSiteDictionary):
     adsSiteDictionary:
         An aiida.orm.Dict object. In which contains the adsorbates (for common adsorbates, I can assign the adsorption atom, geometry of the adsorbates and its adsorption angle in :code:`constants.py`) and adsorption sites, also I can add new adsorbates to the adsorbates library. (Do a very simple relax simulation of a molecule in the big cell, and just output the structure and assign the adsorption site. For mono-site adsorption, it is really easy, for bi-site adsorption, it is also easy since we can get the molecule to align; for tri-site or more-site adsorption, well, we can just put the molecule closer to the surface and let the program determine how does this molecule interact with the surface, for our usual research, I don't think this is necessary.)
 
+        .. code-block:: python
+
+            adsSiteDictionary = {
+                'O': [site1, site2, site3] # each site is a 3x1 list [a, b, c]
+                'F': [site1, site2, site3]
+            }
+
     Return:
         An aiida.orm.StructureData object. With the adsorbates and modified constrains on all the atoms, ready for the submit functions.
 
@@ -334,10 +453,28 @@ def addAdsorbates(slab, adsSiteDictionary):
 
     # clean the input parameters from aiida.orm types to usual types
     slab = slab.get_pymatgen_structure()
+    slab_tmp = deepcopy(slab)
+    # asf = AdsorbateSiteFinder(slab_tmp, selective_dynamics = True)
     adsSiteDictionary = adsSiteDictionary.get_dict()
     # end of cleaning process
 
-    pass
+    for ads, siteList in adsSiteDictionary.items():
+        adsorbate = getMoleculeByName(ads)
+        if len(ads) == 1:
+            ads_site = [0]
+        else:
+            ads_site = adsorbates[ads]['ads_site']
+        if len(ads_site) == 1:
+            for site in siteList:
+                slab_tmp = hzd_add_adsMono(slab_tmp, molecule = adsorbate, ads_coord = [site], ads_site = ads_site)
+        # elif len(ads_site) == 2:
+        #     # treate it as mono-dent
+        #     for site in siteList:
+        #         for adsite in ads_site:
+        #             slab_tmp = hzd_add_adsMono(slab_tmp, molecule = adsorbate, ads_coord = site, ads_site = ads_site)
+        #     slab_tmp = hzd_add_adsBi(slab_tmp, molecule = adsorbate, ads_coord = siteList, ads_site = ads_site)
+
+    return StructureData(pymatgen_structure=slab_tmp)
 
 @calcfunction
 def newStructure(structure, changeDict):
@@ -389,3 +526,115 @@ def newStructure(structure, changeDict):
         )
 
     return new_structure
+
+# The functions below need to be used with care, because they are not part of the open API.
+def getMoleculeByName(str):
+
+    """
+
+    :code:`getMoleculeByName` can return the Molecule object of a specific adsorbates, could be very useful for the simulations.
+
+    Parameters:
+
+    str:
+        A string. Which we will find whether it matches the adsorbates in the database
+
+    Return:
+        A Molecule Object, which can be used for adding the adsorbates.
+
+    """
+
+    from pymatgen.core import Element, Molecule
+    from hzdplugins.aiidaplugins.constants import adsorbates
+
+    if len(str) == 1: # means it is an atom
+        if Element(str): # means str is an element
+            return Molecule(species = (str), coords = [[0, 0, 0]])
+        else:
+            raise ValueError("You have entered a wrong string for an element, please try again.")
+    else:
+        if str in adsorbates.keys():
+            return adsorbates[str]['mol']
+        else:
+            raise ValueError("Sorry, the adsorbates you are asking for haven't been added in the package yet.")
+
+def setFixedCoords(slab, height):
+
+    """
+
+    :code:`setFixedCoords` is a function that can return a list that shows which atom we want to freeze during the simulation
+
+    Parameters:
+
+    slab:
+        An aiida.orm.StructureData object.
+
+    height:
+        A float. which shows the boundary of the fixed atom. if the z-component of the position of the atom is below height, then we freeze it.
+
+    Return:
+        A Nx3 list which holds all the information about the fixed atoms, can be directly passed to the setting_dict.
+
+    """
+
+    slab_ase = slab.get_ase()
+    fixed_coords = []
+
+    for atom in slab_ase:
+        if atom.position[2] > height:
+            fixed_coords.append([False, False, False])
+        else:
+            fixed_coords.append([True, True, True])
+
+    return fixed_coords
+
+def hzd_add_adsMono(slab, molecule, ads_coord, ads_site):
+
+    """
+
+    :code:`hzd_add_ads` is a help function that can help me add adsorbates.
+
+    Parameters:
+
+    slab:
+        Pymatgen Structure object. A slab that we are interested in.
+
+    molecule:
+        The adsorbate that we want to add
+
+    ads_coord:
+        The position of adsorption site
+
+    ads_site:
+        The adsorption site of the molecule. If there is only 1 site in the molecule, that means it is mono-ads, if there are 2 sites in the molecule, then it can be mono-ads or bi-ads (needs to treat differently).
+
+    Return:
+        A modified slab. That all the adsorbates are in [True, True, True] (selective dynamics)
+
+    """
+
+    slab_tmp = deepcopy(slab)
+    molecule_tmp = deepcopy(molecule)
+
+    # check whether ads_coord and ads_site are compatible:
+    if len(ads_coord) == len(ads_site):
+        pass
+    else:
+        raise ValueError("Sorry, the adsorption site on the slab and on the molecule are different, they must have the same length.")
+
+    if len(ads_site) == 1: # momo-ads
+        coord_ads_site = molecule[ads_site[0]].coords
+        vec = ads_coord[0] - coord_ads_site
+        for site in molecule_tmp:
+            site.coords = site.coords + vec
+        # molecule_tmp = hzd_rotate(molecule_tmp, ads_site[0]) # make sure that the ads_site[0] are in the lowest point.
+        molecule_tmp.add_site_property(
+            "surface_properties", ['adsorbate']*molecule_tmp.num_sites
+        )
+        molecule_tmp.add_site_property(
+            'selective dynamics', [[True, True, True]]*molecule_tmp.num_sites
+        )
+        for site in molecule_tmp:
+            slab_tmp.append(species = site.specie, coords = site.coords, coords_are_cartesian=True, properties = site.properties)
+
+    return slab_tmp

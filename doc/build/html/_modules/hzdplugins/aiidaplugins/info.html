@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.37 documentation</title>
+  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.38 documentation</title>
   
 
   
@@ -286,14 +286,20 @@
         <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">label</span>
         <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">computer</span><span class="o">.</span><span class="n">label</span>
 
-        <span class="k">if</span> <span class="s1">&#39;CONTROL&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># it is pw.x calculation</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="c1"># get all the keys in lower case, easy for comparison</span>
+
+        <span class="k">if</span> <span class="s1">&#39;control&#39;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span> <span class="c1"># it is pw.x calculation</span>
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;comp_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()[</span><span class="s1">&#39;CONTROL&#39;</span><span class="p">][</span><span class="s1">&#39;calculation&#39;</span><span class="p">]</span>
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;xc functional&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;input_dft&#39;</span><span class="p">]</span>
             <span class="n">compcode</span> <span class="o">=</span> <span class="s1">&#39;pw&#39;</span>
 
-        <span class="k">if</span> <span class="s1">&#39;projwfc&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># it is projwfc calculation</span>
+        <span class="k">if</span> <span class="s1">&#39;projwfc&#39;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span> <span class="c1"># it is projwfc calculation</span>
             <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;comp_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;PDOS&#39;</span>
             <span class="n">compcode</span> <span class="o">=</span> <span class="s1">&#39;projwfc&#39;</span>
+
+        <span class="k">if</span> <span class="s1">&#39;inputph&#39;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;comp_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;PH&#39;</span>
+            <span class="n">compcode</span> <span class="o">=</span> <span class="s1">&#39;ph&#39;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">is_finished_ok</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span> <span class="o">==</span> <span class="mi">501</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">compcode</span> <span class="o">==</span> <span class="s1">&#39;pw&#39;</span><span class="p">:</span>
@@ -304,6 +310,10 @@
                 <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished_ok</span>
                 <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">compcode</span> <span class="o">==</span> <span class="s1">&#39;projwfc&#39;</span><span class="p">:</span>
+                <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished</span>
+                <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished_ok</span>
+                <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">compcode</span> <span class="o">==</span> <span class="s1">&#39;ph&#39;</span><span class="p">:</span>
                 <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished</span>
                 <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished_ok</span>
                 <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
@@ -590,6 +600,142 @@
     <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">gui_style</span> <span class="o">=</span> <span class="s1">&#39;ngl&#39;</span>
 
     <span class="k">return</span> <span class="n">v</span><span class="p">,</span> <span class="n">structure</span></div>
+
+<div class="viewcode-block" id="getPdos"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getPdos">[docs]</a><span class="k">def</span> <span class="nf">getPdos</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">set_angular_momentum</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getPdos` will give you the PDOS that you want, in order to do the analysis later.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    uuid:</span>
+<span class="sd">        A string. The uuid of the computational node.</span>
+
+<span class="sd">    index:</span>
+<span class="sd">        A list. Shows the atoms that we want to investigate.</span>
+
+<span class="sd">    is_spin:</span>
+<span class="sd">        A Boolean. If is_spin is True, then we need to look for spin-up and spin-down, but if is_spin is false, then we only need to care about the orbital, not the spin.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        A list and A dictionary. A list is the energy list, which is modified by the Fermi energy. The second return is a dictionary. First key is the index of atom in the cell, second key is the angular_momentum, third key is the magnetic number, and in there is the pdos of certain magnetic number, for each angular_momentum, we will have a &#39;tot&#39; element which shows the combination of all the magnetic number.</span>
+
+<span class="sd">        The structure can be represented as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">        </span>
+<span class="sd">            res = {</span>
+<span class="sd">                1: {</span>
+<span class="sd">                    &#39;s&#39;: {</span>
+<span class="sd">                        &#39;s&#39;:</span>
+<span class="sd">                        &#39;tot&#39;:</span>
+<span class="sd">                    },</span>
+<span class="sd">                    &#39;p&#39;: {</span>
+<span class="sd">                        &#39;px&#39;:,</span>
+<span class="sd">                        &#39;py&#39;,</span>
+<span class="sd">                        &#39;pz&#39;</span>
+<span class="sd">                        &#39;tot&#39;:</span>
+<span class="sd">                    }</span>
+<span class="sd">                    ...</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># for the name of the orbital</span>
+    <span class="kn">from</span> <span class="nn">aiida.tools.data.orbital.realhydrogen</span> <span class="kn">import</span> <span class="n">RealhydrogenOrbital</span> <span class="k">as</span> <span class="n">RHO</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="c1"># preparation</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="c1"># check whether the user chooses the correct node.</span>
+    <span class="k">if</span> <span class="s1">&#39;projwfc&#39;</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="s1">&#39;PROJWFC&#39;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You should pick a projwfc calculation node.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># check whether the calculation is using spin-polarization</span>
+    <span class="k">if</span> <span class="n">is_spin</span><span class="p">:</span>
+        <span class="n">projections_up</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">projections_up</span>
+        <span class="n">projections_dw</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">projections_down</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c1"># wait till I have more information</span>
+
+    <span class="c1"># basic dictionary</span>
+    <span class="n">dict_ang_mom</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;f&#39;</span>
+    <span class="p">}</span>
+
+    <span class="c1"># get energy</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;x_array&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">angular_momentum</span> <span class="ow">in</span> <span class="n">set_angular_momentum</span><span class="p">:</span> <span class="c1"># 0-&gt;s; 1-&gt;p; 2-&gt;d; 3-&gt;f</span>
+
+            <span class="n">am_label</span> <span class="o">=</span> <span class="n">dict_ang_mom</span><span class="p">[</span><span class="n">angular_momentum</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">if</span> <span class="n">is_spin</span><span class="p">:</span>
+                <span class="n">tot_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+                <span class="n">tot_dw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">for</span> <span class="n">magnetic_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">angular_momentum</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Assign the pdos (angular_momentum = </span><span class="si">{}</span><span class="s1">, magnetic_number = </span><span class="si">{}</span><span class="s1">) to the atom </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">angular_momentum</span><span class="p">,</span> <span class="n">magnetic_number</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span>
+
+                <span class="n">start_id</span> <span class="o">=</span> <span class="nb">id</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">angular_momentum</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">magnetic_number</span>
+                <span class="n">orbital_name</span> <span class="o">=</span> <span class="n">RHO</span><span class="o">.</span><span class="n">get_name_from_quantum_numbers</span><span class="p">(</span><span class="n">angular_momentum</span><span class="o">=</span><span class="n">angular_momentum</span><span class="p">,</span>
+                                                                 <span class="n">magnetic_number</span><span class="o">=</span><span class="n">magnetic_number</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="k">if</span> <span class="n">is_spin</span><span class="p">:</span>
+                    <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;up&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projections_up</span><span class="o">.</span><span class="n">get_pdos</span><span class="p">(</span><span class="n">angular_momentum</span><span class="o">=</span><span class="n">angular_momentum</span><span class="p">,</span> <span class="n">magnetic_number</span><span class="o">=</span><span class="n">magnetic_number</span><span class="p">)[</span><span class="n">start_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">tot_up</span> <span class="o">=</span> <span class="n">tot_up</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;up&#39;</span><span class="p">]</span>
+                    <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;dw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projections_dw</span><span class="o">.</span><span class="n">get_pdos</span><span class="p">(</span><span class="n">angular_momentum</span><span class="o">=</span><span class="n">angular_momentum</span><span class="p">,</span> <span class="n">magnetic_number</span><span class="o">=</span><span class="n">magnetic_number</span><span class="p">)[</span><span class="n">start_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">tot_dw</span> <span class="o">=</span> <span class="n">tot_dw</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;dw&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="s1">&#39;tot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="s1">&#39;tot&#39;</span><span class="p">][</span><span class="s1">&#39;up&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tot_up</span>
+            <span class="n">results</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="s1">&#39;tot&#39;</span><span class="p">][</span><span class="s1">&#39;dw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tot_dw</span>
+
+    <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="getDos"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getDos">[docs]</a><span class="k">def</span> <span class="nf">getDos</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getDos` can return the DOS of the system</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    uuid:</span>
+<span class="sd">        The uuid of the projwfc calc node</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Two arrays: energy and dos.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;x_array&#39;</span><span class="p">)</span>
+    <span class="n">dos</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;y_array_0&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">dos</span></div>
 
 <div class="viewcode-block" id="saveResults"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.saveResults">[docs]</a><span class="k">def</span> <span class="nf">saveResults</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 

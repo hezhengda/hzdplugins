@@ -45,3 +45,27 @@ def rotation_matrix_from_vectors(vec1, vec2):
     rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
 
     return rotation_matrix
+
+def rotation_matrix_euler(alpha, beta, gamma):
+
+    rot_mat_a = np.array([[1, 0, 0],
+                          [0, np.cos(alpha), np.sin(alpha)],
+                          [0, -np.sin(alpha), np.cos(alpha)]])
+
+    rot_mat_b = np.array([[np.cos(beta), 0, -np.sin(beta)],
+                          [0, 1, 0],
+                          [np.sin(beta), 0, np.cos(beta)]])
+
+    rot_mat_c = np.array([[np.cos(gamma), np.sin(gamma), 0],
+                          [-np.sin(gamma), np.cos(gamma), 0],
+                          [0, 0, 1]])
+
+    tmp = np.array([[1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]])
+
+    tmp = np.matmul(tmp, rot_mat_a)
+    tmp = np.matmul(tmp, rot_mat_b)
+    tmp = np.matmul(tmp, rot_mat_c)
+
+    return tmp

@@ -1,6 +1,12 @@
 Log file for hzdplugins
 =======================
 
+* v0.0.38: 2020.12.12
+    * add `projwfcOriginalSubmit`, `phOriginalSubmit` in `submit.py`
+    * add `getPdos` in `info.py` to get the pdos for certain atom
+    * add `getDos` in `info.py`
+    * Since rotating the adsorbate by algorithm is very time-consuming and not efficient, so I just create the geometric structure of usual adsorbates in the `hzdplugins.aiidaplugins.adsorbates` folder. All formats are `mol`, which is very easy to be read by ase.
+
 * v0.0.34-37: 2020.12.12
     * add some new functionalities in `info.py` which can show the charge & magnetic moments, and also the total forces for each atomic step. Write `get_TotalForces` and `get_ChargeAndMagneticMoments`
     * add the `info.py:getStructure` function which can help visualize the struture.
