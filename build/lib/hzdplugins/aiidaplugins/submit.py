@@ -185,7 +185,7 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, pse
     results_tmp[str(calc.uuid)]['is_finished_ok'] = None
     results_tmp[str(calc.uuid)]['previous_calc'] = 0 # 0 represent original
     results_tmp[str(calc.uuid)]['son_calc'] = None # currently no son_calc node
-    # results_tmp[str(calc.pk)]['description'] = metadata['description']
+    # results_tmp[ads_str(calc.pk)]['description'] = metadata['description']
 
     return results_tmp, calc.uuid
 

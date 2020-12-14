@@ -536,7 +536,7 @@ def getMoleculeByName(str):
 
     Parameters:
 
-    str:
+    ads_str:
         A string. Which we will find whether it matches the adsorbates in the database
 
     Return:
@@ -548,7 +548,7 @@ def getMoleculeByName(str):
     from hzdplugins.aiidaplugins.constants import adsorbates
 
     if len(str) == 1: # means it is an atom
-        if Element(str): # means str is an element
+        if Element(str): # means ads_str is an element
             return Molecule(species = (str), coords = [[0, 0, 0]])
         else:
             raise ValueError("You have entered a wrong string for an element, please try again.")
