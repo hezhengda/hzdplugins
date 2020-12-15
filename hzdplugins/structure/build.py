@@ -23,6 +23,12 @@ def getValue(var):
 
     :code:`getValue` can help us to initialize the variables
 
+    :param var: variable that we want to get value from.
+    :type var: aiida.orm Types
+
+    :returns: the value of the variable.
+    :rtype: corresponding python Types
+
     """
 
     from aiida.orm import Int, Float, Bool, Str, Dict, List
@@ -53,18 +59,17 @@ def getValue(var):
 def bulkFromFile(filename, supercell):
     """
 
-    `bulkFromFile` function can help us create a Bulk from the file.
+    :code:`bulkFromFile` function can help us create a Bulk from the file.
 
-    Parameters:
+    :param filename: Usually when we create the structural file, we do it from the strcutural file such as .xyz or
+                     .cif, etc.
+    :type filename: aiida.orm.Str object
 
-    filename:
-        An aiida.orm.Str object. Usually when we create the structural file, we do it from the strcutural file such
-        as .xyz or .cif, etc.
+    :param supercell: A list that contains the dimension of supercell we would like.
+    :type supercell: aiida.orm.List object
 
-    supercell:
-        An aiida.orm.List object. A list that contains the dimension of supercell we would like.
-
-    Return: A StructureData file that can be used directly in Aiida.
+    :returns: A StructureData file that can be used directly in Aiida.
+    :rtype: aiida.orm.StructurData
 
     """
 
@@ -94,20 +99,22 @@ def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=No
 
     :code:`bulkFromFile` function can help us create a Bulk from the string.
 
-    Parameters:
+    :param bulkStr: The string for the material.
+    :type bulkStr: aiida.orm.Str object.
 
-    bulkStr:
-        An aiida.orm.Str object. The string for the material
+    :param crystal_structure: The crystal structure. It need to be in one of those: sc, fcc,
+                              bcc,  tetragonal, bct, hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende,
+                              rocksalt, cesiumchloride, fluorite or wurtzite.
+    :type crystal_structure: aiida.orm.Str object.
 
-    crystal_structure:
-        An aiida.orm.Str object. The crystal structure. It need to be in one of those: sc, fcc, bcc, tetragonal, bct,
-        hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende, rocksalt, cesiumchloride, fluorite or wurtzite.
+    :param a(/b/c): Lattice constants.
+    :type a(/b/c): aiida.orm.Float object
 
-    a, b, c:
-        An aiida.orm.Float object. Lattice constants.
+    :param supercell: The supercell that we want to get.
+    :type supercell: aiida.orm.List object
 
-    supercell:
-        An aiida.orm.List object. The supercell that we want to get.
+    :returns: The structure of the bulk.
+    :rtype: aiida.orm.StructureData
 
     """
 
@@ -139,26 +146,24 @@ def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=No
 def millerSurfaces(bulk, miller_index, layers, vacuum):
     """
 
-    `millerSurfaces` can help us generate a list of slab structures that we could use in future studies
+    :code:`millerSurfaces` can help us generate a list of slab structures that we could use in future studies
 
-    Parameters:
+    :param bulk: The bulk structure that we are going to use for creating the surface slabs.
+    :type bulk: aiida.orm.StructureData object
 
-    bulk:
-        An aiida.orm.StructureData object. The bulk structure that we are going to use for creating the surface slabs.
+    :param miller_index: The miller index that we want to get.
+    :type miller_index: aiida.orm.List object
 
-    miller_index:
-        An aiida.orm.List object. The miller index that we want to get.
+    :param layers: Set how many layers you want for the surface slab.
+    :type layers: aiida.orm.Int object.
 
-    layers:
-        An aiida.orm.Int object. Set how many layers you want for the surface slab.
+    :param vacuum: Set how many layers you want for the vacuum layer.
+    :type vacuum: aiida.orm.List object
 
-    vacuum:
-        An aiida.orm.List object. Set how many layers you want for the vacuum layer.
-
-    Return: A series of uuids of StructureData object, which can be used for further investigations.
-        The reason why we use uuid instead of StructureData is that StructureData cannot be put in a list with List
-        object, it will shout out error. Once we have the uuid number, we can get the structure by just using
-        :code:`structure = load_node(uuid=uuid_structure)`, it is very straightforward.
+    :returns: A list. The reason why we use uuid instead of StructureData is that StructureData cannot be put in a
+              list with List object, it will shout out error. Once we have the uuid number, we can get the structure
+              by just using :code:`structure = load_node(uuid=uuid_structure)`, it is very straightforward.
+    :rtype: aiida.orm.List object
 
     """
 
@@ -196,25 +201,18 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
 def adsorptionSites(slab, **kwargs):
     """
 
-    `AdsorptionSites` can help us visualize the position and tag of each adsorption sites, then we can determine
+    :code:`AdsorptionSites` can help us visualize the position and tag of each adsorption sites, then we can determine
     where we want to put the adsorbates.
 
-    Parameters:
+    :param slab: This is our slab, and we want to find how we can put the adsorbates on the slab.
+    :type slab: aiida.orm.StructureData
 
-    slab:
-        An aiida.orm.StructureData object. This is our slab, and we want to find how we can put the adsorbates on the
-        slab.
+    :param kwargs: * distance: the distance between adsorption site and the surface
+                   * symm_reduce: the symmetry reduce (default = 0.01)
+                   * near_reduce: the near reduce (default = 0.01)
 
-    kwargs:
-        * distance: the distance between adsorption site and the surface
-        * symm_reduce: the symmetry reduce (default = 0.01)
-        * near_reduce: the near reduce (default = 0.01)
-
-    Return:
-
-    Adsorption site dictionary:
-        An aiida.orm.Dict object. Contains the information of all the positions of adsorption sites,
-        which corresponse to the matplotlib figure.
+    :returns: Dictionary contains the dictionary of adsorption sites.
+    :rtype: aiida.orm.Dict object
 
     """
 
@@ -256,23 +254,22 @@ def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, **kwargs):
 
     :code:`visualizeSlab` will show the slab
 
-    Parameters:
+    :param slab: The slab that we want to visualize
+    :type slab: aiida.orm.StructureData object
 
-    slab:
-        An aiida.orm.StructureData object.
+    :param plot_adsSite: If true, then add adsorption sites, if false, then adsorption site not show.
+    :type plot_adsSite: aiida.orm.Bool object
 
-    plot_adsSite:
-        An aiida.orm.Bool object. If true, then add adsorption sites, if false, then adsorption site not show
+    :param adsorption_sites: Shows the adsorption sites.
+    :type adsorption_sites: aiida.orm.Dict object
 
-    adsorption_sites:
-        An aiida.orm.Dict object. Shows the adsorption sites.
-
-    kwargs:
-        Settings for the plot:
-        * repeat: Int
-        * decay: Float
-        * scale: Float
-        * window: Float
+    :param kwargs: Settings for the plot:
+                   * repeat: Int
+                   * decay: Float
+                   * scale: Float
+                   * window: Float
+    :returns: A graph which represents the slab surface (and the position of adsorption sites).
+    :rtype: matplotlib.pyplot object.
 
     """
 
@@ -443,31 +440,29 @@ def addAdsorbates(slab, adsSiteDictionary):
     * Add each adsorbate to a specific site, and with optimal adsorption distance and angle
     * Put the bottom two layers of the slab fixed, other atoms can be relaxed
 
-    Parameters:
+    :param slab: The slab that we want to adsorb some adsorbates on.
+    :type slab: aiida.orm.StructureData object
 
-    slab:
-        An aiida.orm.StructureData object. The slab that we want to adsorb some adsorbates on.
+    :param adsSiteDictionary: In which contains the adsorbates (for common adsorbates, I can assign the
+                              adsorption atom, geometry of the adsorbates and its adsorption angle in
+                              :code:`constants.py`) and adsorption sites, also I can add new adsorbates to the
+                              adsorbates library. (Do a very simple relax simulation of a molecule in the big cell,
+                              and just output the structure and assign the adsorption site. For mono-site adsorption,
+                              it is really easy, for bi-site adsorption, it is also easy since we can get the
+                              molecule to align; for tri-site or more-site adsorption, well, we can just put the
+                              molecule closer to the surface and let the program determine how does this molecule
+                              interact with the surface, for our usual research, I don't think this is necessary.)
 
-    adsSiteDictionary:
-        An aiida.orm.Dict object. In which contains the adsorbates (for common adsorbates, I can assign the
-        adsorption atom, geometry of the adsorbates and its adsorption angle in :code:`constants.py`) and adsorption
-        sites, also I can add new adsorbates to the adsorbates library. (Do a very simple relax simulation of a
-        molecule in the big cell, and just output the structure and assign the adsorption site. For mono-site
-        adsorption, it is really easy, for bi-site adsorption, it is also easy since we can get the molecule to
-        align; for tri-site or more-site adsorption, well, we can just put the molecule closer to the surface and let
-        the program determine how does this molecule interact with the surface, for our usual research, I don't think
-        this is necessary.)
+                              .. code-block:: python
 
-        .. code-block:: python
+                                    adsSiteDictionary = {
+                                        'O': [site1, site2, site3] # each site is a 3x1 list [a, b, c]
+                                        'F': [site1, site2, site3]
+                                    }
+    :type adsSiteDictionary: aiida.orm.Dict object
 
-            adsSiteDictionary = {
-                'O': [site1, site2, site3] # each site is a 3x1 list [a, b, c]
-                'F': [site1, site2, site3]
-            }
-
-    Return:
-        An aiida.orm.StructureData object. With the adsorbates and modified constrains on all the atoms,
-        ready for the submit functions.
+    :returns: With the adsorbates and modified constrains on all the atoms, ready for the submit functions.
+    :rtype: aiida.orm.StructureData object
 
     """
 
@@ -504,16 +499,14 @@ def newStructure(structure, changeDict):
     :code:`newStructure` will create a new structure by replacing the changeList atom to new type of atoms,
     very useful if there are different chemical states of the same atom in the structure.
 
-    Parameters:
+    :param structure: previous structure with conventional atomic symbols
+    :type structure: aiida.orm.StructureData object
 
-    structure:
-        A aiida.orm.StructureData object.
+    :param changeDict: A dictionary where the i-th atom's label will be replaced. e.g. 'Fe' to 'Fe2'
+    :type changeDict: python dictionary
 
-    changeDict:
-        A dictionary where the i-th atom's label will be replaced. e.g. 'Fe' to 'Fe2'
-
-    Return:
-        A new aiida.orm.StructureData file which stores the difference
+    :returns: return an object which stores the change of the label
+    :rtype: aiida.orm.StructureData object
 
     """
 
@@ -555,13 +548,11 @@ def getMoleculeByName(ads_str):
     :code:`getMoleculeByName` can return the Molecule object of a specific adsorbates, could be very useful for the
     simulations.
 
-    Parameters:
+    :param ads_str: an index of adsorbates in the database
+    :type ads_str: python string
 
-    ads_str:
-        A string. Which we will find whether it matches the adsorbates in the database
-
-    Return:
-        A Molecule Object, which can be used for adding the adsorbates.
+    :returns: An atom or a molecule
+    :rtype: pymatgen molecule object
 
     """
 
@@ -586,17 +577,16 @@ def setFixedCoords(slab, height):
     :code:`setFixedCoords` is a function that can return a list that shows which atom we want to freeze during the
     simulation
 
-    Parameters:
+    :param slab: The slab that we want to fixed atoms.
+    :type slab: aiida.orm.StructureData object
 
-    slab:
-        An aiida.orm.StructureData object.
+    :param height: shows the boundary of the fixed atom. if the z-component of the position of the atom is below
+                   height, then we freeze it.
+    :type height: float
 
-    height:
-        A float. which shows the boundary of the fixed atom. if the z-component of the position of the atom is below
-        height, then we freeze it.
-
-    Return:
-        A Nx3 list which holds all the information about the fixed atoms, can be directly passed to the setting_dict.
+    :returns: A Nx3 list which holds all the information about the fixed atoms, can be directly passed to the
+              setting_dict.
+    :rtype: python list
 
     """
 
@@ -617,23 +607,21 @@ def hzd_add_adsMono(slab, molecule, ads_coord, ads_site):
 
     :code:`hzd_add_ads` is a help function that can help me add adsorbates.
 
-    Parameters:
+    :param slab: A slab that we are interested in.
+    :type slab: Pymatgen Structure object.
 
-    slab:
-        Pymatgen Structure object. A slab that we are interested in.
+    :param molecule: The adsorbate that we want to add
+    :type slab: Pymatgen Molecule object.
 
-    molecule:
-        The adsorbate that we want to add
+    :param ads_coord: The position of adsorption site
+    :type ads_coord: python list
 
-    ads_coord:
-        The position of adsorption site
+    :param ads_site: The adsorption site of the molecule. If there is only 1 site in the molecule, that means it is
+                     mono-ads, if there are 2 sites in the molecule, then it can be mono-ads or bi-ads (needs to
+                     treat differently).
 
-    ads_site:
-        The adsorption site of the molecule. If there is only 1 site in the molecule, that means it is mono-ads,
-        if there are 2 sites in the molecule, then it can be mono-ads or bi-ads (needs to treat differently).
-
-    Return:
-        A modified slab. That all the adsorbates are in [True, True, True] (selective dynamics)
+    :returns: A modified slab with added adsorbates.
+    :rtype: pymatgen structure object.
 
     """
 
