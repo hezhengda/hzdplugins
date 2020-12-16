@@ -34,7 +34,30 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, pse
                            pw.x input file.
 
                            If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
-                           e.g. :code:`{'CONTROL':{}, 'SYSTEM':{}}`
+
+                           In Aiida, there is a very efficient way to specify the :code:`hubbard_u`,
+                           :code:`starting_magnetization` and :code:`starting_ns_eigenvalue`. I give some examples
+                           in below:
+
+                           .. code-block:: python
+
+                                # hubbard_u
+                                'SYSTEM': {
+                                    'hubbard_u': {
+                                        'Fe': 5.0,
+                                        'Fe3': 5.0 # if you have different spins of same atom, then you should use
+                                        newStructure function to create the structure
+                                    },
+                                    'starting_magnetization': {
+                                        'Fe': 0.1,
+                                        'Fe3': 0.1,
+                                    },
+                                    'starting_ns_eigenvalue': [
+                                        [1, 1, 'Fe', 1.0] # represent: starting_ns_eigenvalue(1, 1, 1)=1.0
+                                        # others are the same, if you want to assign to Fe3, just replace Fe with Fe3.
+                                    ]
+                                }
+
     :type add_parameters: python dictionary
 
     :param del_parameters: The tags that we would like to delete, for example if we do not want to use spin-polarized
@@ -219,6 +242,10 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
 
     :param uuid: The uuid of previous calculation. We will start our calculation from there. Because uuid is the
                  unique identification number for each CalcJobNode
+
+                    **Notice**: The uuid must be in the results dictionary, if not the program will shout KeyError.
+                    And if you are testing, you could use assignValue to quickly create a dictionary that contains
+                    the uuid that you want to continue.
     :type uuid: python string object
 
     :param pseudo_family: The pseudopotential family that you want to use. Make sure that you already have that
@@ -244,6 +271,8 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
                            If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
                            e.g. :code:`{'CONTROL':{}, 'SYSTEM':{}}`
+
+                           **Notice**: more options in qePwOriginalSubmit function.
     :type add_parameters: python dictionary object
 
     :param del_parameters: The tags that we would like to delete, for example if we do not want to use spin-polarized
@@ -252,9 +281,10 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
                            e.g. :code:`{'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}`
     :type del_parameters: python dictionary object
 
-    :param kpoints: The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh,
-                    but if two lists are detected, then the first will be k-point mesh, the second one will be the
-                    origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+    :param kpoints: optional, if you want to keep the k-points for previous calculation, just use an empyt list
+                    :code:`[]`. The kpoints that you want to use, if the kpoints has only 1 list, then it is the
+                    kpoint  mesh, but if two lists are detected, then the first will be k-point mesh, the second
+                    one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
     :type kpoints: python list object
 
     :param cluster_options: The detailed option for the cluster. Different cluster may have different
@@ -370,6 +400,12 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
     if parent_folder:
         restart_builder.parent_folder = node.outputs.remote_folder
 
+    # set settings_dict
+    if len(settings_dict) > 0:
+        pass
+    else:
+        settings_dict = node.inputs.settings.get_dict()
+
     # submit the calculation
     restart_builder.structure = structure
     restart_builder.kpoints = kpts
@@ -419,8 +455,6 @@ def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameter
                            because inside the function there is a default setting for parameters which can be used in
                            most cases, but if you have specific need, you can put that in parameters, the format is
                            similar as pw.x input file.
-
-                           If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
                            e.g. :code:`{'PROJWFC':{}}`
     :type add_parameters: python dictionary object

@@ -284,8 +284,11 @@ different atom positions that is in translational symmetry with atom2.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>True or False. If the distance is small than bond_length in one of seven conditions, then return True;
-otherwise return False.</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p>If true, then function will return [True, distance, add_string]</p></li>
+<li><p>If false, then function will return [False, -1, ‘’]</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,8 +343,8 @@ the last step can sometimes be questionable.</p></li>
 <li><p><strong>index</strong> (<em>python list object</em>) – Shows the atoms that we want to investigate.</p></li>
 <li><p><strong>is_spin</strong> (<em>python boolean object</em>) – If is_spin is True, then we need to look for spin-up and spin-down, but if is_spin is false,
 then we only need to care about the orbital, not the spin.</p></li>
-<li><p><strong>set_angular_momentum</strong> (<em>python list object</em>) – A list. [0, 1, 2] means [‘s’, ‘p’, ‘d’] orbitals, and if we are considering f-electrons, then we need to
-add ‘3’ to this list.</p></li>
+<li><p><strong>set_angular_momentum</strong> (<em>python list object</em>) – A list. [0, 1, 2] means [‘s’, ‘p’, ‘d’] orbitals, and if we are considering
+f-electrons, then we need to add ‘3’ to this list.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -614,7 +617,6 @@ previous calculation, then you need to use Str(‘’)</p></li>
 because inside the function there is a default setting for parameters which can be used in
 most cases, but if you have specific need, you can put that in parameters, the format is
 similar as pw.x input file.</p>
-<p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
 <p>e.g. <code class="code docutils literal notranslate"><span class="pre">{'PROJWFC':{}}</span></code></p>
 </p></li>
 <li><p><strong>del_parameters</strong> (<em>python dictionary object</em>) – <p>The tags that we would like to delete, for example if we do not want to use
@@ -646,8 +648,14 @@ listed in the kwargs.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>results</strong> (<em>python dictionary object</em>) – A dictionary that has all the relevant information about the simulation, its key is the uuid of the
 CalcJobNode</p></li>
-<li><p><strong>uuid</strong> (<em>python string object</em>) – The uuid of previous calculation. We will start our calculation from there. Because uuid is the
-unique identification number for each CalcJobNode</p></li>
+<li><p><strong>uuid</strong> (<em>python string object</em>) – <p>The uuid of previous calculation. We will start our calculation from there. Because uuid is the
+unique identification number for each CalcJobNode</p>
+<blockquote>
+<div><p><strong>Notice</strong>: The uuid must be in the results dictionary, if not the program will shout KeyError.
+And if you are testing, you could use assignValue to quickly create a dictionary that contains
+the uuid that you want to continue.</p>
+</div></blockquote>
+</p></li>
 <li><p><strong>pseudo_family</strong> (<em>python string object</em>) – The pseudopotential family that you want to use. Make sure that you already have that
 configured, otherwise an error will occur. This is mendatory.</p></li>
 <li><p><strong>pseudo_dict</strong> (<em>python dictionary object</em>) – Which contains the pseudopotential files that we want to use in the simulation.</p></li>
@@ -661,14 +669,16 @@ most cases, but if you have specific need, you can put that in parameters, the f
 similar as pw.x input file.</p>
 <p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
 <p>e.g. <code class="code docutils literal notranslate"><span class="pre">{'CONTROL':{},</span> <span class="pre">'SYSTEM':{}}</span></code></p>
+<p><strong>Notice</strong>: more options in qePwOriginalSubmit function.</p>
 </p></li>
 <li><p><strong>del_parameters</strong> (<em>python dictionary object</em>) – <p>The tags that we would like to delete, for example if we do not want to use spin-polarized
 simulation, then ‘nspin’ needs to be deleted. Same structure as add_parameters.</p>
 <p>e.g. <code class="code docutils literal notranslate"><span class="pre">{'CONTROL':</span> <span class="pre">[key1,</span> <span class="pre">key2,</span> <span class="pre">key3],</span> <span class="pre">'SYSTEM':</span> <span class="pre">[key1,</span> <span class="pre">key2,</span> <span class="pre">key3]}</span></code></p>
 </p></li>
-<li><p><strong>kpoints</strong> (<em>python list object</em>) – The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh,
-but if two lists are detected, then the first will be k-point mesh, the second one will be the
-origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</p></li>
+<li><p><strong>kpoints</strong> (<em>python list object</em>) – optional, if you want to keep the k-points for previous calculation, just use an empyt list
+<code class="code docutils literal notranslate"><span class="pre">[]</span></code>. The kpoints that you want to use, if the kpoints has only 1 list, then it is the
+kpoint  mesh, but if two lists are detected, then the first will be k-point mesh, the second
+one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</p></li>
 <li><p><strong>cluster_options</strong> (<em>python dictionary object</em>) – The detailed option for the cluster. Different cluster may have different
 settings. Only the following 3 keys can have effects: (1) resources (2) account (3)
 queue_name</p></li>
@@ -703,8 +713,28 @@ the CalcJobNode</p></li>
 function there is a default setting for parameters which can be used in most cases,
 but if you have specific need, you can put that in parameters, the format is similar as
 pw.x input file.</p>
-<p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
-e.g. <code class="code docutils literal notranslate"><span class="pre">{'CONTROL':{},</span> <span class="pre">'SYSTEM':{}}</span></code></p>
+<p>If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</p>
+<p>In Aiida, there is a very efficient way to specify the <code class="code docutils literal notranslate"><span class="pre">hubbard_u</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">starting_magnetization</span></code> and <code class="code docutils literal notranslate"><span class="pre">starting_ns_eigenvalue</span></code>. I give some examples
+in below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># hubbard_u</span>
+<span class="s1">&#39;SYSTEM&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;hubbard_u&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Fe&#39;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="s1">&#39;Fe3&#39;</span><span class="p">:</span> <span class="mf">5.0</span> <span class="c1"># if you have different spins of same atom, then you should use</span>
+        <span class="n">newStructure</span> <span class="n">function</span> <span class="n">to</span> <span class="n">create</span> <span class="n">the</span> <span class="n">structure</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;starting_magnetization&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Fe&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s1">&#39;Fe3&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;starting_ns_eigenvalue&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Fe&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span> <span class="c1"># represent: starting_ns_eigenvalue(1, 1, 1)=1.0</span>
+        <span class="c1"># others are the same, if you want to assign to Fe3, just replace Fe with Fe3.</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </p></li>
 <li><p><strong>del_parameters</strong> (<em>python dictionary object</em>) – <p>The tags that we would like to delete, for example if we do not want to use spin-polarized
 simulation, then ‘nspin’ needs to be deleted. Same structure as add_parameters.</p>

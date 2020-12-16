@@ -186,7 +186,30 @@
 <span class="sd">                           pw.x input file.</span>
 
 <span class="sd">                           If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</span>
-<span class="sd">                           e.g. :code:`{&#39;CONTROL&#39;:{}, &#39;SYSTEM&#39;:{}}`</span>
+
+<span class="sd">                           In Aiida, there is a very efficient way to specify the :code:`hubbard_u`,</span>
+<span class="sd">                           :code:`starting_magnetization` and :code:`starting_ns_eigenvalue`. I give some examples</span>
+<span class="sd">                           in below:</span>
+
+<span class="sd">                           .. code-block:: python</span>
+
+<span class="sd">                                # hubbard_u</span>
+<span class="sd">                                &#39;SYSTEM&#39;: {</span>
+<span class="sd">                                    &#39;hubbard_u&#39;: {</span>
+<span class="sd">                                        &#39;Fe&#39;: 5.0,</span>
+<span class="sd">                                        &#39;Fe3&#39;: 5.0 # if you have different spins of same atom, then you should use</span>
+<span class="sd">                                        newStructure function to create the structure</span>
+<span class="sd">                                    },</span>
+<span class="sd">                                    &#39;starting_magnetization&#39;: {</span>
+<span class="sd">                                        &#39;Fe&#39;: 0.1,</span>
+<span class="sd">                                        &#39;Fe3&#39;: 0.1,</span>
+<span class="sd">                                    },</span>
+<span class="sd">                                    &#39;starting_ns_eigenvalue&#39;: [</span>
+<span class="sd">                                        [1, 1, &#39;Fe&#39;, 1.0] # represent: starting_ns_eigenvalue(1, 1, 1)=1.0</span>
+<span class="sd">                                        # others are the same, if you want to assign to Fe3, just replace Fe with Fe3.</span>
+<span class="sd">                                    ]</span>
+<span class="sd">                                }</span>
+
 <span class="sd">    :type add_parameters: python dictionary</span>
 
 <span class="sd">    :param del_parameters: The tags that we would like to delete, for example if we do not want to use spin-polarized</span>
@@ -371,6 +394,10 @@
 
 <span class="sd">    :param uuid: The uuid of previous calculation. We will start our calculation from there. Because uuid is the</span>
 <span class="sd">                 unique identification number for each CalcJobNode</span>
+
+<span class="sd">                    **Notice**: The uuid must be in the results dictionary, if not the program will shout KeyError.</span>
+<span class="sd">                    And if you are testing, you could use assignValue to quickly create a dictionary that contains</span>
+<span class="sd">                    the uuid that you want to continue.</span>
 <span class="sd">    :type uuid: python string object</span>
 
 <span class="sd">    :param pseudo_family: The pseudopotential family that you want to use. Make sure that you already have that</span>
@@ -396,6 +423,8 @@
 <span class="sd">                           If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</span>
 
 <span class="sd">                           e.g. :code:`{&#39;CONTROL&#39;:{}, &#39;SYSTEM&#39;:{}}`</span>
+
+<span class="sd">                           **Notice**: more options in qePwOriginalSubmit function.</span>
 <span class="sd">    :type add_parameters: python dictionary object</span>
 
 <span class="sd">    :param del_parameters: The tags that we would like to delete, for example if we do not want to use spin-polarized</span>
@@ -404,9 +433,10 @@
 <span class="sd">                           e.g. :code:`{&#39;CONTROL&#39;: [key1, key2, key3], &#39;SYSTEM&#39;: [key1, key2, key3]}`</span>
 <span class="sd">    :type del_parameters: python dictionary object</span>
 
-<span class="sd">    :param kpoints: The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh,</span>
-<span class="sd">                    but if two lists are detected, then the first will be k-point mesh, the second one will be the</span>
-<span class="sd">                    origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
+<span class="sd">    :param kpoints: optional, if you want to keep the k-points for previous calculation, just use an empyt list</span>
+<span class="sd">                    :code:`[]`. The kpoints that you want to use, if the kpoints has only 1 list, then it is the</span>
+<span class="sd">                    kpoint  mesh, but if two lists are detected, then the first will be k-point mesh, the second</span>
+<span class="sd">                    one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
 <span class="sd">    :type kpoints: python list object</span>
 
 <span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different</span>
@@ -522,6 +552,12 @@
     <span class="k">if</span> <span class="n">parent_folder</span><span class="p">:</span>
         <span class="n">restart_builder</span><span class="o">.</span><span class="n">parent_folder</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">remote_folder</span>
 
+    <span class="c1"># set settings_dict</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">settings_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">settings_dict</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
+
     <span class="c1"># submit the calculation</span>
     <span class="n">restart_builder</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
     <span class="n">restart_builder</span><span class="o">.</span><span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpts</span>
@@ -571,8 +607,6 @@
 <span class="sd">                           because inside the function there is a default setting for parameters which can be used in</span>
 <span class="sd">                           most cases, but if you have specific need, you can put that in parameters, the format is</span>
 <span class="sd">                           similar as pw.x input file.</span>
-
-<span class="sd">                           If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</span>
 
 <span class="sd">                           e.g. :code:`{&#39;PROJWFC&#39;:{}}`</span>
 <span class="sd">    :type add_parameters: python dictionary object</span>

@@ -54,8 +54,6 @@ def getValue(var):
     if isinstance(var, List):
         return var.get_list()
 
-
-@calcfunction
 def bulkFromFile(filename, supercell):
     """
 
@@ -91,8 +89,6 @@ def bulkFromFile(filename, supercell):
 
     return StructureData(ase=structure * supercell)
 
-
-@calcfunction
 def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=None, alpha=None, covera=None, u=None,
                    orthorhombic=None):
     """
@@ -142,7 +138,6 @@ def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=No
 # In research, not only we need to deal with solids, we also need to deal with surfaces, and add adsorbates on it,
 # so in my module, it will be important to create any structures that I want easily and efficiently.
 
-@calcfunction
 def millerSurfaces(bulk, miller_index, layers, vacuum):
     """
 
@@ -196,8 +191,6 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
 
     return listGenerator
 
-
-@calcfunction
 def adsorptionSites(slab, **kwargs):
     """
 
@@ -430,8 +423,6 @@ def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, **kwargs):
 
     plt.show()
 
-
-@calcfunction
 def addAdsorbates(slab, adsSiteDictionary):
     """
 
@@ -491,8 +482,6 @@ def addAdsorbates(slab, adsSiteDictionary):
 
     return StructureData(pymatgen_structure=slab_tmp)
 
-
-@calcfunction
 def newStructure(structure, changeDict):
     """
 
@@ -540,7 +529,6 @@ def newStructure(structure, changeDict):
 
     return new_structure
 
-
 # The functions below need to be used with care, because they are not part of the open API.
 def getMoleculeByName(ads_str):
     """
@@ -569,7 +557,6 @@ def getMoleculeByName(ads_str):
             return adsorbates[ads_str]['mol']
         else:
             raise ValueError("Sorry, the adsorbates you are asking for haven't been added in the package yet.")
-
 
 def setFixedCoords(slab, height):
     """
@@ -600,7 +587,6 @@ def setFixedCoords(slab, height):
             fixed_coords.append([True, True, True])
 
     return fixed_coords
-
 
 def hzd_add_adsMono(slab, molecule, ads_coord, ads_site):
     """

@@ -614,8 +614,8 @@
 <span class="sd">                    then we only need to care about the orbital, not the spin.</span>
 <span class="sd">    :type is_spin: python boolean object</span>
 
-<span class="sd">    :param set_angular_momentum: A list. [0, 1, 2] means [&#39;s&#39;, &#39;p&#39;, &#39;d&#39;] orbitals, and if we are considering f-electrons, then we need to</span>
-<span class="sd">                                 add &#39;3&#39; to this list.</span>
+<span class="sd">    :param set_angular_momentum: A list. [0, 1, 2] means [&#39;s&#39;, &#39;p&#39;, &#39;d&#39;] orbitals, and if we are considering</span>
+<span class="sd">                                 f-electrons, then we need to add &#39;3&#39; to this list.</span>
 <span class="sd">    :type set_angular_momentum: python list object</span>
 
 <span class="sd">    :returns: A list and A dictionary. A list is the energy list, which is modified by the Fermi energy. The second</span>
@@ -805,8 +805,8 @@
 <span class="sd">    :param bond_length: The threshold of the bond length that we are interested in, can be set by the user.</span>
 <span class="sd">    :type bond_length: python float object</span>
 
-<span class="sd">    :returns: True or False. If the distance is small than bond_length in one of seven conditions, then return True;</span>
-<span class="sd">              otherwise return False.</span>
+<span class="sd">    :returns: * If true, then function will return [True, distance, add_string]</span>
+<span class="sd">              * If false, then function will return [False, -1, &#39;&#39;]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
