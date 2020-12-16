@@ -557,7 +557,7 @@ The keys are uuid of each nodes</p>
 
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.submit.phOriginalSubmit">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">phOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">qpoints</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#phOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.phOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">phOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">qpoints</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#phOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.phOriginalSubmit" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">phOriginalSubmit</span></code> can submit a ph.x simulation to get the PDOS. It must follow a scf simulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -583,6 +583,9 @@ add_parameters.</p>
 </p></li>
 <li><p><strong>metadata</strong> (<em>python dictionary object</em>) – The dictionary that contains information about metadata. For example: label and description.
 label and description are mendatory.</p></li>
+<li><p><strong>cluster_options</strong> (<em>python dictionary object</em>) – The detailed option for the cluster. Different cluster may have different
+settings. Only the following 3 keys can have effects: (1) resources (2) account (3)
+queue_name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -602,7 +605,7 @@ label and description are mendatory.</p></li>
 
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">projwfcOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#projwfcOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.submit.</code><code class="sig-name descname">projwfcOriginalSubmit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">codename</span></em>, <em class="sig-param"><span class="n">add_parameters</span></em>, <em class="sig-param"><span class="n">del_parameters</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">cluster_options</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/submit.html#projwfcOriginalSubmit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">projwfcOriginalSubmit</span></code> can submit a projwfc simulation to get the PDOS. It must follow a nscf simulation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -626,6 +629,9 @@ add_parameters.</p>
 </p></li>
 <li><p><strong>metadata</strong> (<em>python dictionary object</em>) – The dictionary that contains information about metadata. For example: label and
 description. label and description are mendatory.</p></li>
+<li><p><strong>cluster_options</strong> (<em>python dictionary object</em>) – The detailed option for the cluster. Different cluster may have different
+settings. Only the following 3 keys can have effects: (1) resources (2) account (3)
+queue_name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -675,7 +681,7 @@ similar as pw.x input file.</p>
 simulation, then ‘nspin’ needs to be deleted. Same structure as add_parameters.</p>
 <p>e.g. <code class="code docutils literal notranslate"><span class="pre">{'CONTROL':</span> <span class="pre">[key1,</span> <span class="pre">key2,</span> <span class="pre">key3],</span> <span class="pre">'SYSTEM':</span> <span class="pre">[key1,</span> <span class="pre">key2,</span> <span class="pre">key3]}</span></code></p>
 </p></li>
-<li><p><strong>kpoints</strong> (<em>python list object</em>) – optional, if you want to keep the k-points for previous calculation, just use an empyt list
+<li><p><strong>kpoints</strong> (<em>python list object</em>) – optional, if you want to keep the k-points for previous calculation, just use an empty list
 <code class="code docutils literal notranslate"><span class="pre">[]</span></code>. The kpoints that you want to use, if the kpoints has only 1 list, then it is the
 kpoint  mesh, but if two lists are detected, then the first will be k-point mesh, the second
 one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</p></li>

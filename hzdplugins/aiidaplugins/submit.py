@@ -281,7 +281,7 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
                            e.g. :code:`{'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}`
     :type del_parameters: python dictionary object
 
-    :param kpoints: optional, if you want to keep the k-points for previous calculation, just use an empyt list
+    :param kpoints: optional, if you want to keep the k-points for previous calculation, just use an empty list
                     :code:`[]`. The kpoints that you want to use, if the kpoints has only 1 list, then it is the
                     kpoint  mesh, but if two lists are detected, then the first will be k-point mesh, the second
                     one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
@@ -433,7 +433,7 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
     return results_tmp, calc.uuid
 
 
-def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameters, metadata):
+def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameters, metadata, cluster_options):
     """
 
     :code:`projwfcOriginalSubmit` can submit a projwfc simulation to get the PDOS. It must follow a nscf simulation
@@ -469,6 +469,11 @@ def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameter
     :param metadata: The dictionary that contains information about metadata. For example: label and
                      description. label and description are mendatory.
     :type metadata: python dictionary object
+
+    :param cluster_options: The detailed option for the cluster. Different cluster may have different
+                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)
+                            queue_name
+    :type cluster_options: python dictionary object
 
     :returns: - **results** (`python dictionary object`): results contains the latest calculation information.
 
@@ -511,12 +516,23 @@ def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameter
             if key2 in tmp.keys():
                 tmp.pop(key2)
 
-    # slurm
-    projwfc_builder.metadata.options.resources = {'num_machines': 1}  # in here machine = node
-    projwfc_builder.metadata.options.max_wallclock_seconds = 86400
-    projwfc_builder.metadata.options.account = "jara0037"
-    projwfc_builder.metadata.options.scheduler_stderr = 'stderr'
-    projwfc_builder.metadata.options.scheduler_stdout = 'stdout'
+    # reset cluster_options:
+    if len(cluster_options) > 0:
+        if 'resources' in cluster_options.keys():
+            projwfc_builder.metadata.options.resources = cluster_options['resources']
+        if 'account' in cluster_options.keys():
+            projwfc_builder.metadata.options.account = cluster_options['account']
+        if 'queue_name' in cluster_options.keys():
+            projwfc_builder.metadata.options.queue_name = cluster_options['queue_name']
+    else:
+        projwfc_builder.metadata.options.update({
+            'resources': slurm_options[computer]['projwfc']['resources'],
+            'max_wallclock_seconds': slurm_options[computer]['projwfc']['max_wallclock_seconds'],
+            'account': slurm_options[computer]['projwfc']['account'],
+            'scheduler_stderr': slurm_options[computer]['projwfc']['scheduler_stderr'],
+            'scheduler_stdout': slurm_options[computer]['projwfc']['scheduler_stdout'],
+            'queue_name': slurm_options[computer]['projwfc']['queue_name']
+        })
 
     projwfc_builder.parameters = Dict(dict=projwfc_parameter)
     projwfc_builder.parent_folder = node.outputs.remote_folder
@@ -545,7 +561,7 @@ def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameter
     return results_tmp, calc.uuid
 
 
-def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_parameters, metadata):
+def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_parameters, metadata, cluster_options):
     """
 
     :code:`phOriginalSubmit` can submit a ph.x simulation to get the PDOS. It must follow a scf simulation.
@@ -584,6 +600,11 @@ def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_param
     :param metadata: The dictionary that contains information about metadata. For example: label and description.
                      label and description are mendatory.
     :type metadata: python dictionary object
+
+    :param cluster_options: The detailed option for the cluster. Different cluster may have different
+                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)
+                            queue_name
+    :type cluster_options: python dictionary object
 
     :returns: - **results** (`python dictionary object`): results contains the latest calculation information.
 
@@ -634,12 +655,23 @@ def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_param
     else:
         qpts.set_kpoints_mesh(mesh=qpoints[0], offset=qpoints[1])
 
-    # slurm
-    ph_builder.metadata.options.resources = {'num_machines': 1}  # in here machine = node
-    ph_builder.metadata.options.max_wallclock_seconds = 86400
-    ph_builder.metadata.options.account = "jara0037"
-    ph_builder.metadata.options.scheduler_stderr = 'stderr'
-    ph_builder.metadata.options.scheduler_stdout = 'stdout'
+    # reset cluster_options:
+    if len(cluster_options) > 0:
+        if 'resources' in cluster_options.keys():
+            ph_builder.metadata.options.resources = cluster_options['resources']
+        if 'account' in cluster_options.keys():
+            ph_builder.metadata.options.account = cluster_options['account']
+        if 'queue_name' in cluster_options.keys():
+            ph_builder.metadata.options.queue_name = cluster_options['queue_name']
+    else:
+        ph_builder.metadata.options.update({
+            'resources': slurm_options[computer]['projwfc']['resources'],
+            'max_wallclock_seconds': slurm_options[computer]['projwfc']['max_wallclock_seconds'],
+            'account': slurm_options[computer]['projwfc']['account'],
+            'scheduler_stderr': slurm_options[computer]['projwfc']['scheduler_stderr'],
+            'scheduler_stdout': slurm_options[computer]['projwfc']['scheduler_stdout'],
+            'queue_name': slurm_options[computer]['projwfc']['queue_name']
+        })
 
     ph_builder.parameters = Dict(dict=ph_parameter)
     ph_builder.parent_folder = node.outputs.remote_folder

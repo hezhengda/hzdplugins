@@ -433,7 +433,7 @@
 <span class="sd">                           e.g. :code:`{&#39;CONTROL&#39;: [key1, key2, key3], &#39;SYSTEM&#39;: [key1, key2, key3]}`</span>
 <span class="sd">    :type del_parameters: python dictionary object</span>
 
-<span class="sd">    :param kpoints: optional, if you want to keep the k-points for previous calculation, just use an empyt list</span>
+<span class="sd">    :param kpoints: optional, if you want to keep the k-points for previous calculation, just use an empty list</span>
 <span class="sd">                    :code:`[]`. The kpoints that you want to use, if the kpoints has only 1 list, then it is the</span>
 <span class="sd">                    kpoint  mesh, but if two lists are detected, then the first will be k-point mesh, the second</span>
 <span class="sd">                    one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
@@ -585,7 +585,7 @@
     <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
 
 
-<div class="viewcode-block" id="projwfcOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">projwfcOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+<div class="viewcode-block" id="projwfcOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">projwfcOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`projwfcOriginalSubmit` can submit a projwfc simulation to get the PDOS. It must follow a nscf simulation</span>
@@ -621,6 +621,11 @@
 <span class="sd">    :param metadata: The dictionary that contains information about metadata. For example: label and</span>
 <span class="sd">                     description. label and description are mendatory.</span>
 <span class="sd">    :type metadata: python dictionary object</span>
+
+<span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different</span>
+<span class="sd">                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)</span>
+<span class="sd">                            queue_name</span>
+<span class="sd">    :type cluster_options: python dictionary object</span>
 
 <span class="sd">    :returns: - **results** (`python dictionary object`): results contains the latest calculation information.</span>
 
@@ -663,12 +668,23 @@
             <span class="k">if</span> <span class="n">key2</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">tmp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key2</span><span class="p">)</span>
 
-    <span class="c1"># slurm</span>
-    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;num_machines&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># in here machine = node</span>
-    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_wallclock_seconds</span> <span class="o">=</span> <span class="mi">86400</span>
-    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="s2">&quot;jara0037&quot;</span>
-    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stderr</span> <span class="o">=</span> <span class="s1">&#39;stderr&#39;</span>
-    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stdout</span> <span class="o">=</span> <span class="s1">&#39;stdout&#39;</span>
+    <span class="c1"># reset cluster_options:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;resources&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;account&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;queue_name&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;queue_name&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
+        <span class="p">})</span>
 
     <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">projwfc_parameter</span><span class="p">)</span>
     <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">parent_folder</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">remote_folder</span>
@@ -697,7 +713,7 @@
     <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
 
 
-<div class="viewcode-block" id="phOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.phOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">phOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">qpoints</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+<div class="viewcode-block" id="phOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.phOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">phOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">qpoints</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`phOriginalSubmit` can submit a ph.x simulation to get the PDOS. It must follow a scf simulation.</span>
@@ -736,6 +752,11 @@
 <span class="sd">    :param metadata: The dictionary that contains information about metadata. For example: label and description.</span>
 <span class="sd">                     label and description are mendatory.</span>
 <span class="sd">    :type metadata: python dictionary object</span>
+
+<span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different</span>
+<span class="sd">                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)</span>
+<span class="sd">                            queue_name</span>
+<span class="sd">    :type cluster_options: python dictionary object</span>
 
 <span class="sd">    :returns: - **results** (`python dictionary object`): results contains the latest calculation information.</span>
 
@@ -786,12 +807,23 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">qpts</span><span class="o">.</span><span class="n">set_kpoints_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="o">=</span><span class="n">qpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">offset</span><span class="o">=</span><span class="n">qpoints</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="c1"># slurm</span>
-    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;num_machines&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># in here machine = node</span>
-    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_wallclock_seconds</span> <span class="o">=</span> <span class="mi">86400</span>
-    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="s2">&quot;jara0037&quot;</span>
-    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stderr</span> <span class="o">=</span> <span class="s1">&#39;stderr&#39;</span>
-    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stdout</span> <span class="o">=</span> <span class="s1">&#39;stdout&#39;</span>
+    <span class="c1"># reset cluster_options:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;resources&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;account&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;queue_name&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;queue_name&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
+        <span class="p">})</span>
 
     <span class="n">ph_builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">ph_parameter</span><span class="p">)</span>
     <span class="n">ph_builder</span><span class="o">.</span><span class="n">parent_folder</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">remote_folder</span>
