@@ -69,7 +69,7 @@ def bulkFromFile(filename, supercell):
     :type supercell: aiida.orm.List object
 
     :returns: A StructureData file that can be used directly in Aiida.
-    :rtype: aiida.orm.StructurData
+    :rtype: aiida.orm.StructurData object
 
     """
 

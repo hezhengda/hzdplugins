@@ -462,8 +462,8 @@ def getPdos(uuid, index, is_spin, set_angular_momentum=[0, 1, 2]):
                     then we only need to care about the orbital, not the spin.
     :type is_spin: python boolean object
 
-    :param set_angular_momentum: A list. [0, 1, 2] means ['s', 'p', 'd'] orbitals, and if we are considering f-electrons, then we need to
-                                 add '3' to this list.
+    :param set_angular_momentum: A list. [0, 1, 2] means ['s', 'p', 'd'] orbitals, and if we are considering
+                                 f-electrons, then we need to add '3' to this list.
     :type set_angular_momentum: python list object
 
     :returns: A list and A dictionary. A list is the energy list, which is modified by the Fermi energy. The second
@@ -653,8 +653,8 @@ def checkDistance(cell, atom1, atom2, bond_length):
     :param bond_length: The threshold of the bond length that we are interested in, can be set by the user.
     :type bond_length: python float object
 
-    :returns: True or False. If the distance is small than bond_length in one of seven conditions, then return True;
-              otherwise return False.
+    :returns: * If true, then function will return [True, distance, add_string]
+              * If false, then function will return [False, -1, '']
 
     """
 
