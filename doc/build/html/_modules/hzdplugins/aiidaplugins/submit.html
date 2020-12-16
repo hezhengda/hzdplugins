@@ -228,6 +228,18 @@
 <span class="sd">    :type pseudo_family: python string object.</span>
 
 <span class="sd">    :param pseudo_dict: which contains the pseudopotential files that we want to use in the simulation.</span>
+<span class="sd">                        In here it is very important to note that the path of the pseudopotential file has to be in</span>
+<span class="sd">                        the absolute path.</span>
+
+<span class="sd">                        e.g.</span>
+
+<span class="sd">                        .. code-block:: python</span>
+
+<span class="sd">                            pseudo_dict = {</span>
+<span class="sd">                                &#39;Fe&#39;: UpfData(absolute_path),</span>
+<span class="sd">                                &#39;Fe3&#39;: UpfData(absolute_path)</span>
+<span class="sd">                            }</span>
+
 <span class="sd">    :type pseudo_dict: python dictionary object.</span>
 
 <span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different settings. Only</span>

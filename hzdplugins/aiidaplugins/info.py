@@ -9,7 +9,6 @@ from copy import deepcopy
 from hzdplugins.aiidaplugins.constants import results_keys_set
 import json
 
-
 def showResults(results):
     """
 
@@ -27,7 +26,6 @@ def showResults(results):
                                 columns=results_keys_set)
     pd.set_option("display.max_rows", None, "display.max_columns", None)
     return df
-
 
 def getUnDoneTasks(results):
     """
@@ -55,7 +53,6 @@ def getUnDoneTasks(results):
 
     return subresults
 
-
 def getUnFinishedTasks(results):
     """
 
@@ -77,7 +74,6 @@ def getUnFinishedTasks(results):
             subresults[key] = value
 
     return subresults
-
 
 def getUnConvergedTasks(results):
     """
@@ -102,7 +98,6 @@ def getUnConvergedTasks(results):
                     subresults[key] = value
 
     return subresults
-
 
 def assignValue(results):
     """
@@ -175,7 +170,6 @@ def assignValue(results):
                 results_tmp[uuid_node]['exit_status'] = str(node.exit_status)
 
     return results_tmp
-
 
 def pkToUuidConverter(results_pk):
     """
@@ -259,7 +253,6 @@ def pkToUuidConverter(results_pk):
 
     return results_tmp
 
-
 def getChargeAndMagneticMoments(uuid, traj_index=-1):
     """
 
@@ -295,7 +288,6 @@ def getChargeAndMagneticMoments(uuid, traj_index=-1):
 
     return df
 
-
 def getTotalForces(uuid):
     """
 
@@ -327,7 +319,6 @@ def getTotalForces(uuid):
     plt.show()
 
     return tf[-5:-1]
-
 
 def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
     """
@@ -403,7 +394,6 @@ def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
 
     return results
 
-
 def getStructure(uuid):
     """
 
@@ -445,7 +435,6 @@ def getStructure(uuid):
     v.view.gui_style = 'ngl'
 
     return v, structure
-
 
 def getPdos(uuid, index, is_spin, set_angular_momentum=[0, 1, 2]):
     """
@@ -569,7 +558,6 @@ def getPdos(uuid, index, is_spin, set_angular_momentum=[0, 1, 2]):
 
     return energy, results
 
-
 def getDos(uuid):
     """
 
@@ -589,7 +577,6 @@ def getDos(uuid):
     dos = node.outputs.Dos.get_array('y_array_0')
 
     return energy, dos
-
 
 def saveResults(results, filename):
     """
@@ -612,7 +599,6 @@ def saveResults(results, filename):
 
     return 'Your results have been successfully saved.'
 
-
 def readResults(filename):
     """
 
@@ -629,7 +615,6 @@ def readResults(filename):
         results = json.load(json_file)
 
     return results
-
 
 # In the below are some functions that may help
 
@@ -675,7 +660,6 @@ def checkDistance(cell, atom1, atom2, bond_length):
                                                                                                               az)
 
     return False, -1, ''
-
 
 def isMetal(atom_symbol):
 

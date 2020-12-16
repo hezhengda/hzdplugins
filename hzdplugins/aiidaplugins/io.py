@@ -1,7 +1,6 @@
 from copy import deepcopy
 from aiida.orm import load_node
 
-
 def qeCleanOneRemoteFolder(results, uuid):
     """
 
@@ -98,7 +97,6 @@ def qeCleanOneRemoteFolder(results, uuid):
         transport.close()
         return results_tmp
 
-
 def qecleanAllRemoteFolder(results, *args):
     """
 
@@ -133,7 +131,6 @@ def qecleanAllRemoteFolder(results, *args):
             else:
                 pass
         return results_tmp
-
 
 def qeRetriveAllFiles(uuid, localpath):
     """
@@ -172,7 +169,6 @@ def qeRetriveAllFiles(uuid, localpath):
     transport.close()
 
     return 'The file from {} have been copied to {}'.format(pwd, localpath_uuid)
-
 
 def setCmdOnRemoteComputer(cmd, uuid):
     """

@@ -76,6 +76,18 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, pse
     :type pseudo_family: python string object.
 
     :param pseudo_dict: which contains the pseudopotential files that we want to use in the simulation.
+                        In here it is very important to note that the path of the pseudopotential file has to be in
+                        the absolute path.
+
+                        e.g.
+
+                        .. code-block:: python
+
+                            pseudo_dict = {
+                                'Fe': UpfData(absolute_path),
+                                'Fe3': UpfData(absolute_path)
+                            }
+
     :type pseudo_dict: python dictionary object.
 
     :param cluster_options: The detailed option for the cluster. Different cluster may have different settings. Only
