@@ -7,7 +7,6 @@ from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import numpy as np
-from aiida.engine import calcfunction
 from aiida.orm import StructureData, List, Dict
 from ase.io import read
 from matplotlib import patches
@@ -61,10 +60,10 @@ def bulkFromFile(filename, supercell):
 
     :param filename: Usually when we create the structural file, we do it from the strcutural file such as .xyz or
                      .cif, etc.
-    :type filename: aiida.orm.Str object
+    :type filename: python string object
 
     :param supercell: A list that contains the dimension of supercell we would like.
-    :type supercell: aiida.orm.List object
+    :type supercell: python list object
 
     :returns: A StructureData file that can be used directly in Aiida.
     :rtype: aiida.orm.StructurData object
@@ -72,8 +71,6 @@ def bulkFromFile(filename, supercell):
     """
 
     # transfer from aiida.orm types to the common python types
-    filename = getValue(filename)
-    supercell = getValue(supercell)
 
     if len(filename) == 0:
         raise (IOError("You didn't provide an input file."))
@@ -96,18 +93,18 @@ def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=No
     :code:`bulkFromFile` function can help us create a Bulk from the string.
 
     :param bulkStr: The string for the material.
-    :type bulkStr: aiida.orm.Str object.
+    :type bulkStr: python string object
 
     :param crystal_structure: The crystal structure. It need to be in one of those: sc, fcc,
                               bcc,  tetragonal, bct, hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende,
                               rocksalt, cesiumchloride, fluorite or wurtzite.
-    :type crystal_structure: aiida.orm.Str object.
+    :type crystal_structure: python string object
 
     :param a(/b/c): Lattice constants.
-    :type a(/b/c): aiida.orm.Float object
+    :type a(/b/c): python float object
 
     :param supercell: The supercell that we want to get.
-    :type supercell: aiida.orm.List object
+    :type supercell: python list object
 
     :returns: The structure of the bulk.
     :rtype: aiida.orm.StructureData
@@ -115,19 +112,6 @@ def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=No
     """
 
     from ase.build import bulk
-
-    # convert all aiida
-    bulkStr = getValue(bulkStr)
-    crystal_structure = getValue(crystal_structure)
-    a = getValue(a)
-    b = getValue(b)
-    c = getValue(c)
-    alpha = getValue(alpha)
-    covera = getValue(covera)
-    u = getValue(u)
-    orthorhombic = getValue(orthorhombic)
-    cubic = getValue(cubic)
-    supercell = getValue(supercell)
 
     bulk_ase = bulk(name=bulkStr, crystalstructure=crystal_structure, a=a, b=b, c=c, alpha=alpha, covera=covera, u=u,
                     orthorhombic=orthorhombic, cubic=cubic)
@@ -147,13 +131,13 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
     :type bulk: aiida.orm.StructureData object
 
     :param miller_index: The miller index that we want to get.
-    :type miller_index: aiida.orm.List object
+    :type miller_index: python list object
 
     :param layers: Set how many layers you want for the surface slab.
-    :type layers: aiida.orm.Int object.
+    :type layers: python int object
 
     :param vacuum: Set how many layers you want for the vacuum layer.
-    :type vacuum: aiida.orm.List object
+    :type vacuum: python list object
 
     :returns: A list. The reason why we use uuid instead of StructureData is that StructureData cannot be put in a
               list with List object, it will shout out error. Once we have the uuid number, we can get the structure
@@ -164,18 +148,15 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
 
     # do the pre-process of aiida.orm objects.
     bulk_pmgstructure = bulk.get_pymatgen_structure()
-    miller_index_list = miller_index.get_list()
-    layers_int = layers.value
-    vacuum_int = vacuum.value
 
     sg = SlabGenerator(initial_structure=bulk_pmgstructure,
-                       miller_index=miller_index_list,
-                       min_slab_size=layers_int,
-                       min_vacuum_size=vacuum_int,
+                       miller_index=miller_index,
+                       min_slab_size=layers,
+                       min_vacuum_size=vacuum,
                        center_slab=True,
                        in_unit_planes=True,
                        primitive=False,
-                       max_normal_search=max(miller_index_list),
+                       max_normal_search=max(miller_index),
                        reorient_lattice=True)
 
     listOfStructures = sg.get_slabs()
@@ -242,7 +223,7 @@ def adsorptionSites(slab, **kwargs):
     return dictGenerator
 
 
-def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, **kwargs):
+def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, adssitetype=['ontop', 'bridge', 'hollow'], **kwargs):
     """
 
     :code:`visualizeSlab` will show the slab
@@ -255,6 +236,10 @@ def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, **kwargs):
 
     :param adsorption_sites: Shows the adsorption sites.
     :type adsorption_sites: aiida.orm.Dict object
+
+    :param adssitetype: determine which adsorption site you want to plot, the default is all types of sites (ontop,
+                        bridge, hollow), but you can specify on your own. Since sometime the program tends to give us
+                        more sites, so it is not easy to see, so we can define what kind of site we want to investigate.
 
     :param kwargs: Settings for the plot:
                    * repeat: Int
@@ -337,80 +322,83 @@ def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, **kwargs):
         if plot_adsSite:
             # Adsorption sites
             # top site
-            ads_sites = adsorption_sites['ontop']
-            sop = get_rot(orig_slab)
-            ads_sites = [sop.operate(ads_site)[:2].tolist() for ads_site in ads_sites]
-            ax.plot(
-                *zip(*ads_sites),
-                color="k",
-                marker="o",
-                markersize=20,
-                mew=1,
-                linestyle="",
-                zorder=10000
-            )
-            for site_id, ads_site in enumerate(ads_sites):
-                ax.text(ads_site[0], ads_site[1],
-                        str(site_id),
-                        color='yellow',
-                        fontsize=16,
-                        ha='center', va='center',
-                        zorder=20000)
+            if 'ontop' in adssitetype:
+                ads_sites = adsorption_sites['ontop']
+                sop = get_rot(orig_slab)
+                ads_sites = [sop.operate(ads_site)[:2].tolist() for ads_site in ads_sites]
+                ax.plot(
+                    *zip(*ads_sites),
+                    color="k",
+                    marker="o",
+                    markersize=20,
+                    mew=1,
+                    linestyle="",
+                    zorder=10000
+                )
+                for site_id, ads_site in enumerate(ads_sites):
+                    ax.text(ads_site[0], ads_site[1],
+                            str(site_id),
+                            color='yellow',
+                            fontsize=16,
+                            ha='center', va='center',
+                            zorder=20000)
             # bridge site
-            ads_sites = adsorption_sites['bridge']
-            sop = get_rot(orig_slab)
-            ads_sites = [sop.operate(ads_site)[:2].tolist() for ads_site in ads_sites]
-            ax.plot(
-                *zip(*ads_sites),
-                color="k",
-                marker="s",
-                markersize=20,
-                mew=1,
-                linestyle="",
-                zorder=10000
-            )
-            for site_id, ads_site in enumerate(ads_sites):
-                ax.text(ads_site[0], ads_site[1],
-                        str(site_id),
-                        color='yellow',
-                        fontsize=16,
-                        ha='center', va='center',
-                        zorder=20000)
+            if 'bridge' in adssitetype:
+                ads_sites = adsorption_sites['bridge']
+                sop = get_rot(orig_slab)
+                ads_sites = [sop.operate(ads_site)[:2].tolist() for ads_site in ads_sites]
+                ax.plot(
+                    *zip(*ads_sites),
+                    color="k",
+                    marker="s",
+                    markersize=20,
+                    mew=1,
+                    linestyle="",
+                    zorder=10000
+                )
+                for site_id, ads_site in enumerate(ads_sites):
+                    ax.text(ads_site[0], ads_site[1],
+                            str(site_id),
+                            color='yellow',
+                            fontsize=16,
+                            ha='center', va='center',
+                            zorder=20000)
             # hollow site
-            ads_sites = adsorption_sites['hollow']
-            sop = get_rot(orig_slab)
-            ads_sites = [sop.operate(ads_site)[:2].tolist() for ads_site in ads_sites]
-            ax.plot(
-                *zip(*ads_sites),
-                color="k",
-                marker="^",
-                markersize=20,
-                mew=1,
-                linestyle="",
-                zorder=10000
-            )
-            for site_id, ads_site in enumerate(ads_sites):
-                ax.text(ads_site[0], ads_site[1],
-                        str(site_id),
-                        color='yellow',
-                        fontsize=16,
-                        ha='center', va='center',
-                        zorder=20000)
+            if 'hollow' in adssitetype:
+                ads_sites = adsorption_sites['hollow']
+                sop = get_rot(orig_slab)
+                ads_sites = [sop.operate(ads_site)[:2].tolist() for ads_site in ads_sites]
+                ax.plot(
+                    *zip(*ads_sites),
+                    color="k",
+                    marker="^",
+                    markersize=20,
+                    mew=1,
+                    linestyle="",
+                    zorder=10000
+                )
+                for site_id, ads_site in enumerate(ads_sites):
+                    ax.text(ads_site[0], ads_site[1],
+                            str(site_id),
+                            color='yellow',
+                            fontsize=16,
+                            ha='center', va='center',
+                            zorder=20000)
         else:
             pass
 
-        # Draw unit cell
-        if draw_unit_cell:
-            verts = np.insert(verts, 1, lattsum, axis=0).tolist()
-            verts += [[0.0, 0.0]]
-            verts = [[0.0, 0.0]] + verts
-            codes = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY]
-            verts = [(np.array(vert) + corner).tolist() for vert in verts]
-            path = Path(verts, codes)
-            patch = patches.PathPatch(
-                path, facecolor="none", lw=2, alpha=0.5, zorder=2 * n + 2
-            )
-            ax.add_patch(patch)
+    # Draw unit cell
+    if draw_unit_cell:
+        verts = np.insert(verts, 1, lattsum, axis=0).tolist()
+        verts += [[0.0, 0.0]]
+        verts = [[0.0, 0.0]] + verts
+        codes = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY]
+        verts = [(np.array(vert) + corner).tolist() for vert in verts]
+        path = Path(verts, codes)
+        patch = patches.PathPatch(
+            path, facecolor="none", lw=2, alpha=0.5, zorder=2 * len(coords) + 2
+        )
+        ax.add_patch(patch)
 
     ax.set_aspect("equal")
     center = corner + lattsum / 2.0

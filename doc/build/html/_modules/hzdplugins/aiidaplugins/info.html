@@ -161,7 +161,6 @@
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">results_keys_set</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
-
 <div class="viewcode-block" id="showResults"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.showResults">[docs]</a><span class="k">def</span> <span class="nf">showResults</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -179,7 +178,6 @@
                                 <span class="n">columns</span><span class="o">=</span><span class="n">results_keys_set</span><span class="p">)</span>
     <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_rows&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;display.max_columns&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">df</span></div>
-
 
 <div class="viewcode-block" id="getUnDoneTasks"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getUnDoneTasks">[docs]</a><span class="k">def</span> <span class="nf">getUnDoneTasks</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -207,7 +205,6 @@
 
     <span class="k">return</span> <span class="n">subresults</span></div>
 
-
 <div class="viewcode-block" id="getUnFinishedTasks"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getUnFinishedTasks">[docs]</a><span class="k">def</span> <span class="nf">getUnFinishedTasks</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -229,7 +226,6 @@
             <span class="n">subresults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">return</span> <span class="n">subresults</span></div>
-
 
 <div class="viewcode-block" id="getUnConvergedTasks"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getUnConvergedTasks">[docs]</a><span class="k">def</span> <span class="nf">getUnConvergedTasks</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -254,7 +250,6 @@
                     <span class="n">subresults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">return</span> <span class="n">subresults</span></div>
-
 
 <div class="viewcode-block" id="assignValue"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.assignValue">[docs]</a><span class="k">def</span> <span class="nf">assignValue</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -327,7 +322,6 @@
                 <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid_node</span><span class="p">][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">exit_status</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">results_tmp</span></div>
-
 
 <div class="viewcode-block" id="pkToUuidConverter"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.pkToUuidConverter">[docs]</a><span class="k">def</span> <span class="nf">pkToUuidConverter</span><span class="p">(</span><span class="n">results_pk</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -411,7 +405,6 @@
 
     <span class="k">return</span> <span class="n">results_tmp</span></div>
 
-
 <div class="viewcode-block" id="getChargeAndMagneticMoments"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getChargeAndMagneticMoments">[docs]</a><span class="k">def</span> <span class="nf">getChargeAndMagneticMoments</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">traj_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -447,7 +440,6 @@
 
     <span class="k">return</span> <span class="n">df</span></div>
 
-
 <div class="viewcode-block" id="getTotalForces"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getTotalForces">[docs]</a><span class="k">def</span> <span class="nf">getTotalForces</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -479,7 +471,6 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">tf</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
-
 
 <div class="viewcode-block" id="getStructureAnalysis"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getStructureAnalysis">[docs]</a><span class="k">def</span> <span class="nf">getStructureAnalysis</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">bond_length</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">atom_index</span><span class="o">=</span><span class="p">[],</span> <span class="n">is_Metal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -555,7 +546,6 @@
 
     <span class="k">return</span> <span class="n">results</span></div>
 
-
 <div class="viewcode-block" id="getStructure"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getStructure">[docs]</a><span class="k">def</span> <span class="nf">getStructure</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -597,7 +587,6 @@
     <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">gui_style</span> <span class="o">=</span> <span class="s1">&#39;ngl&#39;</span>
 
     <span class="k">return</span> <span class="n">v</span><span class="p">,</span> <span class="n">structure</span></div>
-
 
 <div class="viewcode-block" id="getPdos"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getPdos">[docs]</a><span class="k">def</span> <span class="nf">getPdos</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">set_angular_momentum</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -721,7 +710,6 @@
 
     <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">results</span></div>
 
-
 <div class="viewcode-block" id="getDos"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getDos">[docs]</a><span class="k">def</span> <span class="nf">getDos</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -741,7 +729,6 @@
     <span class="n">dos</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;y_array_0&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">dos</span></div>
-
 
 <div class="viewcode-block" id="saveResults"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.saveResults">[docs]</a><span class="k">def</span> <span class="nf">saveResults</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -764,7 +751,6 @@
 
     <span class="k">return</span> <span class="s1">&#39;Your results have been successfully saved.&#39;</span></div>
 
-
 <div class="viewcode-block" id="readResults"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.readResults">[docs]</a><span class="k">def</span> <span class="nf">readResults</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -781,7 +767,6 @@
         <span class="n">results</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">results</span></div>
-
 
 <span class="c1"># In the below are some functions that may help</span>
 
@@ -827,7 +812,6 @@
                                                                                                               <span class="n">az</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;&#39;</span></div>
-
 
 <div class="viewcode-block" id="isMetal"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.isMetal">[docs]</a><span class="k">def</span> <span class="nf">isMetal</span><span class="p">(</span><span class="n">atom_symbol</span><span class="p">):</span>
 

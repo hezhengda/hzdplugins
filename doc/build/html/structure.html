@@ -238,9 +238,9 @@ where we want to put the adsorbates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>aiida.orm.Str object</em>) – Usually when we create the structural file, we do it from the strcutural file such as .xyz or
+<li><p><strong>filename</strong> (<em>python string object</em>) – Usually when we create the structural file, we do it from the strcutural file such as .xyz or
 .cif, etc.</p></li>
-<li><p><strong>supercell</strong> (<em>aiida.orm.List object</em>) – A list that contains the dimension of supercell we would like.</p></li>
+<li><p><strong>supercell</strong> (<em>python list object</em>) – A list that contains the dimension of supercell we would like.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -259,12 +259,12 @@ where we want to put the adsorbates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bulkStr</strong> (<em>aiida.orm.Str object.</em>) – The string for the material.</p></li>
-<li><p><strong>crystal_structure</strong> (<em>aiida.orm.Str object.</em>) – The crystal structure. It need to be in one of those: sc, fcc,
+<li><p><strong>bulkStr</strong> (<em>python string object</em>) – The string for the material.</p></li>
+<li><p><strong>crystal_structure</strong> (<em>python string object</em>) – The crystal structure. It need to be in one of those: sc, fcc,
 bcc,  tetragonal, bct, hcp, rhombohedral, orthorhombic, mlc, diamond, zincblende,
 rocksalt, cesiumchloride, fluorite or wurtzite.</p></li>
-<li><p><strong>a</strong><strong>(</strong><strong>/b/c</strong><strong>)</strong> (<em>aiida.orm.Float object</em>) – Lattice constants.</p></li>
-<li><p><strong>supercell</strong> (<em>aiida.orm.List object</em>) – The supercell that we want to get.</p></li>
+<li><p><strong>a</strong><strong>(</strong><strong>/b/c</strong><strong>)</strong> (<em>python float object</em>) – Lattice constants.</p></li>
+<li><p><strong>supercell</strong> (<em>python list object</em>) – The supercell that we want to get.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -343,9 +343,9 @@ treat differently).</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bulk</strong> (<em>aiida.orm.StructureData object</em>) – The bulk structure that we are going to use for creating the surface slabs.</p></li>
-<li><p><strong>miller_index</strong> (<em>aiida.orm.List object</em>) – The miller index that we want to get.</p></li>
-<li><p><strong>layers</strong> (<em>aiida.orm.Int object.</em>) – Set how many layers you want for the surface slab.</p></li>
-<li><p><strong>vacuum</strong> (<em>aiida.orm.List object</em>) – Set how many layers you want for the vacuum layer.</p></li>
+<li><p><strong>miller_index</strong> (<em>python list object</em>) – The miller index that we want to get.</p></li>
+<li><p><strong>layers</strong> (<em>python int object</em>) – Set how many layers you want for the surface slab.</p></li>
+<li><p><strong>vacuum</strong> (<em>python list object</em>) – Set how many layers you want for the vacuum layer.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -405,7 +405,7 @@ setting_dict.</p>
 
 <dl class="py function">
 <dt id="hzdplugins.structure.build.visualizeSlab">
-<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">visualizeSlab</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">plot_adsSite</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">adsorption_sites</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#visualizeSlab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.visualizeSlab" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">visualizeSlab</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slab</span></em>, <em class="sig-param"><span class="n">plot_adsSite</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">adsorption_sites</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">adssitetype</span><span class="o">=</span><span class="default_value">['ontop', 'bridge', 'hollow']</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#visualizeSlab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.visualizeSlab" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">visualizeSlab</span></code> will show the slab</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -413,6 +413,9 @@ setting_dict.</p>
 <li><p><strong>slab</strong> (<em>aiida.orm.StructureData object</em>) – The slab that we want to visualize</p></li>
 <li><p><strong>plot_adsSite</strong> (<em>aiida.orm.Bool object</em>) – If true, then add adsorption sites, if false, then adsorption site not show.</p></li>
 <li><p><strong>adsorption_sites</strong> (<em>aiida.orm.Dict object</em>) – Shows the adsorption sites.</p></li>
+<li><p><strong>adssitetype</strong> – determine which adsorption site you want to plot, the default is all types of sites (ontop,
+bridge, hollow), but you can specify on your own. Since sometime the program tends to give us
+more sites, so it is not easy to see, so we can define what kind of site we want to investigate.</p></li>
 <li><p><strong>kwargs</strong> – Settings for the plot:
 * repeat: Int
 * decay: Float

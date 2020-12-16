@@ -153,7 +153,6 @@
 <span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">load_node</span>
 
-
 <div class="viewcode-block" id="qeCleanOneRemoteFolder"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qeCleanOneRemoteFolder">[docs]</a><span class="k">def</span> <span class="nf">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -250,7 +249,6 @@
         <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">results_tmp</span></div>
 
-
 <div class="viewcode-block" id="qecleanAllRemoteFolder"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qecleanAllRemoteFolder">[docs]</a><span class="k">def</span> <span class="nf">qecleanAllRemoteFolder</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -285,7 +283,6 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="k">return</span> <span class="n">results_tmp</span></div>
-
 
 <div class="viewcode-block" id="qeRetriveAllFiles"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qeRetriveAllFiles">[docs]</a><span class="k">def</span> <span class="nf">qeRetriveAllFiles</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">localpath</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -324,7 +321,6 @@
     <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="s1">&#39;The file from </span><span class="si">{}</span><span class="s1"> have been copied to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pwd</span><span class="p">,</span> <span class="n">localpath_uuid</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="setCmdOnRemoteComputer"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.setCmdOnRemoteComputer">[docs]</a><span class="k">def</span> <span class="nf">setCmdOnRemoteComputer</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>

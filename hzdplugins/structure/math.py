@@ -5,7 +5,8 @@ def rotation_matrix_from_vectors(vec1, vec2):
     """
     Find the rotation matrix that aligns vec1 to vec2
     This function is taken from Peter's answer on stackoverflow:
-    `Question Link <https://stackoverflow.com/questions/45142959/calculate-rotation-matrix-to-align-two-vectors-in-3d-space>`_
+    `Question Link <https://stackoverflow.com/questions/45142959/calculate-rotation-matrix-to-align-two-vectors-in-3d
+    -space>`_
     Parameters:
     vec1:
         Numpy array. A 3d "source" vector
@@ -47,6 +48,24 @@ def rotation_matrix_from_vectors(vec1, vec2):
     return rotation_matrix
 
 def rotation_matrix_euler(alpha, beta, gamma):
+
+    """
+
+    :code:`rotation_matrix_euler` can return a matrix which can rotate a vector in three directions.
+
+    :param alpha: rotate along axis 1 (arbitrary, you can image it)
+    :type alpha: radians
+
+    :param beta: rotate along axis 2
+    :type beta: radians
+
+    :param gamma: rotate along axis 3
+    :type gamma: radians
+
+    :returns: The rotational matrix that can help to rotate a certain vector in 3D space.
+    :rtype: np.array matrix
+
+    """
 
     rot_mat_a = np.array([[1, 0, 0],
                           [0, np.cos(alpha), np.sin(alpha)],
