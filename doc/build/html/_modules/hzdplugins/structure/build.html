@@ -291,10 +291,9 @@
 <span class="sd">    :param vacuum: Set how many layers you want for the vacuum layer.</span>
 <span class="sd">    :type vacuum: python list object</span>
 
-<span class="sd">    :returns: A list. The reason why we use uuid instead of StructureData is that StructureData cannot be put in a</span>
-<span class="sd">              list with List object, it will shout out error. Once we have the uuid number, we can get the structure</span>
-<span class="sd">              by just using :code:`structure = load_node(uuid=uuid_structure)`, it is very straightforward.</span>
-<span class="sd">    :rtype: aiida.orm.List object</span>
+<span class="sd">    :returns: A list of slabs that we generated, notice that all the slabs are orthogonal, because we use</span>
+<span class="sd">              :code:`slab.get_orthogonal_c_slab()` for all the slabs</span>
+<span class="sd">    :rtype: pymatgen.core.structure.slab object</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -308,21 +307,22 @@
                        <span class="n">center_slab</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                        <span class="n">in_unit_planes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                        <span class="n">primitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                       <span class="n">max_normal_search</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">miller_index</span><span class="p">),</span>
+                       <span class="c1"># max_normal_search=max(miller_index),</span>
                        <span class="n">reorient_lattice</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">listOfStructures</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_slabs</span><span class="p">()</span>
+    <span class="n">listOfStructures</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span><span class="o">.</span><span class="n">get_orthogonal_c_slab</span><span class="p">()</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">]</span>
 
-    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">:</span>
-        <span class="n">structure_node</span> <span class="o">=</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">pymatgen_structure</span><span class="o">=</span><span class="n">structure</span><span class="p">)</span>
-        <span class="n">structure_node</span><span class="o">.</span><span class="n">store</span><span class="p">()</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure_node</span><span class="o">.</span><span class="n">uuid</span><span class="p">)</span>  <span class="c1"># since uuid is the unique identifier for each node across the platform</span>
+    <span class="c1"># results = []</span>
+    <span class="c1"># for structure in listOfStructures:</span>
+    <span class="c1">#     structure_node = StructureData(pymatgen_structure=structure)</span>
+    <span class="c1">#     structure_node.store()</span>
+    <span class="c1">#     results.append(structure_node.uuid)  # since uuid is the unique identifier for each node across the platform</span>
+    <span class="c1">#</span>
+    <span class="c1"># listGenerator = List()</span>
+    <span class="c1"># listGenerator.set_list(results)</span>
 
-    <span class="n">listGenerator</span> <span class="o">=</span> <span class="n">List</span><span class="p">()</span>
-    <span class="n">listGenerator</span><span class="o">.</span><span class="n">set_list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">listGenerator</span></div>
+    <span class="k">return</span> <span class="n">listOfStructures</span></div>
 
 <div class="viewcode-block" id="adsorptionSites"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.adsorptionSites">[docs]</a><span class="k">def</span> <span class="nf">adsorptionSites</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -384,7 +384,7 @@
 <span class="sd">    :type slab: aiida.orm.StructureData object</span>
 
 <span class="sd">    :param plot_adsSite: If true, then add adsorption sites, if false, then adsorption site not show.</span>
-<span class="sd">    :type plot_adsSite: aiida.orm.Bool object</span>
+<span class="sd">    :type plot_adsSite: python boolean object</span>
 
 <span class="sd">    :param adsorption_sites: Shows the adsorption sites.</span>
 <span class="sd">    :type adsorption_sites: aiida.orm.Dict object</span>
@@ -392,6 +392,7 @@
 <span class="sd">    :param adssitetype: determine which adsorption site you want to plot, the default is all types of sites (ontop,</span>
 <span class="sd">                        bridge, hollow), but you can specify on your own. Since sometime the program tends to give us</span>
 <span class="sd">                        more sites, so it is not easy to see, so we can define what kind of site we want to investigate.</span>
+<span class="sd">    :type adssitetype: python list object</span>
 
 <span class="sd">    :param kwargs: Settings for the plot:</span>
 <span class="sd">                   * repeat: Int</span>
@@ -590,7 +591,7 @@
 <span class="sd">                                        &#39;O&#39;: [site1, site2, site3] # each site is a 3x1 list [a, b, c]</span>
 <span class="sd">                                        &#39;F&#39;: [site1, site2, site3]</span>
 <span class="sd">                                    }</span>
-<span class="sd">    :type adsSiteDictionary: aiida.orm.Dict object</span>
+<span class="sd">    :type adsSiteDictionary: python dictionary object</span>
 
 <span class="sd">    :returns: With the adsorbates and modified constrains on all the atoms, ready for the submit functions.</span>
 <span class="sd">    :rtype: aiida.orm.StructureData object</span>
@@ -601,7 +602,6 @@
     <span class="n">slab</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">get_pymatgen_structure</span><span class="p">()</span>
     <span class="n">slab_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">slab</span><span class="p">)</span>
     <span class="c1"># asf = AdsorbateSiteFinder(slab_tmp, selective_dynamics = True)</span>
-    <span class="n">adsSiteDictionary</span> <span class="o">=</span> <span class="n">adsSiteDictionary</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
     <span class="c1"># end of cleaning process</span>
 
     <span class="k">for</span> <span class="n">ads</span><span class="p">,</span> <span class="n">siteList</span> <span class="ow">in</span> <span class="n">adsSiteDictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

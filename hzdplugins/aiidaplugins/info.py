@@ -436,6 +436,38 @@ def getStructure(uuid):
 
     return v, structure
 
+def viewStructure(structure):
+
+    """
+
+    :param structure: The structure that we want to show, it has to be pymatgen structure
+    :type structure: pymatgen.core.structure object
+
+    :returns: a nglview variable to show the structure
+    :rtype: nglview object
+
+    """
+
+    from ase.visualize import view
+    from pymatgen.io.ase import AseAtomsAdaptor
+
+    structure = AseAtomsAdaptor.get_atoms(structure=structure)
+
+    v = view(structure, viewer='ngl')
+
+    # setting the output window for the nglview
+    # nglview is a really good tool, and I need to learn more about that.
+    v.view.add_ball_and_stick()
+    v.view.center()
+    v.view.layout.width = '800px'
+    v.view.layout.height = '800px'
+    v.view.add_label(color='blue', radius=1.0, labelType='text',
+                     labelText=[structure[i].symbol + str(i) for i in range(len(structure))], zOffset=2.0,
+                     attachment='middle_center')
+    v.view.gui_style = 'ngl'
+
+    return v
+
 def getPdos(uuid, index, is_spin, set_angular_momentum=[0, 1, 2]):
     """
 
@@ -577,6 +609,66 @@ def getDos(uuid):
     dos = node.outputs.Dos.get_array('y_array_0')
 
     return energy, dos
+
+def getLastScf(uuid):
+
+    """
+
+    :code:`getLastScf` will return the value of the last scf accuracy and the stdout of :code:`grep 'scf accuracy'
+    aiida.out`
+
+    :param uuid: The uuid of the simulation
+    :type uuid: python string object
+
+    :returns: * The last force of the simulation
+              * The stdout of the cmd
+
+    """
+
+    from hzdplugins.aiidaplugins.io import setCmdOnRemoteComputer
+    r, stdout, stderr = setCmdOnRemoteComputer(cmd="grep 'scf accuracy' aiida.out", uuid=uuid)
+
+    list_scf_accuracy = []
+    strings = stdout.split('\n')
+    for string in strings:
+        if string != '':
+            scf = string.split(' ')[-2]
+            list_scf_accuracy.append(scf)
+
+    if len(list_scf_accuracy) == 0: # no scf deteced
+        return -1, stdout
+    else:
+        return list_scf_accuracy[-1], stdout
+
+def getLastForce(uuid):
+
+    """
+
+    :code:`getLastForce` will return the value of the last total force and the stdout of :code:`grep 'Total force'
+    aiida.out`
+
+    :param uuid: The uuid of the simulation
+    :type uuid: python string object
+
+    :returns: * The last force of the simulation
+              * The stdout of the cmd
+
+    """
+
+    from hzdplugins.aiidaplugins.io import setCmdOnRemoteComputer
+    r, stdout, stderr = setCmdOnRemoteComputer(cmd="grep 'Total force' aiida.out", uuid=uuid)
+
+    list_force = []
+    strings = stdout.split('\n')
+    for string in strings:
+        if string != '':
+            tmp = string.split(' ')
+            list_force.append(tmp[12])
+
+    if len(list_force) == 0: # no force detected
+        return -1, stdout
+    else:
+        return list_force[-1], stdout
 
 def saveResults(results, filename):
     """

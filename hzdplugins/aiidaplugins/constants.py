@@ -92,7 +92,7 @@ slurm_options['juwels'] = {
 # 'jusuf'
 slurm_options['jusuf'] = {
     'qe': {
-        'resources': {'num_machines': 1},  # on jusuf, each node has 128 cores
+        'resources': {'num_machines': 2},  # on jusuf, each node has 128 cores
         'max_wallclock_seconds': 86400,
         'account': 'jiek61',
         'scheduler_stderr': 'stderr',
@@ -276,6 +276,7 @@ adsorbates = {
     'CHOH': {'mol': molToMolecule(filename=path('CHOH.mol')), 'ads_site': [0]},
     'COH': {'mol': molToMolecule(filename=path('COH.mol')), 'ads_site': [0]},
     'CHO': {'mol': molToMolecule(filename=path('CHO.mol')), 'ads_site': [0]},
+    'CO': {'mol': molToMolecule(filename=path('CO.mol')), 'ads_site': [0]},
 
     'HCOO': {'mol': molToMolecule(filename=path('HCOO.mol')), 'ads_site': [2]},
     'COOH': {'mol': molToMolecule(filename=path('COOH.mol')), 'ads_site': [0]}

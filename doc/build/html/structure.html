@@ -178,7 +178,7 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>slab</strong> (<em>aiida.orm.StructureData object</em>) – The slab that we want to adsorb some adsorbates on.</p></li>
-<li><p><strong>adsSiteDictionary</strong> (<em>aiida.orm.Dict object</em>) – <p>In which contains the adsorbates (for common adsorbates, I can assign the
+<li><p><strong>adsSiteDictionary</strong> (<em>python dictionary object</em>) – <p>In which contains the adsorbates (for common adsorbates, I can assign the
 adsorption atom, geometry of the adsorbates and its adsorption angle in
 <code class="code docutils literal notranslate"><span class="pre">constants.py</span></code>) and adsorption sites, also I can add new adsorbates to the
 adsorbates library. (Do a very simple relax simulation of a molecule in the big cell,
@@ -349,12 +349,11 @@ treat differently).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list. The reason why we use uuid instead of StructureData is that StructureData cannot be put in a
-list with List object, it will shout out error. Once we have the uuid number, we can get the structure
-by just using <code class="code docutils literal notranslate"><span class="pre">structure</span> <span class="pre">=</span> <span class="pre">load_node(uuid=uuid_structure)</span></code>, it is very straightforward.</p>
+<dd class="field-even"><p>A list of slabs that we generated, notice that all the slabs are orthogonal, because we use
+<code class="code docutils literal notranslate"><span class="pre">slab.get_orthogonal_c_slab()</span></code> for all the slabs</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>aiida.orm.List object</p>
+<dd class="field-odd"><p>pymatgen.core.structure.slab object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -411,9 +410,9 @@ setting_dict.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>slab</strong> (<em>aiida.orm.StructureData object</em>) – The slab that we want to visualize</p></li>
-<li><p><strong>plot_adsSite</strong> (<em>aiida.orm.Bool object</em>) – If true, then add adsorption sites, if false, then adsorption site not show.</p></li>
+<li><p><strong>plot_adsSite</strong> (<em>python boolean object</em>) – If true, then add adsorption sites, if false, then adsorption site not show.</p></li>
 <li><p><strong>adsorption_sites</strong> (<em>aiida.orm.Dict object</em>) – Shows the adsorption sites.</p></li>
-<li><p><strong>adssitetype</strong> – determine which adsorption site you want to plot, the default is all types of sites (ontop,
+<li><p><strong>adssitetype</strong> (<em>python list object</em>) – determine which adsorption site you want to plot, the default is all types of sites (ontop,
 bridge, hollow), but you can specify on your own. Since sometime the program tends to give us
 more sites, so it is not easy to see, so we can define what kind of site we want to investigate.</p></li>
 <li><p><strong>kwargs</strong> – Settings for the plot:

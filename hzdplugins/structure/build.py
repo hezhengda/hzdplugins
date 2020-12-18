@@ -139,10 +139,9 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
     :param vacuum: Set how many layers you want for the vacuum layer.
     :type vacuum: python list object
 
-    :returns: A list. The reason why we use uuid instead of StructureData is that StructureData cannot be put in a
-              list with List object, it will shout out error. Once we have the uuid number, we can get the structure
-              by just using :code:`structure = load_node(uuid=uuid_structure)`, it is very straightforward.
-    :rtype: aiida.orm.List object
+    :returns: A list of slabs that we generated, notice that all the slabs are orthogonal, because we use
+              :code:`slab.get_orthogonal_c_slab()` for all the slabs
+    :rtype: pymatgen.core.structure.slab object
 
     """
 
@@ -156,21 +155,22 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
                        center_slab=True,
                        in_unit_planes=True,
                        primitive=False,
-                       max_normal_search=max(miller_index),
+                       # max_normal_search=max(miller_index),
                        reorient_lattice=True)
 
     listOfStructures = sg.get_slabs()
+    listOfStructures = [slab.get_orthogonal_c_slab() for slab in listOfStructures]
 
-    results = []
-    for structure in listOfStructures:
-        structure_node = StructureData(pymatgen_structure=structure)
-        structure_node.store()
-        results.append(structure_node.uuid)  # since uuid is the unique identifier for each node across the platform
+    # results = []
+    # for structure in listOfStructures:
+    #     structure_node = StructureData(pymatgen_structure=structure)
+    #     structure_node.store()
+    #     results.append(structure_node.uuid)  # since uuid is the unique identifier for each node across the platform
+    #
+    # listGenerator = List()
+    # listGenerator.set_list(results)
 
-    listGenerator = List()
-    listGenerator.set_list(results)
-
-    return listGenerator
+    return listOfStructures
 
 def adsorptionSites(slab, **kwargs):
     """
@@ -232,7 +232,7 @@ def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, adssitetype=[
     :type slab: aiida.orm.StructureData object
 
     :param plot_adsSite: If true, then add adsorption sites, if false, then adsorption site not show.
-    :type plot_adsSite: aiida.orm.Bool object
+    :type plot_adsSite: python boolean object
 
     :param adsorption_sites: Shows the adsorption sites.
     :type adsorption_sites: aiida.orm.Dict object
@@ -240,6 +240,7 @@ def visualizeSlab(slab, plot_adsSite=False, adsorption_sites=None, adssitetype=[
     :param adssitetype: determine which adsorption site you want to plot, the default is all types of sites (ontop,
                         bridge, hollow), but you can specify on your own. Since sometime the program tends to give us
                         more sites, so it is not easy to see, so we can define what kind of site we want to investigate.
+    :type adssitetype: python list object
 
     :param kwargs: Settings for the plot:
                    * repeat: Int
@@ -438,7 +439,7 @@ def addAdsorbates(slab, adsSiteDictionary):
                                         'O': [site1, site2, site3] # each site is a 3x1 list [a, b, c]
                                         'F': [site1, site2, site3]
                                     }
-    :type adsSiteDictionary: aiida.orm.Dict object
+    :type adsSiteDictionary: python dictionary object
 
     :returns: With the adsorbates and modified constrains on all the atoms, ready for the submit functions.
     :rtype: aiida.orm.StructureData object
@@ -449,7 +450,6 @@ def addAdsorbates(slab, adsSiteDictionary):
     slab = slab.get_pymatgen_structure()
     slab_tmp = deepcopy(slab)
     # asf = AdsorbateSiteFinder(slab_tmp, selective_dynamics = True)
-    adsSiteDictionary = adsSiteDictionary.get_dict()
     # end of cleaning process
 
     for ads, siteList in adsSiteDictionary.items():

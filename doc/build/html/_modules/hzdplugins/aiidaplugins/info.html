@@ -588,6 +588,38 @@
 
     <span class="k">return</span> <span class="n">v</span><span class="p">,</span> <span class="n">structure</span></div>
 
+<div class="viewcode-block" id="viewStructure"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.viewStructure">[docs]</a><span class="k">def</span> <span class="nf">viewStructure</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param structure: The structure that we want to show, it has to be pymatgen structure</span>
+<span class="sd">    :type structure: pymatgen.core.structure object</span>
+
+<span class="sd">    :returns: a nglview variable to show the structure</span>
+<span class="sd">    :rtype: nglview object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">ase.visualize</span> <span class="kn">import</span> <span class="n">view</span>
+    <span class="kn">from</span> <span class="nn">pymatgen.io.ase</span> <span class="kn">import</span> <span class="n">AseAtomsAdaptor</span>
+
+    <span class="n">structure</span> <span class="o">=</span> <span class="n">AseAtomsAdaptor</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">)</span>
+
+    <span class="n">v</span> <span class="o">=</span> <span class="n">view</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">viewer</span><span class="o">=</span><span class="s1">&#39;ngl&#39;</span><span class="p">)</span>
+
+    <span class="c1"># setting the output window for the nglview</span>
+    <span class="c1"># nglview is a really good tool, and I need to learn more about that.</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">add_ball_and_stick</span><span class="p">()</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="s1">&#39;800px&#39;</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="s1">&#39;800px&#39;</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">labelType</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span>
+                     <span class="n">labelText</span><span class="o">=</span><span class="p">[</span><span class="n">structure</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">))],</span> <span class="n">zOffset</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                     <span class="n">attachment</span><span class="o">=</span><span class="s1">&#39;middle_center&#39;</span><span class="p">)</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">gui_style</span> <span class="o">=</span> <span class="s1">&#39;ngl&#39;</span>
+
+    <span class="k">return</span> <span class="n">v</span></div>
+
 <div class="viewcode-block" id="getPdos"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getPdos">[docs]</a><span class="k">def</span> <span class="nf">getPdos</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">set_angular_momentum</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -729,6 +761,66 @@
     <span class="n">dos</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;y_array_0&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">dos</span></div>
+
+<div class="viewcode-block" id="getLastScf"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getLastScf">[docs]</a><span class="k">def</span> <span class="nf">getLastScf</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getLastScf` will return the value of the last scf accuracy and the stdout of :code:`grep &#39;scf accuracy&#39;</span>
+<span class="sd">    aiida.out`</span>
+
+<span class="sd">    :param uuid: The uuid of the simulation</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :returns: * The last force of the simulation</span>
+<span class="sd">              * The stdout of the cmd</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.io</span> <span class="kn">import</span> <span class="n">setCmdOnRemoteComputer</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">setCmdOnRemoteComputer</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="s2">&quot;grep &#39;scf accuracy&#39; aiida.out&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">list_scf_accuracy</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">string</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">scf</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">list_scf_accuracy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scf</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_scf_accuracy</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># no scf deteced</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_scf_accuracy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stdout</span></div>
+
+<div class="viewcode-block" id="getLastForce"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getLastForce">[docs]</a><span class="k">def</span> <span class="nf">getLastForce</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getLastForce` will return the value of the last total force and the stdout of :code:`grep &#39;Total force&#39;</span>
+<span class="sd">    aiida.out`</span>
+
+<span class="sd">    :param uuid: The uuid of the simulation</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :returns: * The last force of the simulation</span>
+<span class="sd">              * The stdout of the cmd</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.io</span> <span class="kn">import</span> <span class="n">setCmdOnRemoteComputer</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">setCmdOnRemoteComputer</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="s2">&quot;grep &#39;Total force&#39; aiida.out&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">list_force</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">string</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">list_force</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">12</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_force</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># no force detected</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_force</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stdout</span></div>
 
 <div class="viewcode-block" id="saveResults"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.saveResults">[docs]</a><span class="k">def</span> <span class="nf">saveResults</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>

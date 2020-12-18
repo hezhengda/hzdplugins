@@ -301,15 +301,17 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
 
     :param cluster_options: The detailed option for the cluster. Different cluster may have different
                             settings. Only the following 3 keys can have effects: (1) resources (2) account (3)
-                            queue_name
+                            queue_name. If value is :code:`{}`, then it means we will use previous settings
     :type cluster_options: python dictionary object
 
     :param metadata: The dictionary that contains information about metadata. For example: label and description.
-                     label and description are mendatory.
+                     label and description are mendatory. If value is :code:`{}`, then it means we will use previous
+                     settings.
     :type metadata: python dictionary object
 
     :param settings_dict: which contains the additional information for the pw.x calculation. e.g. Fixed atom,
-                          retrieving more files, parser options, etc. And the command-line options.
+                          retrieving more files, parser options, etc. And the command-line options. If value is
+                          :code:`{}`, then it means we will use previous settings
     :type settings_dict: python dictionary object
 
     :returns: - results (`python dictionary object`): a modified results dictionary with the latest submitted job

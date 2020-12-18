@@ -453,15 +453,17 @@
 
 <span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different</span>
 <span class="sd">                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)</span>
-<span class="sd">                            queue_name</span>
+<span class="sd">                            queue_name. If value is :code:`{}`, then it means we will use previous settings</span>
 <span class="sd">    :type cluster_options: python dictionary object</span>
 
 <span class="sd">    :param metadata: The dictionary that contains information about metadata. For example: label and description.</span>
-<span class="sd">                     label and description are mendatory.</span>
+<span class="sd">                     label and description are mendatory. If value is :code:`{}`, then it means we will use previous</span>
+<span class="sd">                     settings.</span>
 <span class="sd">    :type metadata: python dictionary object</span>
 
 <span class="sd">    :param settings_dict: which contains the additional information for the pw.x calculation. e.g. Fixed atom,</span>
-<span class="sd">                          retrieving more files, parser options, etc. And the command-line options.</span>
+<span class="sd">                          retrieving more files, parser options, etc. And the command-line options. If value is</span>
+<span class="sd">                          :code:`{}`, then it means we will use previous settings</span>
 <span class="sd">    :type settings_dict: python dictionary object</span>
 
 <span class="sd">    :returns: - results (`python dictionary object`): a modified results dictionary with the latest submitted job</span>
