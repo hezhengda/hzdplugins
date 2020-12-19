@@ -101,7 +101,7 @@ def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, ps
                           command-line options.
     :type settings_dict: python dictionary object
 
-    :returns: the new CalcJobNode
+    :returns: uuid of the new CalcJobNode
 
     """
 
@@ -186,22 +186,22 @@ def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, ps
     pw_builder.metadata.description = metadata['description']
 
     # set default options for slurm
-    pw_builder.metadata.options.resources = slurm_options[computer]['qe']['resources']  # in here machine = node
-    pw_builder.metadata.options.max_wallclock_seconds = slurm_options[computer]['qe'][
-        'max_wallclock_seconds']  # in here machine = node
-    pw_builder.metadata.options.account = slurm_options[computer]['qe']['account']  # in here machine = node
-    pw_builder.metadata.options.scheduler_stderr = slurm_options[computer]['qe']['scheduler_stderr']
-    pw_builder.metadata.options.scheduler_stdout = slurm_options[computer]['qe']['scheduler_stderr']
-    pw_builder.metadata.options.queue_name = slurm_options[computer]['qe']['queue_name']
+    pw_builder.metadata.options['resources'] = slurm_options[computer]['qe']['resources']  # in here machine = node
+    pw_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['qe'][
+        'max_wallclock_seconds']  #in here machine = node
+    pw_builder.metadata.options['account'] = slurm_options[computer]['qe']['account']  # in here machine = node
+    pw_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    pw_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    pw_builder.metadata.options['queue_name'] = slurm_options[computer]['qe']['queue_name']
 
     # revised by cluster_options
     if len(cluster_options) > 0:
         if 'resources' in cluster_options.keys():
-            pw_builder.metadata.options.resources = cluster_options['resources']
+            pw_builder.metadata.options['resources'] = cluster_options['resources']
         if 'account' in cluster_options.keys():
-            pw_builder.metadata.options.resources = cluster_options['account']
+            pw_builder.metadata.options['account'] = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
-            pw_builder.metadata.options.resources = cluster_options['queue_name']
+            pw_builder.metadata.options['queue_name'] = cluster_options['queue_name']
 
     # initialize the settings_dict
     if len(settings_dict) == 0:
@@ -221,7 +221,7 @@ def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, ps
     pw_builder.settings = Dict(dict=settings_dict)
     calc = submit(pw_builder)
 
-    return calc
+    return calc.uuid
 
 def qePwContinueSubmit(uuid, pseudo_family, pseudo_dict={}, codename='', parent_folder=True, add_parameters={},
                        del_parameters={}, kpoints=[], cluster_options={}, metadata={}, settings_dict={}):
@@ -297,7 +297,7 @@ def qePwContinueSubmit(uuid, pseudo_family, pseudo_dict={}, codename='', parent_
                           If value is :code:`{}`, then it means we will use previous settings.
     :type settings_dict: python dictionary object
 
-    :returns: CalcJobNode of the newest calculation.
+    :returns: uuid of the CalcJobNode of the newest calculation.
 
     """
 
@@ -363,22 +363,22 @@ def qePwContinueSubmit(uuid, pseudo_family, pseudo_dict={}, codename='', parent_
         restart_builder.pseudos = pseudo_dict
 
     # set default options for slurm
-    restart_builder.metadata.options.resources = slurm_options[computer]['qe']['resources']  # in here machine = node
-    restart_builder.metadata.options.max_wallclock_seconds = slurm_options[computer]['qe'][
+    restart_builder.metadata.options['resources'] = slurm_options[computer]['qe']['resources']  # in here machine = node
+    restart_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['qe'][
         'max_wallclock_seconds']  # in here machine = node
-    restart_builder.metadata.options.account = slurm_options[computer]['qe']['account']  # in here machine = node
-    restart_builder.metadata.options.scheduler_stderr = slurm_options[computer]['qe']['scheduler_stderr']
-    restart_builder.metadata.options.scheduler_stdout = slurm_options[computer]['qe']['scheduler_stderr']
-    restart_builder.metadata.options.queue_name = slurm_options[computer]['qe']['queue_name']
+    restart_builder.metadata.options['account'] = slurm_options[computer]['qe']['account']  # in here machine = node
+    restart_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    restart_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    restart_builder.metadata.options['queue_name'] = slurm_options[computer]['qe']['queue_name']
 
     # reset cluster_options:
     if len(cluster_options) > 0:
         if 'resources' in cluster_options.keys():
-            restart_builder.metadata.options.resources = cluster_options['resources']
+            restart_builder.metadata.options['resources'] = cluster_options['resources']
         if 'account' in cluster_options.keys():
-            restart_builder.metadata.options.account = cluster_options['account']
+            restart_builder.metadata.options['account'] = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
-            restart_builder.metadata.options.queue_name = cluster_options['queue_name']
+            restart_builder.metadata.options['queue_name'] = cluster_options['queue_name']
 
     # reset metadata
     if len(metadata) > 0:
@@ -412,7 +412,7 @@ def qePwContinueSubmit(uuid, pseudo_family, pseudo_dict={}, codename='', parent_
     restart_builder.settings = Dict(dict=settings_dict)
     calc = submit(restart_builder)
 
-    return calc
+    return calc.uuid
 
 
 def projwfcOriginalSubmit(uuid, codename, metadata, add_parameters={}, del_parameters={}, cluster_options={}):
@@ -452,7 +452,7 @@ def projwfcOriginalSubmit(uuid, codename, metadata, add_parameters={}, del_param
                             account (3) queue_name
     :type cluster_options: python dictionary object
 
-    :returns: CalcJobNode object of the newest calculation.
+    :returns: uuid of the CalcJobNode object of the newest calculation.
 
     """
 
@@ -490,23 +490,23 @@ def projwfcOriginalSubmit(uuid, codename, metadata, add_parameters={}, del_param
                 tmp.pop(key2)
 
     # set default options for slurm
-    projwfc_builder.metadata.options.resources = slurm_options[computer]['projwfc']['resources']  # in here machine =
+    projwfc_builder.metadata.options['resources'] = slurm_options[computer]['projwfc']['resources']  # in here machine =
     # node
-    projwfc_builder.metadata.options.max_wallclock_seconds = slurm_options[computer]['projwfc'][
+    projwfc_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['projwfc'][
         'max_wallclock_seconds']  # in here machine = node
-    projwfc_builder.metadata.options.account = slurm_options[computer]['projwfc']['account']  # in here machine = node
-    projwfc_builder.metadata.options.scheduler_stderr = slurm_options[computer]['projwfc']['scheduler_stderr']
-    projwfc_builder.metadata.options.scheduler_stdout = slurm_options[computer]['projwfc']['scheduler_stderr']
-    projwfc_builder.metadata.options.queue_name = slurm_options[computer]['projwfc']['queue_name']
+    projwfc_builder.metadata.options['account'] = slurm_options[computer]['projwfc']['account']  # in here machine = node
+    projwfc_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['projwfc']['scheduler_stderr']
+    projwfc_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['projwfc']['scheduler_stderr']
+    projwfc_builder.metadata.options['queue_name'] = slurm_options[computer]['projwfc']['queue_name']
 
     # reset cluster_options:
     if len(cluster_options) > 0:
         if 'resources' in cluster_options.keys():
-            projwfc_builder.metadata.options.resources = cluster_options['resources']
+            projwfc_builder.metadata.options['resources'] = cluster_options['resources']
         if 'account' in cluster_options.keys():
-            projwfc_builder.metadata.options.account = cluster_options['account']
+            projwfc_builder.metadata.options['account'] = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
-            projwfc_builder.metadata.options.queue_name = cluster_options['queue_name']
+            projwfc_builder.metadata.options['queue_name'] = cluster_options['queue_name']
 
     projwfc_builder.parameters = projwfc_parameter
     projwfc_builder.parent_folder = node.outputs.remote_folder
@@ -515,7 +515,7 @@ def projwfcOriginalSubmit(uuid, codename, metadata, add_parameters={}, del_param
 
     calc = submit(projwfc_builder)
 
-    return calc
+    return calc.uuid
 
 
 def phOriginalSubmit(uuid, codename, natlist, qpoints=[[0.0, 0.0, 0.0]], add_parameters={}, del_parameters={},
@@ -563,7 +563,7 @@ def phOriginalSubmit(uuid, codename, natlist, qpoints=[[0.0, 0.0, 0.0]], add_par
                             account (3) queue_name
     :type cluster_options: python dictionary object
 
-    :returns: CalcJobNode object of the newest calculation.
+    :returns: uuid of the CalcJobNode object of the newest calculation.
 
 
     """
@@ -612,23 +612,23 @@ def phOriginalSubmit(uuid, codename, natlist, qpoints=[[0.0, 0.0, 0.0]], add_par
 
     # set default options for slurm
     # set first, then modify
-    ph_builder.metadata.options.resources = slurm_options[computer]['ph']['resources']  # in here machine =
+    ph_builder.metadata.options['resources'] = slurm_options[computer]['ph']['resources']  # in here machine =
     # node
-    ph_builder.metadata.options.max_wallclock_seconds = slurm_options[computer]['projwfc'][
+    ph_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['projwfc'][
         'max_wallclock_seconds']  # in here machine = node
-    ph_builder.metadata.options.account = slurm_options[computer]['ph']['account']  # in here machine = node
-    ph_builder.metadata.options.scheduler_stderr = slurm_options[computer]['ph']['scheduler_stderr']
-    ph_builder.metadata.options.scheduler_stdout = slurm_options[computer]['ph']['scheduler_stderr']
-    ph_builder.metadata.options.queue_name = slurm_options[computer]['ph']['queue_name']
+    ph_builder.metadata.options['account'] = slurm_options[computer]['ph']['account']  # in here machine = node
+    ph_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['ph']['scheduler_stderr']
+    ph_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['ph']['scheduler_stderr']
+    ph_builder.metadata.options['queue_name'] = slurm_options[computer]['ph']['queue_name']
 
     # reset cluster_options:
     if len(cluster_options) > 0:
         if 'resources' in cluster_options.keys():
-            ph_builder.metadata.options.resources = cluster_options['resources']
+            ph_builder.metadata.options['resources'] = cluster_options['resources']
         if 'account' in cluster_options.keys():
-            ph_builder.metadata.options.account = cluster_options['account']
+            ph_builder.metadata.options['account'] = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
-            ph_builder.metadata.options.queue_name = cluster_options['queue_name']
+            ph_builder.metadata.options['queue_name'] = cluster_options['queue_name']
 
     ph_builder.parameters = Dict(dict=ph_parameter)
     ph_builder.parent_folder = node.outputs.remote_folder
@@ -638,7 +638,7 @@ def phOriginalSubmit(uuid, codename, natlist, qpoints=[[0.0, 0.0, 0.0]], add_par
 
     calc = submit(ph_builder)
 
-    return calc
+    return calc.uuid
 
 
 def ppOriginalSubmit(results, uuid, codename, add_parameters, del_parameters, metadata):
