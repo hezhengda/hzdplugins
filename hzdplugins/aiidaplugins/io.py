@@ -34,12 +34,15 @@ def qeCleanOneRemoteFolder(results, uuid):
     exit_status = node.exit_status
     finished = node.is_finished
 
-    # check whether the calculation is finished (0 or 501) or not
+    # check whether the calculation is finished (0 or 501), 'killed' / 'excepted' or not
     if (exit_status == 0) or (exit_status == 501) or finished:
         results_tmp[str(uuid)]['exit_status'] = str(exit_status)
         results_tmp[str(uuid)]['is_finished'] = finished
     elif node.is_excepted:
         results_tmp[str(uuid)]['exit_status'] = 'excepted'
+        results_tmp[str(uuid)]['is_finished'] = finished
+    elif node.is_killed:
+        results_tmp[str(uuid)]['exit_status'] = 'killed'
         results_tmp[str(uuid)]['is_finished'] = finished
     else:
         print('uuid:{} --- Sorry, your calculation is not finished yet, please wait until it is finished.'.format(uuid))
@@ -86,6 +89,8 @@ def qeCleanOneRemoteFolder(results, uuid):
                     transport.remove(transport.getcwd() + '/' + item)  # delete the wavefunction file
                 if 'charge' in item:
                     transport.remove(transport.getcwd() + '/' + item)  # delete the charge-density file
+                if 'UPF' in item:
+                    transport.remove(transport.getcwd() + '/' + item)  # delete the pseudopotential file
         results_tmp[str(uuid)]['remove_remote_folder'] = True
         print('uuid:{} -- All the unnecessary files have been deleted.'.format(uuid))
         transport.close()

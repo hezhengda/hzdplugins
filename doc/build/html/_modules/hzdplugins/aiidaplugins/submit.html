@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../log.html">Log file for hzdplugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To-Do list for the further</a></li>
 </ul>
 
             
@@ -163,27 +164,22 @@
 
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">slurm_options</span>
 
-
-<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span>
-                       <span class="n">del_parameters</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">,</span> <span class="n">settings_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span>
+                       <span class="n">del_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">cluster_options</span><span class="o">=</span><span class="p">{},</span> <span class="n">settings_dict</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.</span>
 
-<span class="sd">    :param results: A dictionary that has all the relevant information about the simulation, its key is the uuid of</span>
-<span class="sd">                    the CalcJobNode</span>
-<span class="sd">    :type results: python dictionary</span>
-
-<span class="sd">    :param codename: A string represents the code for pw.x that you want to use.</span>
+<span class="sd">    :param codename: (mandatory) A string represents the code for pw.x that you want to use.</span>
 <span class="sd">    :type codename: python string object</span>
 
-<span class="sd">    :param structure: The structure of your system.</span>
+<span class="sd">    :param structure: (mandatory) The structure of your system.</span>
 <span class="sd">    :type structure: aiida.orm.StructureData object</span>
 
-<span class="sd">    :param add_parameters: The desired parameters that you want to state, it can be incomplete, because inside the</span>
-<span class="sd">                           function there is a default setting for parameters which can be used in most cases,</span>
-<span class="sd">                           but if you have specific need, you can put that in parameters, the format is similar as</span>
-<span class="sd">                           pw.x input file.</span>
+<span class="sd">    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be</span>
+<span class="sd">                           incomplete, because inside the function there is a default setting for parameters which can</span>
+<span class="sd">                           be used in most cases, but if you have specific need, you can put that in parameters,</span>
+<span class="sd">                           the format is similar as pw.x input file.</span>
 
 <span class="sd">                           If you want to assign DFT+U and spin-polarization, you need to specify it on your own.</span>
 
@@ -212,24 +208,25 @@
 
 <span class="sd">    :type add_parameters: python dictionary</span>
 
-<span class="sd">    :param del_parameters: The tags that we would like to delete, for example if we do not want to use spin-polarized</span>
-<span class="sd">                           simulation, then &#39;nspin&#39; needs to be deleted. Same structure as add_parameters.</span>
+<span class="sd">    :param del_parameters: (optional, default = {}) The tags that we would like to delete, for example if we do not</span>
+<span class="sd">                           want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure</span>
+<span class="sd">                           as add_parameters.</span>
 
 <span class="sd">                           e.g. :code:`{&#39;CONTROL&#39;: [key1, key2, key3], &#39;SYSTEM&#39;: [key1, key2, key3]}`</span>
 <span class="sd">    :type del_parameters: python dictionary object</span>
 
-<span class="sd">    :param kpoints: The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh,</span>
-<span class="sd">                    but if two lists are detected, then the first will be k-point mesh, the second one will be the</span>
+<span class="sd">    :param kpoints: (mandatory) The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint</span>
+<span class="sd">                    mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the</span>
 <span class="sd">                    origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
 <span class="sd">    :type kpoints: python list object</span>
 
-<span class="sd">    :param pseudo_family: The pseudopotential family that you want to use. Make sure that you already have that</span>
-<span class="sd">                          configured, otherwise an error will occur.</span>
+<span class="sd">    :param pseudo_family: (mandatory) The pseudopotential family that you want to use. Make sure that you already have</span>
+<span class="sd">                          that configured, otherwise an error will occur.</span>
 <span class="sd">    :type pseudo_family: python string object.</span>
 
-<span class="sd">    :param pseudo_dict: which contains the pseudopotential files that we want to use in the simulation.</span>
-<span class="sd">                        In here it is very important to note that the path of the pseudopotential file has to be in</span>
-<span class="sd">                        the absolute path.</span>
+<span class="sd">    :param pseudo_dict: (optional, default = {}) which contains the pseudopotential files that we want to use in the</span>
+<span class="sd">                        simulation. In here it is very important to note that the path of the pseudopotential file</span>
+<span class="sd">                        has to be in the absolute path.</span>
 
 <span class="sd">                        e.g.</span>
 
@@ -239,30 +236,27 @@
 <span class="sd">                                &#39;Fe&#39;: UpfData(absolute_path),</span>
 <span class="sd">                                &#39;Fe3&#39;: UpfData(absolute_path)</span>
 <span class="sd">                            }</span>
-
 <span class="sd">    :type pseudo_dict: python dictionary object.</span>
 
-<span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different settings. Only</span>
-<span class="sd">                            the following 3 keys can have effects: (1) resources (2) account (3) queue_name</span>
+<span class="sd">    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have</span>
+<span class="sd">                            different settings. Only the following 3 keys can have effects: (1) resources (2) account</span>
+<span class="sd">                            (3) queue_name</span>
 <span class="sd">    :type cluster_options: python dictionary object</span>
 
-<span class="sd">    :param metadata: The dictionary that contains information about metadata. For example: label and</span>
+<span class="sd">    :param metadata: (mandatory) The dictionary that contains information about metadata. For example: label and</span>
 <span class="sd">                     description. label and description are mendatory.</span>
 
 <span class="sd">                     e.g. :code:`{&#39;label&#39;:{}, &#39;description&#39;:{}}`</span>
 <span class="sd">    :type metadata: python dictionary object</span>
 
-<span class="sd">    :param settings_dict: which contains the additional information for the pw.x calculation. e.g. Fixed atom,</span>
-<span class="sd">                          retrieving more files, parser options, etc. And the command-line options.</span>
+<span class="sd">    :param settings_dict: (optional, default = {}) which contains the additional information for the pw.x</span>
+<span class="sd">                          calculation. e.g. Fixed atom, retrieving more files, parser options, etc. And the</span>
+<span class="sd">                          command-line options.</span>
 <span class="sd">    :type settings_dict: python dictionary object</span>
 
-<span class="sd">    :returns: - **results** (`python dictionary object`): a modified results dictionary with the latest submitted job</span>
-
-<span class="sd">              - **uuid** (`python string object`): the uuid of that CalcJob</span>
+<span class="sd">    :returns: the new CalcJobNode</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>  <span class="c1"># first we need to create a copy for our simulation</span>
 
     <span class="n">code</span> <span class="o">=</span> <span class="n">Code</span><span class="o">.</span><span class="n">get_from_string</span><span class="p">(</span><span class="n">codename</span><span class="p">)</span>
     <span class="n">computer</span> <span class="o">=</span> <span class="n">codename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># get the name of the cluster</span>
@@ -310,10 +304,10 @@
             <span class="s1">&#39;occupations&#39;</span><span class="p">:</span> <span class="s1">&#39;smearing&#39;</span><span class="p">,</span>
             <span class="s1">&#39;degauss&#39;</span><span class="p">:</span> <span class="mf">0.002</span><span class="p">,</span>
             <span class="s1">&#39;smearing&#39;</span><span class="p">:</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;input_dft&#39;</span><span class="p">:</span> <span class="s1">&#39;PBE&#39;</span>
+            <span class="s1">&#39;input_dft&#39;</span><span class="p">:</span> <span class="s1">&#39;PBESOL&#39;</span>
         <span class="p">},</span>
         <span class="s1">&#39;ELECTRONS&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;electron_maxstep&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s1">&#39;electron_maxstep&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
             <span class="s1">&#39;conv_thr&#39;</span><span class="p">:</span> <span class="mf">1.0e-6</span><span class="p">,</span>
             <span class="s1">&#39;diagonalization&#39;</span><span class="p">:</span> <span class="s1">&#39;david&#39;</span><span class="p">,</span>
             <span class="s1">&#39;mixing_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span>
@@ -362,6 +356,12 @@
         <span class="k">if</span> <span class="s1">&#39;queue_name&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">pw_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
 
+    <span class="c1"># initialize the settings_dict</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">settings_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">settings_dict</span><span class="p">[</span><span class="s1">&#39;cmdline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-nk&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># do nothing</span>
+
     <span class="c1"># get atomic occupations</span>
     <span class="k">if</span> <span class="s1">&#39;lda_plus_u&#39;</span> <span class="ow">in</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;lda_plus_u&#39;</span><span class="p">]:</span>
@@ -374,60 +374,40 @@
     <span class="n">pw_builder</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">settings_dict</span><span class="p">)</span>
     <span class="n">calc</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">pw_builder</span><span class="p">)</span>
 
-    <span class="c1"># results</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;comp_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;CONTROL&#39;</span><span class="p">][</span><span class="s1">&#39;calculation&#39;</span><span class="p">]</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;E/eV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">codename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)[</span>
-        <span class="mi">1</span><span class="p">]</span>  <span class="c1"># becase all the codename have same structure &quot;code@computer&quot;</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;xc functional&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;input_dft&#39;</span><span class="p">]</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;previous_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 0 represent original</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;son_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># currently no son_calc node</span>
-    <span class="c1"># results_tmp[ads_str(calc.pk)][&#39;description&#39;] = metadata[&#39;description&#39;]</span>
+    <span class="k">return</span> <span class="n">calc</span></div>
 
-    <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
-
-
-<div class="viewcode-block" id="qePwContinueSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwContinueSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwContinueSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">parent_folder</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span>
-                       <span class="n">del_parameters</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">settings_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="qePwContinueSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwContinueSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwContinueSubmit</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">codename</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">parent_folder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span>
+                       <span class="n">del_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">kpoints</span><span class="o">=</span><span class="p">[],</span> <span class="n">cluster_options</span><span class="o">=</span><span class="p">{},</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{},</span> <span class="n">settings_dict</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    `qePwContinueSubmit` will continue a simulation with similar or modified input parameters. All the parameters are</span>
 <span class="sd">    listed in the kwargs.</span>
 
-<span class="sd">    :param results: A dictionary that has all the relevant information about the simulation, its key is the uuid of the</span>
-<span class="sd">                    CalcJobNode</span>
-<span class="sd">    :type results: python dictionary object</span>
-
-<span class="sd">    :param uuid: The uuid of previous calculation. We will start our calculation from there. Because uuid is the</span>
-<span class="sd">                 unique identification number for each CalcJobNode</span>
+<span class="sd">    :param uuid: (mandatory) The uuid of previous calculation. We will start our calculation from there. Because uuid</span>
+<span class="sd">                 is the unique identification number for each CalcJobNode</span>
 
 <span class="sd">                    **Notice**: The uuid must be in the results dictionary, if not the program will shout KeyError.</span>
 <span class="sd">                    And if you are testing, you could use assignValue to quickly create a dictionary that contains</span>
 <span class="sd">                    the uuid that you want to continue.</span>
 <span class="sd">    :type uuid: python string object</span>
 
-<span class="sd">    :param pseudo_family: The pseudopotential family that you want to use. Make sure that you already have that</span>
-<span class="sd">                          configured, otherwise an error will occur. This is mendatory.</span>
+<span class="sd">    :param pseudo_family: (mandatory) The pseudopotential family that you want to use. Make sure that you already have</span>
+<span class="sd">                          that configured, otherwise an error will occur. This is mendatory.</span>
 <span class="sd">    :type pseudo_family: python string object</span>
 
-<span class="sd">    :param pseudo_dict: Which contains the pseudopotential files that we want to use in the simulation.</span>
+<span class="sd">    :param pseudo_dict: (optional, default = {}) Which contains the pseudopotential files that we want to use in the</span>
+<span class="sd">                        simulation.</span>
 <span class="sd">    :type pseudo_dict: python dictionary object</span>
 
-<span class="sd">    :param codename: Represent the code for pw.x that you want to use. If you want to use the same as</span>
-<span class="sd">                     previous calculation, then you need to use Str(&#39;&#39;)</span>
+<span class="sd">    :param codename: (optional, default = &#39;&#39;) Represent the code for pw.x that you want to use. If you want to use the</span>
+<span class="sd">                     same as previous calculation, then you need to use Str(&#39;&#39;)</span>
 <span class="sd">    :type codename: python string object</span>
 
-<span class="sd">    :param parent_folder: If parent_folder is True, then the calculation will start with the output files from</span>
-<span class="sd">                          previous calculations.</span>
+<span class="sd">    :param parent_folder: (optional, default = True) If parent_folder is True, then the calculation will start with the</span>
+<span class="sd">                          output files from previous calculations.</span>
 <span class="sd">    :type parent_folder: python boolean object</span>
 
-<span class="sd">    :param add_parameters: The desired parameters that you want to state, it can be incomplete,</span>
+<span class="sd">    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be incomplete,</span>
 <span class="sd">                           because inside the function there is a default setting for parameters which can be used in</span>
 <span class="sd">                           most cases, but if you have specific need, you can put that in parameters, the format is</span>
 <span class="sd">                           similar as pw.x input file.</span>
@@ -436,43 +416,43 @@
 
 <span class="sd">                           e.g. :code:`{&#39;CONTROL&#39;:{}, &#39;SYSTEM&#39;:{}}`</span>
 
-<span class="sd">                           **Notice**: more options in qePwOriginalSubmit function.</span>
+<span class="sd">                           **Notice**: more options in qePwOriginalSubmit function. In qePwContinueSubmit,</span>
+<span class="sd">                           we assume that the user wants to restart from previous converged wave functions and</span>
+<span class="sd">                           charge density, so we set [&#39;CONTROL&#39;][&#39;restart_mode&#39;]=&#39;restart&#39;, [&#39;ELECTRON&#39;][</span>
+<span class="sd">                           &#39;startingwfc&#39;]=&#39;file and [&#39;ELECTRON&#39;][&#39;startingpot&#39;]=&#39;file&#39;.</span>
 <span class="sd">    :type add_parameters: python dictionary object</span>
 
-<span class="sd">    :param del_parameters: The tags that we would like to delete, for example if we do not want to use spin-polarized</span>
-<span class="sd">                           simulation, then &#39;nspin&#39; needs to be deleted. Same structure as add_parameters.</span>
+<span class="sd">    :param del_parameters: (optional, default = {})The tags that we would like to delete, for example if we do not</span>
+<span class="sd">                           want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure as</span>
+<span class="sd">                           add_parameters.</span>
 
 <span class="sd">                           e.g. :code:`{&#39;CONTROL&#39;: [key1, key2, key3], &#39;SYSTEM&#39;: [key1, key2, key3]}`</span>
 <span class="sd">    :type del_parameters: python dictionary object</span>
 
-<span class="sd">    :param kpoints: optional, if you want to keep the k-points for previous calculation, just use an empty list</span>
-<span class="sd">                    :code:`[]`. The kpoints that you want to use, if the kpoints has only 1 list, then it is the</span>
-<span class="sd">                    kpoint  mesh, but if two lists are detected, then the first will be k-point mesh, the second</span>
-<span class="sd">                    one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
+<span class="sd">    :param kpoints: (optional, default = []), if you want to keep the k-points for previous calculation, just use an</span>
+<span class="sd">                    empty list :code:`[]`. The kpoints that you want to use, if the kpoints has only 1 list,</span>
+<span class="sd">                    then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh,</span>
+<span class="sd">                    the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]</span>
 <span class="sd">    :type kpoints: python list object</span>
 
-<span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different</span>
-<span class="sd">                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)</span>
-<span class="sd">                            queue_name. If value is :code:`{}`, then it means we will use previous settings</span>
+<span class="sd">    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have</span>
+<span class="sd">                            different settings. Only the following 3 keys can have effects: (1) resources (2)</span>
+<span class="sd">                            account (3) queue_name. If value is :code:`{}`, then it means we will use previous settings</span>
 <span class="sd">    :type cluster_options: python dictionary object</span>
 
-<span class="sd">    :param metadata: The dictionary that contains information about metadata. For example: label and description.</span>
-<span class="sd">                     label and description are mendatory. If value is :code:`{}`, then it means we will use previous</span>
-<span class="sd">                     settings.</span>
+<span class="sd">    :param metadata: (optional, default = {}) The dictionary that contains information about metadata. For example:</span>
+<span class="sd">                     label and description.label and description are mendatory. If value is :code:`{}`,</span>
+<span class="sd">                     then it means we will use previous settings.</span>
 <span class="sd">    :type metadata: python dictionary object</span>
 
-<span class="sd">    :param settings_dict: which contains the additional information for the pw.x calculation. e.g. Fixed atom,</span>
-<span class="sd">                          retrieving more files, parser options, etc. And the command-line options. If value is</span>
-<span class="sd">                          :code:`{}`, then it means we will use previous settings</span>
+<span class="sd">    :param settings_dict: (optional, default = {}) which contains the additional information for the pw.x calculation.</span>
+<span class="sd">                          e.g. Fixed atom, retrieving more files, parser options, etc. And the command-line options.</span>
+<span class="sd">                          If value is :code:`{}`, then it means we will use previous settings.</span>
 <span class="sd">    :type settings_dict: python dictionary object</span>
 
-<span class="sd">    :returns: - results (`python dictionary object`): a modified results dictionary with the latest submitted job</span>
-
-<span class="sd">              - uuid (`python dictionary object`): the uuid of that CalcJob</span>
+<span class="sd">    :returns: CalcJobNode of the newest calculation.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
     <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
 
@@ -489,11 +469,17 @@
     <span class="n">parameters_dict</span> <span class="o">=</span> <span class="n">parameters_tmp</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span>
     <span class="n">calc_type</span> <span class="o">=</span> <span class="n">parameters_dict</span><span class="p">[</span><span class="s1">&#39;CONTROL&#39;</span><span class="p">][</span><span class="s1">&#39;calculation&#39;</span><span class="p">]</span>
 
+    <span class="c1"># change the parameters (since this is the continuation of the previous calculation)</span>
+    <span class="n">parameters_tmp</span><span class="p">[</span><span class="s1">&#39;CONTROL&#39;</span><span class="p">][</span><span class="s1">&#39;restart_mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;restart&#39;</span>
+    <span class="n">parameters_tmp</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;startingwfc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>  <span class="c1"># from wave function in aiida.save</span>
+    <span class="n">parameters_tmp</span><span class="p">[</span><span class="s1">&#39;ELECTRONS&#39;</span><span class="p">][</span><span class="s1">&#39;startingpot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>  <span class="c1"># from charge density in aiida.save</span>
+
     <span class="k">if</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;relax&#39;</span> <span class="ow">or</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;vc-relax&#39;</span><span class="p">:</span>
         <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">output_structure</span>
     <span class="k">elif</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;scf&#39;</span> <span class="ow">or</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;nscf&#39;</span><span class="p">:</span>
         <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">structure</span>
 
+    <span class="c1"># assign parameters in add_parameters</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">add_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">key2</span><span class="p">,</span> <span class="n">value2</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">parameters_tmp</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">key2</span><span class="p">]</span> <span class="o">=</span> <span class="n">value2</span>
@@ -529,6 +515,15 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pseudo_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">restart_builder</span><span class="o">.</span><span class="n">pseudos</span> <span class="o">=</span> <span class="n">pseudo_dict</span>
 
+    <span class="c1"># set default options for slurm</span>
+    <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span>  <span class="c1"># in here machine = node</span>
+    <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_wallclock_seconds</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span>
+        <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">]</span>  <span class="c1"># in here machine = node</span>
+    <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>  <span class="c1"># in here machine = node</span>
+    <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stderr</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">]</span>
+    <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stdout</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">]</span>
+    <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
+
     <span class="c1"># reset cluster_options:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;resources&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -537,15 +532,6 @@
             <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s1">&#39;queue_name&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;queue_name&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;qe&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
-        <span class="p">})</span>
 
     <span class="c1"># reset metadata</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -579,45 +565,23 @@
     <span class="n">restart_builder</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">settings_dict</span><span class="p">)</span>
     <span class="n">calc</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">restart_builder</span><span class="p">)</span>
 
-    <span class="c1"># results</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">restart_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">label</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;comp_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;CONTROL&#39;</span><span class="p">][</span><span class="s1">&#39;calculation&#39;</span><span class="p">]</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;E/eV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">computer</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;xc functional&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters_default</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;input_dft&#39;</span><span class="p">]</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;previous_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uuid</span>  <span class="c1"># pk is the previous calculation</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;son_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># right now there is no son_node</span>
-
-    <span class="c1"># change son_calc with previous simulation</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid</span><span class="p">][</span><span class="s1">&#39;son_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span>
-
-    <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
+    <span class="k">return</span> <span class="n">calc</span></div>
 
 
-<div class="viewcode-block" id="projwfcOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">projwfcOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">):</span>
+<div class="viewcode-block" id="projwfcOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.projwfcOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">projwfcOriginalSubmit</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">del_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">cluster_options</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`projwfcOriginalSubmit` can submit a projwfc simulation to get the PDOS. It must follow a nscf simulation</span>
 
-
-<span class="sd">    :param results: A dictionary that has all the relevant information about the simulation, its key is the uuid of the</span>
-<span class="sd">                    CalcJobNode</span>
-<span class="sd">    :type results: python dictionary object</span>
-
-<span class="sd">    :param uuid: The uuid of previous calculation. We will start our calculation from there. Because uuid is the</span>
-<span class="sd">                 unique identification number for each CalcJobNode</span>
+<span class="sd">    :param uuid: (mandatory) The uuid of previous calculation. We will start our calculation from there. Because uuid</span>
+<span class="sd">                 is the unique identification number for each CalcJobNode</span>
 <span class="sd">    :type uuid: python string object</span>
 
-<span class="sd">    :param codename: Represent the code for pw.x that you want to use. If you want to use the same as</span>
+<span class="sd">    :param codename: (mandatory) Represent the code for pw.x that you want to use. If you want to use the same as</span>
 <span class="sd">                     previous calculation, then you need to use Str(&#39;&#39;)</span>
 <span class="sd">    :type codename: python string object</span>
 
-<span class="sd">    :param add_parameters: The desired parameters that you want to state, it can be incomplete,</span>
+<span class="sd">    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be incomplete,</span>
 <span class="sd">                           because inside the function there is a default setting for parameters which can be used in</span>
 <span class="sd">                           most cases, but if you have specific need, you can put that in parameters, the format is</span>
 <span class="sd">                           similar as pw.x input file.</span>
@@ -625,29 +589,25 @@
 <span class="sd">                           e.g. :code:`{&#39;PROJWFC&#39;:{}}`</span>
 <span class="sd">    :type add_parameters: python dictionary object</span>
 
-<span class="sd">    :param del_parameters: The tags that we would like to delete, for example if we do not want to use</span>
-<span class="sd">                           spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure as</span>
-<span class="sd">                           add_parameters.</span>
+<span class="sd">    :param del_parameters: (optional, default = {}) The tags that we would like to delete, for example if we do not</span>
+<span class="sd">                           want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure</span>
+<span class="sd">                           as add_parameters.</span>
 
 <span class="sd">                           e.g. :code:`{&#39;PROJWFC&#39;: [key1, key2, key3]}`</span>
 <span class="sd">    :type del_parameters: python dictionary object</span>
 
-<span class="sd">    :param metadata: The dictionary that contains information about metadata. For example: label and</span>
-<span class="sd">                     description. label and description are mendatory.</span>
+<span class="sd">    :param metadata: (optional, default = {}) The dictionary that contains information about metadata. For example:</span>
+<span class="sd">                     label and description. label and description are mendatory.</span>
 <span class="sd">    :type metadata: python dictionary object</span>
 
-<span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different</span>
-<span class="sd">                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)</span>
-<span class="sd">                            queue_name</span>
+<span class="sd">    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have</span>
+<span class="sd">                            different settings. Only the following 3 keys can have effects: (1) resources (2)</span>
+<span class="sd">                            account (3) queue_name</span>
 <span class="sd">    :type cluster_options: python dictionary object</span>
 
-<span class="sd">    :returns: - **results** (`python dictionary object`): results contains the latest calculation information.</span>
-
-<span class="sd">              - **uuid** (`python string object`): uuid of the latest calculation</span>
+<span class="sd">    :returns: CalcJobNode object of the newest calculation.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
     <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
 
@@ -660,7 +620,7 @@
     <span class="n">projwfc_builder</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">get_builder</span><span class="p">()</span>
 
     <span class="c1"># parameters</span>
-    <span class="n">projwfc_parameter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">projwfc_parameter</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;PROJWFC&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s1">&#39;DeltaE&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
             <span class="s1">&#39;ngauss&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -668,7 +628,7 @@
             <span class="s1">&#39;Emin&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">40</span><span class="p">,</span>
             <span class="s1">&#39;Emax&#39;</span><span class="p">:</span> <span class="mi">40</span>
         <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="p">})</span>
 
     <span class="c1"># add parameters in add_parameters</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">add_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -682,6 +642,16 @@
             <span class="k">if</span> <span class="n">key2</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">tmp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key2</span><span class="p">)</span>
 
+    <span class="c1"># set default options for slurm</span>
+    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span>  <span class="c1"># in here machine =</span>
+    <span class="c1"># node</span>
+    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_wallclock_seconds</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span>
+        <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">]</span>  <span class="c1"># in here machine = node</span>
+    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>  <span class="c1"># in here machine = node</span>
+    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stderr</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">]</span>
+    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stdout</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">]</span>
+    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
+
     <span class="c1"># reset cluster_options:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;resources&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -690,95 +660,66 @@
             <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s1">&#39;queue_name&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;queue_name&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
-        <span class="p">})</span>
 
-    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">projwfc_parameter</span><span class="p">)</span>
+    <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">projwfc_parameter</span>
     <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">parent_folder</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">remote_folder</span>
     <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
     <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
 
     <span class="n">calc</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">projwfc_builder</span><span class="p">)</span>
 
-    <span class="c1"># results</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projwfc_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">label</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;comp_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;projwfc&#39;</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;E/eV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">computer</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;xc functional&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;input_dft&#39;</span><span class="p">]</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;previous_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uuid</span>  <span class="c1"># pk is the previous calculation</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;son_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># right now there is no son_node</span>
-
-    <span class="c1"># change son_calc with previous simulation</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid</span><span class="p">][</span><span class="s1">&#39;son_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span>
-
-    <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
+    <span class="k">return</span> <span class="n">calc</span></div>
 
 
-<div class="viewcode-block" id="phOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.phOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">phOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">qpoints</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">cluster_options</span><span class="p">):</span>
+<div class="viewcode-block" id="phOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.phOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">phOriginalSubmit</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">natlist</span><span class="p">,</span> <span class="n">qpoints</span><span class="o">=</span><span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]],</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">del_parameters</span><span class="o">=</span><span class="p">{},</span>
+                     <span class="n">metadata</span><span class="o">=</span><span class="p">{},</span> <span class="n">cluster_options</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`phOriginalSubmit` can submit a ph.x simulation to get the PDOS. It must follow a scf simulation.</span>
 
-<span class="sd">    :param results: A dictionary that has all the relevant information about the simulation, its key is the uuid of the</span>
-<span class="sd">                    CalcJobNode</span>
-<span class="sd">    :type results: python dictionary object</span>
-
-<span class="sd">    :param uuid: The uuid of previous calculation. We will start our calculation from there. Because uuid is the</span>
-<span class="sd">                 unique identification number for each CalcJobNode</span>
+<span class="sd">    :param uuid: (mandatory) The uuid of previous calculation. We will start our calculation from there. Because uuid</span>
+<span class="sd">                 is the unique identification number for each CalcJobNode</span>
 <span class="sd">    :type uuid: python string object</span>
 
-<span class="sd">    :param codename: Represent the code for pw.x that you want to use. If you want to use the same as</span>
-<span class="sd">                     previous calculation, then you need to use :code:`Str(&#39;&#39;)`</span>
+<span class="sd">    :param codename: (mandatory) Represent the code for pw.x that you want to use. If you want to use the same as</span>
+<span class="sd">                     previous calculation, then you need to use Str(&#39;&#39;)</span>
 <span class="sd">    :type codename: python string object</span>
 
-<span class="sd">    :param qpoints: A list that may contain 1 / 2 lists. To show the qpoints we want to use. e.g. qpoints = [[0.0, 0.0,</span>
-<span class="sd">                    0.0]] or qpoints = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], first one is mesh, second is offset.</span>
+<span class="sd">    :param natlist: (mandatory) Assign the atoms which we want to do the vibrational frequency analysis.</span>
+<span class="sd">    :type natlist: python list object</span>
+
+<span class="sd">    :param qpoints: (optional, default = [[0.0, 0.0, 0.0]] It is like k-points, but useful when calculating</span>
+<span class="sd">                    vibrational frequencies.</span>
 <span class="sd">    :type qpoints: python list object</span>
 
-<span class="sd">    :param add_parameters: The desired parameters that you want to state, it can be incomplete, because inside the</span>
-<span class="sd">                           function there is a default setting for parameters which can be used in most cases,</span>
-<span class="sd">                           but if you have specific need, you can put that in parameters, the format is similar as</span>
-<span class="sd">                           pw.x input file.</span>
+<span class="sd">    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be incomplete,</span>
+<span class="sd">                           because inside the function there is a default setting for parameters which can be used in</span>
+<span class="sd">                           most cases, but if you have specific need, you can put that in parameters, the format is</span>
+<span class="sd">                           similar as pw.x input file.</span>
 
-<span class="sd">                           e.g. {&#39;INPUTPH&#39;:{}}</span>
+<span class="sd">                           e.g. :code:`{&#39;PROJWFC&#39;:{}}`</span>
 <span class="sd">    :type add_parameters: python dictionary object</span>
 
-<span class="sd">    :param del_parameters: The tags that we would like to delete, for example if we do not want to use</span>
-<span class="sd">                           spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure as</span>
-<span class="sd">                           add_parameters.</span>
+<span class="sd">    :param del_parameters: (optional, default = {}) The tags that we would like to delete, for example if we do not</span>
+<span class="sd">                           want to use spin-polarized simulation, then &#39;nspin&#39; needs to be deleted. Same structure</span>
+<span class="sd">                           as add_parameters.</span>
 
-<span class="sd">                           e.g. {&#39;INPUTPH&#39;: [key1, key2, key3]}</span>
+<span class="sd">                           e.g. :code:`{&#39;PROJWFC&#39;: [key1, key2, key3]}`</span>
 <span class="sd">    :type del_parameters: python dictionary object</span>
 
-<span class="sd">    :param metadata: The dictionary that contains information about metadata. For example: label and description.</span>
-<span class="sd">                     label and description are mendatory.</span>
+<span class="sd">    :param metadata: (optional, default = {}) The dictionary that contains information about metadata. For example:</span>
+<span class="sd">                     label and description. label and description are mendatory.</span>
 <span class="sd">    :type metadata: python dictionary object</span>
 
-<span class="sd">    :param cluster_options: The detailed option for the cluster. Different cluster may have different</span>
-<span class="sd">                            settings. Only the following 3 keys can have effects: (1) resources (2) account (3)</span>
-<span class="sd">                            queue_name</span>
+<span class="sd">    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have</span>
+<span class="sd">                            different settings. Only the following 3 keys can have effects: (1) resources (2)</span>
+<span class="sd">                            account (3) queue_name</span>
 <span class="sd">    :type cluster_options: python dictionary object</span>
 
-<span class="sd">    :returns: - **results** (`python dictionary object`): results contains the latest calculation information.</span>
+<span class="sd">    :returns: CalcJobNode object of the newest calculation.</span>
 
-<span class="sd">              - **uuid** (`python string object`): uuid of the latest calculation</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">results_tmp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
     <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
 
@@ -798,7 +739,8 @@
             <span class="s1">&#39;tr2_ph&#39;</span><span class="p">:</span> <span class="mf">1.0e-8</span><span class="p">,</span>
             <span class="s1">&#39;ldisp&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s1">&#39;epsil&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;trans&#39;</span><span class="p">:</span> <span class="kc">True</span>
+            <span class="s1">&#39;trans&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;nat_todo&#39;</span><span class="p">:</span> <span class="n">natlist</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
@@ -821,6 +763,17 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">qpts</span><span class="o">.</span><span class="n">set_kpoints_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="o">=</span><span class="n">qpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">offset</span><span class="o">=</span><span class="n">qpoints</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
+    <span class="c1"># set default options for slurm</span>
+    <span class="c1"># set first, then modify</span>
+    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;ph&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span>  <span class="c1"># in here machine =</span>
+    <span class="c1"># node</span>
+    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_wallclock_seconds</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span>
+        <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">]</span>  <span class="c1"># in here machine = node</span>
+    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;ph&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>  <span class="c1"># in here machine = node</span>
+    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stderr</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;ph&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">]</span>
+    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">scheduler_stdout</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;ph&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">]</span>
+    <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;ph&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
+
     <span class="c1"># reset cluster_options:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;resources&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -829,15 +782,6 @@
             <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;account&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s1">&#39;queue_name&#39;</span> <span class="ow">in</span> <span class="n">cluster_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">queue_name</span> <span class="o">=</span> <span class="n">cluster_options</span><span class="p">[</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;resources&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;max_wallclock_seconds&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;account&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stderr&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;scheduler_stdout&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;queue_name&#39;</span><span class="p">:</span> <span class="n">slurm_options</span><span class="p">[</span><span class="n">computer</span><span class="p">][</span><span class="s1">&#39;projwfc&#39;</span><span class="p">][</span><span class="s1">&#39;queue_name&#39;</span><span class="p">]</span>
-        <span class="p">})</span>
 
     <span class="n">ph_builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">ph_parameter</span><span class="p">)</span>
     <span class="n">ph_builder</span><span class="o">.</span><span class="n">parent_folder</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">remote_folder</span>
@@ -847,24 +791,7 @@
 
     <span class="n">calc</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">ph_builder</span><span class="p">)</span>
 
-    <span class="c1"># results</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ph_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">label</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;comp_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ph&#39;</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;E/eV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;remove_remote_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">computer</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;xc functional&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;input_dft&#39;</span><span class="p">]</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;exit_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;is_finished_ok&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;previous_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uuid</span>  <span class="c1"># pk is the previous calculation</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">uuid</span><span class="p">)][</span><span class="s1">&#39;son_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># right now there is no son_node</span>
-
-    <span class="c1"># change son_calc with previous simulation</span>
-    <span class="n">results_tmp</span><span class="p">[</span><span class="n">uuid</span><span class="p">][</span><span class="s1">&#39;son_calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span>
-
-    <span class="k">return</span> <span class="n">results_tmp</span><span class="p">,</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
+    <span class="k">return</span> <span class="n">calc</span></div>
 
 
 <div class="viewcode-block" id="ppOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.ppOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">ppOriginalSubmit</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">add_parameters</span><span class="p">,</span> <span class="n">del_parameters</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>

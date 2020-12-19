@@ -21,6 +21,7 @@ Enjoy computing, and enjoy building an automated world!
    tutorial
    modules
    log
+   todo
 
 Indices and tables
 ==================

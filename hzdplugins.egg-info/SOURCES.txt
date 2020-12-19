@@ -9,6 +9,7 @@ hzdplugins.egg-info/requires.txt
 hzdplugins.egg-info/top_level.txt
 hzdplugins/aiidaplugins/__init__.py
 hzdplugins/aiidaplugins/constants.py
+hzdplugins/aiidaplugins/deprecated.py
 hzdplugins/aiidaplugins/info.py
 hzdplugins/aiidaplugins/io.py
 hzdplugins/aiidaplugins/submit.py

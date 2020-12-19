@@ -30,7 +30,7 @@ slurm_options['rwth-claix-mac'] = {
 # 'juwels-mac'
 slurm_options['juwels-mac'] = {
     'qe': {
-        'resources': {'num_machines': 2},  # on juwels, each node has 48 cores.
+        'resources': {'num_machines': 4},  # on juwels, each node has 48 cores.
         'max_wallclock_seconds': 86400,
         'account': 'fzj-mac',
         'scheduler_stderr': 'stderr',
