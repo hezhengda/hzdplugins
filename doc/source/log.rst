@@ -3,6 +3,8 @@ Log file for hzdplugins
 
 * v0.0.39: 2020.12.19
     * remove all the :code:`results` parameter in the `submit.py`, and add :code:`group` parameter to make sure that we use the group functionality in Aiida, not something we create ourselves. Since the :code:`results` parameter is no longer needed, we also need to remove the :code:`saveResults`, :code:`readResults`, :code:`showResults`, :code:`getUnDoneTasks`, :code:`getUnFinishedTasks`, :code:`getUnConvergedTasks`, :code:`assignValue`, :code:`pkToUuidConverter` from `info.py` to `deprecated.py`
+    * add `inputgenerator.py` in `hzdplugins.aiidaplugins` module in order to help me generate input data for the workchains.
+        * For the outputdict(), do we need to specify which parameter we need to exclude? (Use a dictionay to store the parameter list) --> For the future.
 
 * v0.0.38: 2020.12.12
     * add :code:`projwfcOriginalSubmit`, :code:`phOriginalSubmit` in `submit.py`

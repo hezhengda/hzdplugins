@@ -471,7 +471,7 @@
 
     <span class="c1"># change the parameters (since this is the continuation of the previous calculation)</span>
     <span class="n">parameters_tmp</span><span class="p">[</span><span class="s1">&#39;CONTROL&#39;</span><span class="p">][</span><span class="s1">&#39;restart_mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;restart&#39;</span>
-    <span class="n">parameters_tmp</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">][</span><span class="s1">&#39;startingwfc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>  <span class="c1"># from wave function in aiida.save</span>
+    <span class="n">parameters_tmp</span><span class="p">[</span><span class="s1">&#39;ELECTRONS&#39;</span><span class="p">][</span><span class="s1">&#39;startingwfc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>  <span class="c1"># from wave function in aiida.save</span>
     <span class="n">parameters_tmp</span><span class="p">[</span><span class="s1">&#39;ELECTRONS&#39;</span><span class="p">][</span><span class="s1">&#39;startingpot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>  <span class="c1"># from charge density in aiida.save</span>
 
     <span class="k">if</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;relax&#39;</span> <span class="ow">or</span> <span class="n">calc_type</span> <span class="o">==</span> <span class="s1">&#39;vc-relax&#39;</span><span class="p">:</span>

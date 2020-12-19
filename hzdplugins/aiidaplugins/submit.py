@@ -318,7 +318,7 @@ def qePwContinueSubmit(uuid, pseudo_family, pseudo_dict={}, codename='', parent_
 
     # change the parameters (since this is the continuation of the previous calculation)
     parameters_tmp['CONTROL']['restart_mode'] = 'restart'
-    parameters_tmp['SYSTEM']['startingwfc'] = 'file'  # from wave function in aiida.save
+    parameters_tmp['ELECTRONS']['startingwfc'] = 'file'  # from wave function in aiida.save
     parameters_tmp['ELECTRONS']['startingpot'] = 'file'  # from charge density in aiida.save
 
     if calc_type == 'relax' or calc_type == 'vc-relax':

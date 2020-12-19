@@ -10,7 +10,7 @@ addiaplugins.io Module
     :show-inheritance:
 
 addiaplugins.info Module
--------------------------
+------------------------
 
 .. automodule:: hzdplugins.aiidaplugins.info
     :members:
@@ -18,9 +18,17 @@ addiaplugins.info Module
     :show-inheritance:
 
 addiaplugins.submit Module
-----------------------------
+--------------------------
 
 .. automodule:: hzdplugins.aiidaplugins.submit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+addiaplugins.inputgenerator Module
+----------------------------------
+
+.. automodule:: hzdplugins.aiidaplugins.inputgenerator
     :members:
     :undoc-members:
     :show-inheritance:
