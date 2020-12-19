@@ -151,8 +151,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for hzdplugins.aiidaplugins.io</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">load_node</span>
+<span></span><span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">load_node</span>
 
 <div class="viewcode-block" id="qeCleanOneRemoteFolder"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qeCleanOneRemoteFolder">[docs]</a><span class="k">def</span> <span class="nf">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -212,7 +211,6 @@
                     <span class="n">transport</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">transport</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">item</span><span class="p">)</span>  <span class="c1"># delete the pseudopotential file</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;uuid:</span><span class="si">{}</span><span class="s1"> -- All the unnecessary files have been deleted.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="p">))</span>
         <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">results_tmp</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="s1">&#39;uuid:</span><span class="si">{}</span><span class="s1"> --- There is no out folder in the working directory. Please check whether the calculation is &#39;</span>
@@ -227,11 +225,11 @@
 <span class="sd">    :param uuid_list: you can add a list of nodes that you want to clear the remote folder. e.g. [2020, 2030,</span>
 <span class="sd">                      2040] etc. The function will only deal with the list object, other types of inputs are ignored.</span>
 <span class="sd">                      But if args is not set, then the function will deal with all the nodes in the results dictionary.</span>
-<span class="sd">    :type args: python list object</span>
+<span class="sd">    :type uuid_list: python list object</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">uuid_list</span><span class="p">:</span>
-        <span class="n">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">results_tmp</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span></div>
+        <span class="n">qeCleanOneRemoteFolder</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="qeRetriveAllFiles"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.io.qeRetriveAllFiles">[docs]</a><span class="k">def</span> <span class="nf">qeRetriveAllFiles</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">localpath</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>

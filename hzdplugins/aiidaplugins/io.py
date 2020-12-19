@@ -1,4 +1,3 @@
-from copy import deepcopy
 from aiida.orm import load_node
 
 def qeCleanOneRemoteFolder(uuid):
@@ -59,7 +58,6 @@ def qeCleanOneRemoteFolder(uuid):
                     transport.remove(transport.getcwd() + '/' + item)  # delete the pseudopotential file
         print('uuid:{} -- All the unnecessary files have been deleted.'.format(uuid))
         transport.close()
-        return results_tmp
     else:
         print(
             'uuid:{} --- There is no out folder in the working directory. Please check whether the calculation is '
@@ -74,11 +72,11 @@ def qecleanAllRemoteFolder(uuid_list):
     :param uuid_list: you can add a list of nodes that you want to clear the remote folder. e.g. [2020, 2030,
                       2040] etc. The function will only deal with the list object, other types of inputs are ignored.
                       But if args is not set, then the function will deal with all the nodes in the results dictionary.
-    :type args: python list object
+    :type uuid_list: python list object
 
     """
     for uuid in uuid_list:
-        qeCleanOneRemoteFolder(results_tmp, uuid)
+        qeCleanOneRemoteFolder(uuid)
 
 def qeRetriveAllFiles(uuid, localpath):
     """
