@@ -1,70 +1,112 @@
-# Since the goal of Aiida is to "preservation of provenance", so I should write this plugin with the same goal as Aiida, that's why all the relevant information will be provided in aiida.orm types. (I can convert them in the code, it is very straightforward)
+# Since the goal of Aiida is to "preservation of provenance", so I should write this plugin with the same goal as
+# Aiida, that's why all the relevant information will be provided in aiida.orm types. (I can convert them in the
+# code, it is very straightforward)
 
-from aiida.orm import StructureData, KpointsData, Dict, Code
 from copy import deepcopy
-from aiida.orm import load_node
-from aiida.engine import calcfunction
+
 from aiida.engine.launch import submit
-from hzdplugins.aiidaplugins.constants import results_keys_set, slurm_options
+from aiida.orm import KpointsData, Dict, Code
+from aiida.orm import load_node
 from aiida.orm.nodes.data.upf import get_pseudos_from_structure
 
-def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, pseudo_dict, metadata, add_parameters, del_parameters, cluster_options, settings_dict):
+from hzdplugins.aiidaplugins.constants import slurm_options
 
+def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, pseudo_dict={}, add_parameters={},
+                       del_parameters={}, cluster_options={}, settings_dict={}):
     """
 
-    `qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.
+    :code:`qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.
 
-    Parameters:
+    :param codename: (mandatory) A string represents the code for pw.x that you want to use.
+    :type codename: python string object
 
-    results:
-        A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode
+    :param structure: (mandatory) The structure of your system.
+    :type structure: aiida.orm.StructureData object
 
-    codename:
-        A string. A string represents the code for pw.x that you want to use
+    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be
+                           incomplete, because inside the function there is a default setting for parameters which can
+                           be used in most cases, but if you have specific need, you can put that in parameters,
+                           the format is similar as pw.x input file.
 
-    structure:
-        An aiida.orm.StructureData object. The structure of your system. It needs to be StructureData type.
+                           If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
-    add_parameters:
-        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+                           In Aiida, there is a very efficient way to specify the :code:`hubbard_u`,
+                           :code:`starting_magnetization` and :code:`starting_ns_eigenvalue`. I give some examples
+                           in below:
 
-        If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
+                           .. code-block:: python
 
-        e.g. {'CONTROL':{}, 'SYSTEM':{}}
+                                # hubbard_u
+                                'SYSTEM': {
+                                    'hubbard_u': {
+                                        'Fe': 5.0,
+                                        'Fe3': 5.0 # if you have different spins of same atom, then you should use
+                                        newStructure function to create the structure
+                                    },
+                                    'starting_magnetization': {
+                                        'Fe': 0.1,
+                                        'Fe3': 0.1,
+                                    },
+                                    'starting_ns_eigenvalue': [
+                                        [1, 1, 'Fe', 1.0] # represent: starting_ns_eigenvalue(1, 1, 1)=1.0
+                                        # others are the same, if you want to assign to Fe3, just replace Fe with Fe3.
+                                    ]
+                                }
 
-    del_parameters:
-        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+    :type add_parameters: python dictionary
 
-        e.g. {'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}
+    :param del_parameters: (optional, default = {}) The tags that we would like to delete, for example if we do not
+                           want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure
+                           as add_parameters.
 
-    kpoints:
-        A list object. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+                           e.g. :code:`{'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}`
+    :type del_parameters: python dictionary object
 
-    pseudo_family:
-        A string. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur.
+    :param kpoints: (mandatory) The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint
+                    mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the
+                    origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+    :type kpoints: python list object
 
-    pseudo_dict:
-        A dictionary. Which contains the pseudopotential files that we want to use in the simulation.
+    :param pseudo_family: (mandatory) The pseudopotential family that you want to use. Make sure that you already have
+                          that configured, otherwise an error will occur.
+    :type pseudo_family: python string object.
 
-    cluster_options:
-        A dictionary. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
+    :param pseudo_dict: (optional, default = {}) which contains the pseudopotential files that we want to use in the
+                        simulation. In here it is very important to note that the path of the pseudopotential file
+                        has to be in the absolute path.
 
-    metadata:
-        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
+                        e.g.
 
-    settings_dict:
-        A dictionary. which contains the additional information for the pw.x calculation. e.g. Fixed atom, retrieving more files, parser options, etc. And the command-line options.
+                        .. code-block:: python
 
-    Return:
-        results: a modified results dictionary with the latest submitted job
-        pk: the id of that CalcJob
+                            pseudo_dict = {
+                                'Fe': UpfData(absolute_path),
+                                'Fe3': UpfData(absolute_path)
+                            }
+    :type pseudo_dict: python dictionary object.
+
+    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have
+                            different settings. Only the following 3 keys can have effects: (1) resources (2) account
+                            (3) queue_name
+    :type cluster_options: python dictionary object
+
+    :param metadata: (mandatory) The dictionary that contains information about metadata. For example: label and
+                     description. label and description are mendatory.
+
+                     e.g. :code:`{'label':{}, 'description':{}}`
+    :type metadata: python dictionary object
+
+    :param settings_dict: (optional, default = {}) which contains the additional information for the pw.x
+                          calculation. e.g. Fixed atom, retrieving more files, parser options, etc. And the
+                          command-line options.
+    :type settings_dict: python dictionary object
+
+    :returns: uuid of the new CalcJobNode
 
     """
-
-    results_tmp = deepcopy(results) # first we need to create a copy for our simulation
 
     code = Code.get_from_string(codename)
-    computer = codename.split('@')[1] # get the name of the cluster
+    computer = codename.split('@')[1]  # get the name of the cluster
     pw_builder = code.get_builder()
 
     # pseudopotential
@@ -109,10 +151,10 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, pse
             'occupations': 'smearing',
             'degauss': 0.002,
             'smearing': 'gaussian',
-            'input_dft': 'PBE'
+            'input_dft': 'PBESOL'
         },
         'ELECTRONS': {
-            'electron_maxstep': 1000,
+            'electron_maxstep': 200,
             'conv_thr': 1.0e-6,
             'diagonalization': 'david',
             'mixing_mode': 'plain',
@@ -144,25 +186,32 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, pse
     pw_builder.metadata.description = metadata['description']
 
     # set default options for slurm
-    pw_builder.metadata.options.resources = slurm_options[computer]['qe']['resources'] # in here machine = node
-    pw_builder.metadata.options.max_wallclock_seconds = slurm_options[computer]['qe']['max_wallclock_seconds'] # in here machine = node
-    pw_builder.metadata.options.account = slurm_options[computer]['qe']['account'] # in here machine = node
-    pw_builder.metadata.options.scheduler_stderr = slurm_options[computer]['qe']['scheduler_stderr']
-    pw_builder.metadata.options.scheduler_stdout = slurm_options[computer]['qe']['scheduler_stderr']
-    pw_builder.metadata.options.queue_name = slurm_options[computer]['qe']['queue_name']
+    pw_builder.metadata.options['resources'] = slurm_options[computer]['qe']['resources']  # in here machine = node
+    pw_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['qe'][
+        'max_wallclock_seconds']  #in here machine = node
+    pw_builder.metadata.options['account'] = slurm_options[computer]['qe']['account']  # in here machine = node
+    pw_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    pw_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    pw_builder.metadata.options['queue_name'] = slurm_options[computer]['qe']['queue_name']
 
     # revised by cluster_options
     if len(cluster_options) > 0:
         if 'resources' in cluster_options.keys():
-            pw_builder.metadata.options.resources = cluster_options['resources']
+            pw_builder.metadata.options['resources'] = cluster_options['resources']
         if 'account' in cluster_options.keys():
-            pw_builder.metadata.options.resources = cluster_options['account']
+            pw_builder.metadata.options['account'] = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
-            pw_builder.metadata.options.resources = cluster_options['queue_name']
+            pw_builder.metadata.options['queue_name'] = cluster_options['queue_name']
 
-    ## get atomic occupations
+    # initialize the settings_dict
+    if len(settings_dict) == 0:
+        settings_dict['cmdline'] = ['-nk', '4']
+    else:
+        pass  # do nothing
+
+    # get atomic occupations
     if 'lda_plus_u' in parameters_default['SYSTEM']:
-        if parameters_default['SYSTEM']['lda_plus_u'] == True:
+        if parameters_default['SYSTEM']['lda_plus_u']:
             settings_dict['parser_options'] = {'parse_atomic_occupations': True}
 
     # launch the simulation
@@ -172,86 +221,91 @@ def qePwOriginalSubmit(results, codename, structure, kpoints, pseudo_family, pse
     pw_builder.settings = Dict(dict=settings_dict)
     calc = submit(pw_builder)
 
-    # results
-    results_tmp[str(calc.uuid)] = {}
-    results_tmp[str(calc.uuid)]['system'] = metadata['label']
-    results_tmp[str(calc.uuid)]['comp_type'] = parameters_default['CONTROL']['calculation']
-    results_tmp[str(calc.uuid)]['E/eV'] = None
-    results_tmp[str(calc.uuid)]['remove_remote_folder'] = False
-    results_tmp[str(calc.uuid)]['cluster'] = codename.split('@')[1] # becase all the codename have same structure "code@computer"
-    results_tmp[str(calc.uuid)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
-    results_tmp[str(calc.uuid)]['exit_status'] = None
-    results_tmp[str(calc.uuid)]['is_finished'] = None
-    results_tmp[str(calc.uuid)]['is_finished_ok'] = None
-    results_tmp[str(calc.uuid)]['previous_calc'] = 0 # 0 represent original
-    results_tmp[str(calc.uuid)]['son_calc'] = None # currently no son_calc node
-    # results_tmp[ads_str(calc.pk)]['description'] = metadata['description']
+    return calc.uuid
 
-    return results_tmp, calc.uuid
-
-def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, parent_folder, add_parameters, del_parameters, kpoints, cluster_options, metadata, settings_dict):
-
+def qePwContinueSubmit(uuid, pseudo_family, pseudo_dict={}, codename='', parent_folder=True, add_parameters={},
+                       del_parameters={}, kpoints=[], cluster_options={}, metadata={}, settings_dict={}):
     """
 
-    `qePwContinueSubmit` will continue a simulation with similar or modified input parameters. All the parameters are listed in the kwargs.
+    `qePwContinueSubmit` will continue a simulation with similar or modified input parameters. All the parameters are
+    listed in the kwargs.
 
-    Parameters:
+    :param uuid: (mandatory) The uuid of previous calculation. We will start our calculation from there. Because uuid
+                 is the unique identification number for each CalcJobNode
 
-    results:
-        A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode
+                    **Notice**: The uuid must be in the results dictionary, if not the program will shout KeyError.
+                    And if you are testing, you could use assignValue to quickly create a dictionary that contains
+                    the uuid that you want to continue.
+    :type uuid: python string object
 
-    uuid:
-        A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
+    :param pseudo_family: (mandatory) The pseudopotential family that you want to use. Make sure that you already have
+                          that configured, otherwise an error will occur. This is mendatory.
+    :type pseudo_family: python string object
 
-    pseudo_family:
-        A string. A string. The pseudopotential family that you want to use. Make sure that you already have that configured, otherwise an error will occur. This is mendatory.
+    :param pseudo_dict: (optional, default = {}) Which contains the pseudopotential files that we want to use in the
+                        simulation.
+    :type pseudo_dict: python dictionary object
 
-    pseudo_dict:
-        A dictionary. Which contains the pseudopotential files that we want to use in the simulation.
+    :param codename: (optional, default = '') Represent the code for pw.x that you want to use. If you want to use the
+                     same as previous calculation, then you need to use Str('')
+    :type codename: python string object
 
-    codename:
-        A string. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str('')
+    :param parent_folder: (optional, default = True) If parent_folder is True, then the calculation will start with the
+                          output files from previous calculations.
+    :type parent_folder: python boolean object
 
-    parent_folder:
-        A Boolean variable. If parent_folder is True, then the calculation will start with the output files from previous calculations.
+    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be incomplete,
+                           because inside the function there is a default setting for parameters which can be used in
+                           most cases, but if you have specific need, you can put that in parameters, the format is
+                           similar as pw.x input file.
 
-    add_parameters:
-        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+                           If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
 
-        If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
+                           e.g. :code:`{'CONTROL':{}, 'SYSTEM':{}}`
 
-        e.g. {'CONTROL':{}, 'SYSTEM':{}}
+                           **Notice**: more options in qePwOriginalSubmit function. In qePwContinueSubmit,
+                           we assume that the user wants to restart from previous converged wave functions and
+                           charge density, so we set ['CONTROL']['restart_mode']='restart', ['ELECTRON'][
+                           'startingwfc']='file and ['ELECTRON']['startingpot']='file'.
+    :type add_parameters: python dictionary object
 
-    del_parameters:
-        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+    :param del_parameters: (optional, default = {})The tags that we would like to delete, for example if we do not
+                           want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as
+                           add_parameters.
 
-        e.g. {'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}
+                           e.g. :code:`{'CONTROL': [key1, key2, key3], 'SYSTEM': [key1, key2, key3]}`
+    :type del_parameters: python dictionary object
 
-    kpoints:
-        A list. A list of lists. The kpoints that you want to use, if the kpoints has only 1 list, then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh, the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+    :param kpoints: (optional, default = []), if you want to keep the k-points for previous calculation, just use an
+                    empty list :code:`[]`. The kpoints that you want to use, if the kpoints has only 1 list,
+                    then it is the kpoint mesh, but if two lists are detected, then the first will be k-point mesh,
+                    the second one will be the origin of k-point mesh.e.g. [[3, 3, 1]] or [[3, 3, 1],[0.5, 0.5, 0.5]]
+    :type kpoints: python list object
 
-    cluster_options:
-        A dictionary. A dictionary. The detailed option for the cluster. Different cluster may have different settings. Only the following 3 keys can have effects: (1) resources (2) account (3) queue_name
+    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have
+                            different settings. Only the following 3 keys can have effects: (1) resources (2)
+                            account (3) queue_name. If value is :code:`{}`, then it means we will use previous settings
+    :type cluster_options: python dictionary object
 
-    metadata:
-        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
+    :param metadata: (optional, default = {}) The dictionary that contains information about metadata. For example:
+                     label and description.label and description are mendatory. If value is :code:`{}`,
+                     then it means we will use previous settings.
+    :type metadata: python dictionary object
 
-    settings_dict:
-        A dictionary. which contains the additional information for the pw.x calculation. e.g. Fixed atom, retrieving more files, parser options, etc. And the command-line options.
+    :param settings_dict: (optional, default = {}) which contains the additional information for the pw.x calculation.
+                          e.g. Fixed atom, retrieving more files, parser options, etc. And the command-line options.
+                          If value is :code:`{}`, then it means we will use previous settings.
+    :type settings_dict: python dictionary object
 
-    Return:
-        results: a modified results dictionary with the latest submitted job
-        uuid: the uuid of that CalcJob
+    :returns: uuid of the CalcJobNode of the newest calculation.
 
     """
-
-    results_tmp = deepcopy(results)
 
     node = load_node(uuid=uuid)
 
-    if len(codename) == 0: # not going to change cluster
+    if len(codename) == 0:  # not going to change cluster
         computer = node.computer.label
-        restart_builder = node.get_builder_restart() # get the restart_builder
+        restart_builder = node.get_builder_restart()  # get the restart_builder
     else:
         computer = codename.split('@')[1]
         code = Code.get_from_string(codename)
@@ -262,11 +316,17 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
     parameters_dict = parameters_tmp.get_dict()
     calc_type = parameters_dict['CONTROL']['calculation']
 
+    # change the parameters (since this is the continuation of the previous calculation)
+    parameters_tmp['CONTROL']['restart_mode'] = 'restart'
+    parameters_tmp['ELECTRONS']['startingwfc'] = 'file'  # from wave function in aiida.save
+    parameters_tmp['ELECTRONS']['startingpot'] = 'file'  # from charge density in aiida.save
+
     if calc_type == 'relax' or calc_type == 'vc-relax':
         structure = node.outputs.output_structure
     elif calc_type == 'scf' or calc_type == 'nscf':
         structure = node.inputs.structure
 
+    # assign parameters in add_parameters
     for key, value in add_parameters.items():
         for key2, value2 in value.items():
             parameters_tmp[key][key2] = value2
@@ -302,23 +362,23 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
     if len(pseudo_dict) != 0:
         restart_builder.pseudos = pseudo_dict
 
+    # set default options for slurm
+    restart_builder.metadata.options['resources'] = slurm_options[computer]['qe']['resources']  # in here machine = node
+    restart_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['qe'][
+        'max_wallclock_seconds']  # in here machine = node
+    restart_builder.metadata.options['account'] = slurm_options[computer]['qe']['account']  # in here machine = node
+    restart_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    restart_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['qe']['scheduler_stderr']
+    restart_builder.metadata.options['queue_name'] = slurm_options[computer]['qe']['queue_name']
+
     # reset cluster_options:
     if len(cluster_options) > 0:
         if 'resources' in cluster_options.keys():
-            restart_builder.metadata.options.resources = cluster_options['resources']
+            restart_builder.metadata.options['resources'] = cluster_options['resources']
         if 'account' in cluster_options.keys():
-            restart_builder.metadata.options.account = cluster_options['account']
+            restart_builder.metadata.options['account'] = cluster_options['account']
         if 'queue_name' in cluster_options.keys():
-            restart_builder.metadata.options.queue_name = cluster_options['queue_name']
-    else:
-        restart_builder.metadata.options.update({
-            'resources': slurm_options[computer]['qe']['resources'],
-            'max_wallclock_seconds': slurm_options[computer]['qe']['max_wallclock_seconds'],
-            'account': slurm_options[computer]['qe']['account'],
-            'scheduler_stderr': slurm_options[computer]['qe']['scheduler_stderr'],
-            'scheduler_stdout': slurm_options[computer]['qe']['scheduler_stdout'],
-            'queue_name': slurm_options[computer]['qe']['queue_name']
-        })
+            restart_builder.metadata.options['queue_name'] = cluster_options['queue_name']
 
     # reset metadata
     if len(metadata) > 0:
@@ -336,8 +396,14 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
         restart_builder.metadata.description = node.description
 
     # assign the parent_folder
-    if parent_folder == True:
+    if parent_folder:
         restart_builder.parent_folder = node.outputs.remote_folder
+
+    # set settings_dict
+    if len(settings_dict) > 0:
+        pass
+    else:
+        settings_dict = node.inputs.settings.get_dict()
 
     # submit the calculation
     restart_builder.structure = structure
@@ -346,63 +412,49 @@ def qePwContinueSubmit(results, uuid, pseudo_family, pseudo_dict, codename, pare
     restart_builder.settings = Dict(dict=settings_dict)
     calc = submit(restart_builder)
 
-    # results
-    results_tmp[str(calc.uuid)] = {}
-    results_tmp[str(calc.uuid)]['system'] = restart_builder.metadata.label
-    results_tmp[str(calc.uuid)]['comp_type'] = parameters_default['CONTROL']['calculation']
-    results_tmp[str(calc.uuid)]['E/eV'] = None
-    results_tmp[str(calc.uuid)]['remove_remote_folder'] = False
-    results_tmp[str(calc.uuid)]['cluster'] = computer
-    results_tmp[str(calc.uuid)]['xc functional'] = parameters_default['SYSTEM']['input_dft']
-    results_tmp[str(calc.uuid)]['exit_status'] = None
-    results_tmp[str(calc.uuid)]['is_finished'] = None
-    results_tmp[str(calc.uuid)]['is_finished_ok'] = None
-    results_tmp[str(calc.uuid)]['previous_calc'] = uuid # pk is the previous calculation
-    results_tmp[str(calc.uuid)]['son_calc'] = None # right now there is no son_node
+    return calc.uuid
 
-    # change son_calc with previous simulation
-    results_tmp[uuid]['son_calc'] = calc.uuid
 
-    return results_tmp, calc.uuid
-
-def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameters, metadata):
-
+def projwfcOriginalSubmit(uuid, codename, metadata, add_parameters={}, del_parameters={}, cluster_options={}):
     """
 
     :code:`projwfcOriginalSubmit` can submit a projwfc simulation to get the PDOS. It must follow a nscf simulation
 
-    Parameters:
+    :param uuid: (mandatory) The uuid of previous calculation. We will start our calculation from there. Because uuid
+                 is the unique identification number for each CalcJobNode
+    :type uuid: python string object
 
-    results:
-        A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode
+    :param codename: (mandatory) Represent the code for pw.x that you want to use. If you want to use the same as
+                     previous calculation, then you need to use Str('')
+    :type codename: python string object
 
-    uuid:
-        A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
+    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be incomplete,
+                           because inside the function there is a default setting for parameters which can be used in
+                           most cases, but if you have specific need, you can put that in parameters, the format is
+                           similar as pw.x input file.
 
-    codename:
-        A string. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str('')
+                           e.g. :code:`{'PROJWFC':{}}`
+    :type add_parameters: python dictionary object
 
-    add_parameters:
-        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+    :param del_parameters: (optional, default = {}) The tags that we would like to delete, for example if we do not
+                           want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure
+                           as add_parameters.
 
-        If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
+                           e.g. :code:`{'PROJWFC': [key1, key2, key3]}`
+    :type del_parameters: python dictionary object
 
-        e.g. {'PROJWFC':{}}
+    :param metadata: (optional, default = {}) The dictionary that contains information about metadata. For example:
+                     label and description. label and description are mendatory.
+    :type metadata: python dictionary object
 
-    del_parameters:
-        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have
+                            different settings. Only the following 3 keys can have effects: (1) resources (2)
+                            account (3) queue_name
+    :type cluster_options: python dictionary object
 
-        e.g. {'PROJWFC': [key1, key2, key3]}
-
-    metadata:
-        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
-
-    Return:
-        A results dictionary that has the information about calc.uuid, and the calc.uuid.
+    :returns: uuid of the CalcJobNode object of the newest calculation.
 
     """
-
-    results_tmp = deepcopy(results)
 
     node = load_node(uuid=uuid)
 
@@ -415,7 +467,7 @@ def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameter
     projwfc_builder = code.get_builder()
 
     # parameters
-    projwfc_parameter = {
+    projwfc_parameter = Dict(dict={
         'PROJWFC': {
             'DeltaE': 0.01,
             'ngauss': 0,
@@ -423,7 +475,7 @@ def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameter
             'Emin': -40,
             'Emax': 40
         }
-    }
+    })
 
     # add parameters in add_parameters
     for key, value in add_parameters.items():
@@ -437,80 +489,84 @@ def projwfcOriginalSubmit(results, uuid, codename, add_parameters, del_parameter
             if key2 in tmp.keys():
                 tmp.pop(key2)
 
-    # slurm
-    projwfc_builder.metadata.options.resources = {'num_machines': 1} # in here machine = node
-    projwfc_builder.metadata.options.max_wallclock_seconds = 86400
-    projwfc_builder.metadata.options.account = "jara0037"
-    projwfc_builder.metadata.options.scheduler_stderr = 'stderr'
-    projwfc_builder.metadata.options.scheduler_stdout = 'stdout'
+    # set default options for slurm
+    projwfc_builder.metadata.options['resources'] = slurm_options[computer]['projwfc']['resources']  # in here machine =
+    # node
+    projwfc_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['projwfc'][
+        'max_wallclock_seconds']  # in here machine = node
+    projwfc_builder.metadata.options['account'] = slurm_options[computer]['projwfc']['account']  # in here machine = node
+    projwfc_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['projwfc']['scheduler_stderr']
+    projwfc_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['projwfc']['scheduler_stderr']
+    projwfc_builder.metadata.options['queue_name'] = slurm_options[computer]['projwfc']['queue_name']
 
-    projwfc_builder.parameters = Dict(dict=projwfc_parameter)
+    # reset cluster_options:
+    if len(cluster_options) > 0:
+        if 'resources' in cluster_options.keys():
+            projwfc_builder.metadata.options['resources'] = cluster_options['resources']
+        if 'account' in cluster_options.keys():
+            projwfc_builder.metadata.options['account'] = cluster_options['account']
+        if 'queue_name' in cluster_options.keys():
+            projwfc_builder.metadata.options['queue_name'] = cluster_options['queue_name']
+
+    projwfc_builder.parameters = projwfc_parameter
     projwfc_builder.parent_folder = node.outputs.remote_folder
     projwfc_builder.metadata.label = metadata['label']
     projwfc_builder.metadata.description = metadata['description']
 
     calc = submit(projwfc_builder)
 
-    # results
-    results_tmp[str(calc.uuid)] = {}
-    results_tmp[str(calc.uuid)]['system'] = projwfc_builder.metadata.label
-    results_tmp[str(calc.uuid)]['comp_type'] = 'projwfc'
-    results_tmp[str(calc.uuid)]['E/eV'] = None
-    results_tmp[str(calc.uuid)]['remove_remote_folder'] = False
-    results_tmp[str(calc.uuid)]['cluster'] = computer
-    results_tmp[str(calc.uuid)]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
-    results_tmp[str(calc.uuid)]['exit_status'] = None
-    results_tmp[str(calc.uuid)]['is_finished'] = None
-    results_tmp[str(calc.uuid)]['is_finished_ok'] = None
-    results_tmp[str(calc.uuid)]['previous_calc'] = uuid # pk is the previous calculation
-    results_tmp[str(calc.uuid)]['son_calc'] = None # right now there is no son_node
+    return calc.uuid
 
-    # change son_calc with previous simulation
-    results_tmp[uuid]['son_calc'] = calc.uuid
 
-    return results_tmp, calc.uuid
-
-def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_parameters, metadata):
-
+def phOriginalSubmit(uuid, codename, natlist, qpoints=[[0.0, 0.0, 0.0]], add_parameters={}, del_parameters={},
+                     metadata={}, cluster_options={}):
     """
 
     :code:`phOriginalSubmit` can submit a ph.x simulation to get the PDOS. It must follow a scf simulation.
 
-    Parameters:
+    :param uuid: (mandatory) The uuid of previous calculation. We will start our calculation from there. Because uuid
+                 is the unique identification number for each CalcJobNode
+    :type uuid: python string object
 
-    results:
-        A dictionary that has all the relevant information about the simulation, its key is the uuid of the CalcJobNode
+    :param codename: (mandatory) Represent the code for pw.x that you want to use. If you want to use the same as
+                     previous calculation, then you need to use Str('')
+    :type codename: python string object
 
-    uuid:
-        A string. The uuid of previous calculation. We will start our calculation from there. Because uuid is the unique identification number for each CalcJobNode
+    :param natlist: (mandatory) Assign the atoms which we want to do the vibrational frequency analysis.
+    :type natlist: python list object
 
-    codename:
-        A string. A string. Represent the code for pw.x that you want to use. If you want to use the same as previous calculation, then you need to use Str('')
+    :param qpoints: (optional, default = [[0.0, 0.0, 0.0]] It is like k-points, but useful when calculating
+                    vibrational frequencies.
+    :type qpoints: python list object
 
-    qpoints:
-        A list that may contain 1 / 2 lists. To show the qpoints we want to use. e.g. qpoints = [[0.0, 0.0, 0.0]] or qpoints = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], first one is mesh, second is offset.
+    :param add_parameters: (optional, default = {}) The desired parameters that you want to state, it can be incomplete,
+                           because inside the function there is a default setting for parameters which can be used in
+                           most cases, but if you have specific need, you can put that in parameters, the format is
+                           similar as pw.x input file.
 
-    add_parameters:
-        A dictionary. A dictionary. The desired parameters that you want to state, it can be incomplete, because inside the function there is a default setting for parameters which can be used in most cases, but if you have specific need, you can put that in parameters, the format is similar as pw.x input file.
+                           e.g. :code:`{'PROJWFC':{}}`
+    :type add_parameters: python dictionary object
 
-        If you want to assign DFT+U and spin-polarization, you need to specify it on your own.
+    :param del_parameters: (optional, default = {}) The tags that we would like to delete, for example if we do not
+                           want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure
+                           as add_parameters.
 
-        e.g. {'INPUTPH':{}}
+                           e.g. :code:`{'PROJWFC': [key1, key2, key3]}`
+    :type del_parameters: python dictionary object
 
-    del_parameters:
-        A dictionary. A dictionary. The tags that we would like to delete, for example if we do not want to use spin-polarized simulation, then 'nspin' needs to be deleted. Same structure as add_parameters.
+    :param metadata: (optional, default = {}) The dictionary that contains information about metadata. For example:
+                     label and description. label and description are mendatory.
+    :type metadata: python dictionary object
 
-        e.g. {'INPUTPH': [key1, key2, key3]}
+    :param cluster_options: (optional, default = {}) The detailed option for the cluster. Different cluster may have
+                            different settings. Only the following 3 keys can have effects: (1) resources (2)
+                            account (3) queue_name
+    :type cluster_options: python dictionary object
 
-    metadata:
-        A dictionary. A dictionary. The dictionary that contains information about metadata. For example: label and description. label and description are mendatory.
+    :returns: uuid of the CalcJobNode object of the newest calculation.
 
-    Return:
-        A results dictionary that has the information about calc.uuid, and the calc.uuid.
 
     """
-
-    results_tmp = deepcopy(results)
 
     node = load_node(uuid=uuid)
 
@@ -530,7 +586,8 @@ def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_param
             'tr2_ph': 1.0e-8,
             'ldisp': False,
             'epsil': False,
-            'trans': True
+            'trans': True,
+            'nat_todo': natlist
         }
     }
 
@@ -553,12 +610,25 @@ def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_param
     else:
         qpts.set_kpoints_mesh(mesh=qpoints[0], offset=qpoints[1])
 
-    # slurm
-    ph_builder.metadata.options.resources = {'num_machines': 1} # in here machine = node
-    ph_builder.metadata.options.max_wallclock_seconds = 86400
-    ph_builder.metadata.options.account = "jara0037"
-    ph_builder.metadata.options.scheduler_stderr = 'stderr'
-    ph_builder.metadata.options.scheduler_stdout = 'stdout'
+    # set default options for slurm
+    # set first, then modify
+    ph_builder.metadata.options['resources'] = slurm_options[computer]['ph']['resources']  # in here machine =
+    # node
+    ph_builder.metadata.options['max_wallclock_seconds'] = slurm_options[computer]['projwfc'][
+        'max_wallclock_seconds']  # in here machine = node
+    ph_builder.metadata.options['account'] = slurm_options[computer]['ph']['account']  # in here machine = node
+    ph_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['ph']['scheduler_stderr']
+    ph_builder.metadata.options['scheduler_stderr'] = slurm_options[computer]['ph']['scheduler_stderr']
+    ph_builder.metadata.options['queue_name'] = slurm_options[computer]['ph']['queue_name']
+
+    # reset cluster_options:
+    if len(cluster_options) > 0:
+        if 'resources' in cluster_options.keys():
+            ph_builder.metadata.options['resources'] = cluster_options['resources']
+        if 'account' in cluster_options.keys():
+            ph_builder.metadata.options['account'] = cluster_options['account']
+        if 'queue_name' in cluster_options.keys():
+            ph_builder.metadata.options['queue_name'] = cluster_options['queue_name']
 
     ph_builder.parameters = Dict(dict=ph_parameter)
     ph_builder.parent_folder = node.outputs.remote_folder
@@ -566,29 +636,14 @@ def phOriginalSubmit(results, uuid, codename, qpoints, add_parameters, del_param
     ph_builder.metadata.description = metadata['description']
     ph_builder.qpoints = qpts
 
-    calc = submit(projwfc_builder)
+    calc = submit(ph_builder)
 
-    # results
-    results_tmp[str(calc.uuid)] = {}
-    results_tmp[str(calc.uuid)]['system'] = ph_builder.metadata.label
-    results_tmp[str(calc.uuid)]['comp_type'] = 'ph'
-    results_tmp[str(calc.uuid)]['E/eV'] = None
-    results_tmp[str(calc.uuid)]['remove_remote_folder'] = False
-    results_tmp[str(calc.uuid)]['cluster'] = computer
-    results_tmp[str(calc.uuid)]['xc functional'] = node.inputs.parameters.get_dict()['SYSTEM']['input_dft']
-    results_tmp[str(calc.uuid)]['exit_status'] = None
-    results_tmp[str(calc.uuid)]['is_finished'] = None
-    results_tmp[str(calc.uuid)]['is_finished_ok'] = None
-    results_tmp[str(calc.uuid)]['previous_calc'] = uuid # pk is the previous calculation
-    results_tmp[str(calc.uuid)]['son_calc'] = None # right now there is no son_node
+    return calc.uuid
 
-    # change son_calc with previous simulation
-    results_tmp[uuid]['son_calc'] = calc.uuid
-
-    return results_tmp, calc.uuid
 
 def ppOriginalSubmit(results, uuid, codename, add_parameters, del_parameters, metadata):
     pass
+
 
 def nebOriginalSubmit(results, uuid, codename, add_parameters, del_parameters, metadata):
     pass

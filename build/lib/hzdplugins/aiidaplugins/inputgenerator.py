@@ -183,13 +183,14 @@ class PwRelaxWorkChainInputGenerator():
     :type clean_workdir: python boolean object
     """
 
-    def __init__(self, base, base_final_scf, structure, relax_type, meta_convergence=True,
+    def __init__(self, base, base_final_scf, structure, relax_type, final_scf=True,
+                 meta_convergence=True,
                  max_meta_convergence_iterations=5, volume_convergence=0.01, clean_workdir=True):
 
         self.base = base
         self.base_final_scf = base_final_scf
         self.structure = structure
-        # self.final_scf = orm.Bool(final_scf)
+        self.final_scf = orm.Bool(final_scf)
         # self.relax_scheme = orm.Str(relax_scheme)
         self.relax_type = orm.Str(relax_type)
         self.meta_convergence = orm.Bool(meta_convergence)
@@ -231,7 +232,7 @@ class PwRelaxWorkChainInputGenerator():
             tmp['base_final_scf']['pw'].pop('parent_folder')
 
         tmp['structure'] = self.structure
-        # tmp['final_scf'] = self.final_scf
+        tmp['final_scf'] = self.final_scf
         # tmp['relax_scheme'] = self.relax_scheme
         tmp['relax_type'] = self.relax_type
         tmp['meta_convergence'] = self.meta_convergence

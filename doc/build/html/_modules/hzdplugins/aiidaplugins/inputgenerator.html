@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.inputgenerator &mdash; hzdplugins 0.0.38 documentation</title>
+  <title>hzdplugins.aiidaplugins.inputgenerator &mdash; hzdplugins 0.0.39 documentation</title>
   
 
   
@@ -212,9 +212,12 @@
 <span class="sd">                            }</span>
 <span class="sd">                        }</span>
 <span class="sd">    :type metadata: python dictionary object</span>
+
+<span class="sd">    :param kpoints: kpoints for the simulation</span>
+<span class="sd">    :type kpoints: aiida.orm.KpointsData</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">pseudos</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">pseudos</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
@@ -222,6 +225,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpoints</span>
 
 <div class="viewcode-block" id="PwCalculationInputGenerator.outputdict"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.inputgenerator.PwCalculationInputGenerator.outputdict">[docs]</a>    <span class="k">def</span> <span class="nf">outputdict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -237,8 +241,9 @@
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;pseudos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pseudos</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;settngs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;kpoints&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span>
 
         <span class="k">return</span> <span class="n">tmp</span></div></div>
 
@@ -278,7 +283,7 @@
 
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pw</span><span class="o">.</span><span class="n">outputdict</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="s1">&#39;kpoints&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># if &#39;kpoints&#39; has been set, then delete it</span>
+        <span class="k">if</span> <span class="s1">&#39;kpoints&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;kpoints&#39;</span><span class="p">)</span>
 
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;kpoints&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span>
@@ -302,9 +307,6 @@
 <span class="sd">    :param structure: The structure we want to relax</span>
 <span class="sd">    :type structure: aiida.orm.StructureData object</span>
 
-<span class="sd">    :param final_scf: If true, then we need to run the final scf simulation</span>
-<span class="sd">    :type final_scf: aiida.orm.Bool</span>
-
 <span class="sd">    :param relax_type: How do we want to relax the structure. Default value can be summaried in below:</span>
 
 <span class="sd">                       .. code-block:: python</span>
@@ -319,32 +321,32 @@
 <span class="sd">                                &#39;atoms_shape&#39;: &#39;Relax atomic positions and shape&#39;,</span>
 <span class="sd">                                &#39;atoms_cell&#39;: &#39;Relax both atomic positions and cell&#39; (&#39;vc-relax&#39;)</span>
 <span class="sd">                            }</span>
-<span class="sd">    :type relax_type: aiida.orm.Str object</span>
+<span class="sd">    :type relax_type: python string object</span>
 
-<span class="sd">    :param metadata_convergence: Don&#39;t know why this exists</span>
-<span class="sd">    :type metadata_convergence: aiida.orm.Bool object</span>
+<span class="sd">    :param meta_convergence: Don&#39;t know why this exists</span>
+<span class="sd">    :type meta_convergence: python boolean object</span>
 
-<span class="sd">    :param meta_convergence_iterations: pass</span>
-<span class="sd">    :type meta_convergence: aiida.orm.Int</span>
+<span class="sd">    :param max_meta_convergence_iterations: pass</span>
+<span class="sd">    :type max_meta_convergence_iterations: python int object</span>
 
 <span class="sd">    :param volume_convergence: pass</span>
-<span class="sd">    :type volume_convergence: aiida.orm.Float object</span>
+<span class="sd">    :type volume_convergence: python float object</span>
 
 <span class="sd">    :param clean_workdir: pass</span>
-<span class="sd">    :type clean_workdir: aiida.orm.Bool object</span>
+<span class="sd">    :type clean_workdir: python boolean object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">base_final_scf</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">relax_type</span><span class="p">,</span> <span class="n">final_scf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">metadata_convergence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">meta_convergence_iterations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">volume_convergence</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">clean_workdir</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">base_final_scf</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">relax_type</span><span class="p">,</span> <span class="n">meta_convergence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">max_meta_convergence_iterations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">volume_convergence</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">clean_workdir</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_final_scf</span> <span class="o">=</span> <span class="n">base_final_scf</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">final_scf</span> <span class="o">=</span> <span class="n">final_scf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">relax_type</span> <span class="o">=</span> <span class="n">relax_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_convergence</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">metadata_convergence</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_convergence_iterations</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">meta_convergence_iterations</span><span class="p">)</span>
+        <span class="c1"># self.final_scf = orm.Bool(final_scf)</span>
+        <span class="c1"># self.relax_scheme = orm.Str(relax_scheme)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relax_type</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">Str</span><span class="p">(</span><span class="n">relax_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_convergence</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">meta_convergence</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_meta_convergence_iterations</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">max_meta_convergence_iterations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">volume_convergence</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">volume_convergence</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clean_workdir</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">clean_workdir</span><span class="p">)</span>
 
@@ -361,7 +363,6 @@
 
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">outputdict</span><span class="p">()</span>
 
-        <span class="c1"># remove &#39;clean_workdir&#39;, &#39;pw.structure&#39; and &#39;pw.parent_folder&#39;</span>
         <span class="k">if</span> <span class="s1">&#39;clean_workdir&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clean_workdir&#39;</span><span class="p">)</span>
 
@@ -373,21 +374,21 @@
 
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base_final_scf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_final_scf</span><span class="o">.</span><span class="n">outputdict</span><span class="p">()</span>
 
-        <span class="c1"># remove &#39;clean_workdir&#39;, &#39;pw.structure&#39; and &#39;pw.parent_folder&#39;</span>
-        <span class="k">if</span> <span class="s1">&#39;clean_workdir&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clean_workdir&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;clean_workdir&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base_final_scf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base_final_scf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clean_workdir&#39;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s1">&#39;structure&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;structure&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;structure&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base_final_scf&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base_final_scf&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;structure&#39;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s1">&#39;parent_folder&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;parent_folder&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;parent_folder&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base_final_scf&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;base_final_scf&#39;</span><span class="p">][</span><span class="s1">&#39;pw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;parent_folder&#39;</span><span class="p">)</span>
 
-        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;final_scf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_scf</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span>
+        <span class="c1"># tmp[&#39;final_scf&#39;] = self.final_scf</span>
+        <span class="c1"># tmp[&#39;relax_scheme&#39;] = self.relax_scheme</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;relax_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relax_type</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;metadata_convergence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_convergence</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;metadata_convergence_iterations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_convergence_iterations</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;meta_convergence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_convergence</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;max_meta_convergence_iterations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_meta_convergence_iterations</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;volume_convergence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_convergence</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;clean_workdir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_workdir</span>
 

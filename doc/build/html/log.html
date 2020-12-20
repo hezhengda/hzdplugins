@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.38 documentation</title>
+  <title>Log file for hzdplugins &mdash; hzdplugins 0.0.39 documentation</title>
   
 
   
@@ -160,7 +160,13 @@
 <li><dl class="simple">
 <dt>v0.0.39: 2020.12.19</dt><dd><ul>
 <li><p>remove all the <code class="code docutils literal notranslate"><span class="pre">results</span></code> parameter in the <cite>submit.py</cite>, and add <code class="code docutils literal notranslate"><span class="pre">group</span></code> parameter to make sure that we use the group functionality in Aiida, not something we create ourselves. Since the <code class="code docutils literal notranslate"><span class="pre">results</span></code> parameter is no longer needed, we also need to remove the <code class="code docutils literal notranslate"><span class="pre">saveResults</span></code>, <code class="code docutils literal notranslate"><span class="pre">readResults</span></code>, <code class="code docutils literal notranslate"><span class="pre">showResults</span></code>, <code class="code docutils literal notranslate"><span class="pre">getUnDoneTasks</span></code>, <code class="code docutils literal notranslate"><span class="pre">getUnFinishedTasks</span></code>, <code class="code docutils literal notranslate"><span class="pre">getUnConvergedTasks</span></code>, <code class="code docutils literal notranslate"><span class="pre">assignValue</span></code>, <code class="code docutils literal notranslate"><span class="pre">pkToUuidConverter</span></code> from <cite>info.py</cite> to <cite>deprecated.py</cite></p></li>
-<li><p>add <cite>inputgenerator.py</cite> in <cite>hzdplugins.aiidaplugins</cite> module in order to help me generate input data for the workchains.</p></li>
+<li><dl class="simple">
+<dt>add <cite>inputgenerator.py</cite> in <cite>hzdplugins.aiidaplugins</cite> module in order to help me generate input data for the workchains.</dt><dd><ul>
+<li><p>For the outputdict(), do we need to specify which parameter we need to exclude? (Use a dictionay to store the parameter list) –&gt; For the future.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>

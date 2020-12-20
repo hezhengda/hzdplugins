@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.38 documentation</title>
+  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.39 documentation</title>
   
 
   
@@ -732,7 +732,7 @@ command-line options.</p></li>
 
 <dl class="py class">
 <dt id="hzdplugins.aiidaplugins.inputgenerator.PwCalculationInputGenerator">
-<em class="property">class </em><code class="sig-prename descclassname">hzdplugins.aiidaplugins.inputgenerator.</code><code class="sig-name descname">PwCalculationInputGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">pseudos</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">settings</span></em>, <em class="sig-param"><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/inputgenerator.html#PwCalculationInputGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.inputgenerator.PwCalculationInputGenerator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">hzdplugins.aiidaplugins.inputgenerator.</code><code class="sig-name descname">PwCalculationInputGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">pseudos</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">settings</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">kpoints</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/inputgenerator.html#PwCalculationInputGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.inputgenerator.PwCalculationInputGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">PwCalculationInputGenerator</span></code> class is used to construct the input file for PwCalculation.</p>
 <p>Initialization function for <code class="code docutils literal notranslate"><span class="pre">PwCalculationInputGenerator</span></code> class.</p>
@@ -769,6 +769,7 @@ command-line options.</p></li>
 </pre></div>
 </div>
 </p></li>
+<li><p><strong>kpoints</strong> (<em>aiida.orm.KpointsData</em>) – kpoints for the simulation</p></li>
 </ul>
 </dd>
 </dl>
@@ -787,7 +788,7 @@ command-line options.</p></li>
 
 <dl class="py class">
 <dt id="hzdplugins.aiidaplugins.inputgenerator.PwRelaxWorkChainInputGenerator">
-<em class="property">class </em><code class="sig-prename descclassname">hzdplugins.aiidaplugins.inputgenerator.</code><code class="sig-name descname">PwRelaxWorkChainInputGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base</span></em>, <em class="sig-param"><span class="n">base_final_scf</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">relax_type</span></em>, <em class="sig-param"><span class="n">final_scf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">metadata_convergence</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">meta_convergence_iterations</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">volume_convergence</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">clean_workdir</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/inputgenerator.html#PwRelaxWorkChainInputGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.inputgenerator.PwRelaxWorkChainInputGenerator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">hzdplugins.aiidaplugins.inputgenerator.</code><code class="sig-name descname">PwRelaxWorkChainInputGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base</span></em>, <em class="sig-param"><span class="n">base_final_scf</span></em>, <em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">relax_type</span></em>, <em class="sig-param"><span class="n">meta_convergence</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">max_meta_convergence_iterations</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">volume_convergence</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">clean_workdir</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/inputgenerator.html#PwRelaxWorkChainInputGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.inputgenerator.PwRelaxWorkChainInputGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">PwRelaxWorkChainInputGenerator</span></code> class is used to construct the input file for PwBaseWorkChain.</p>
 <p>Initialization function for <code class="code docutils literal notranslate"><span class="pre">PwRelaxWorkChainInputGenerator</span></code> class.</p>
@@ -797,8 +798,7 @@ command-line options.</p></li>
 <li><p><strong>base</strong> (<em>PwBaseWorkChainInputGenerator object</em>) – Input for the PwBaseWorkChain</p></li>
 <li><p><strong>base_final_scf</strong> (<em>PwBaseWorkChainInputGenerator object</em>) – Input for the last scf simulation</p></li>
 <li><p><strong>structure</strong> (<em>aiida.orm.StructureData object</em>) – The structure we want to relax</p></li>
-<li><p><strong>final_scf</strong> (<em>aiida.orm.Bool</em>) – If true, then we need to run the final scf simulation</p></li>
-<li><p><strong>relax_type</strong> (<em>aiida.orm.Str object</em>) – <p>How do we want to relax the structure. Default value can be summaried in below:</p>
+<li><p><strong>relax_type</strong> (<em>python string object</em>) – <p>How do we want to relax the structure. Default value can be summaried in below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">relax_type_dict</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;none&#39;</span><span class="p">:</span> <span class="s1">&#39;Nothing can move --&gt; SCF simulation&#39;</span><span class="p">,</span>
     <span class="s1">&#39;atoms: &#39;</span><span class="n">Only</span> <span class="n">atomic</span> <span class="n">positions</span> <span class="n">can</span> <span class="n">be</span> <span class="n">relaxed</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">is</span> <span class="n">fixed</span><span class="o">.</span><span class="s1">&#39;, (&#39;</span><span class="n">relax</span><span class="s1">&#39;)</span>
@@ -812,10 +812,10 @@ command-line options.</p></li>
 </pre></div>
 </div>
 </p></li>
-<li><p><strong>metadata_convergence</strong> (<em>aiida.orm.Bool object</em>) – Don’t know why this exists</p></li>
-<li><p><strong>meta_convergence_iterations</strong> – pass</p></li>
-<li><p><strong>volume_convergence</strong> (<em>aiida.orm.Float object</em>) – pass</p></li>
-<li><p><strong>clean_workdir</strong> (<em>aiida.orm.Bool object</em>) – pass</p></li>
+<li><p><strong>meta_convergence</strong> (<em>python boolean object</em>) – Don’t know why this exists</p></li>
+<li><p><strong>max_meta_convergence_iterations</strong> (<em>python int object</em>) – pass</p></li>
+<li><p><strong>volume_convergence</strong> (<em>python float object</em>) – pass</p></li>
+<li><p><strong>clean_workdir</strong> (<em>python boolean object</em>) – pass</p></li>
 </ul>
 </dd>
 </dl>

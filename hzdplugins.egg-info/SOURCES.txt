@@ -11,6 +11,7 @@ hzdplugins/aiidaplugins/__init__.py
 hzdplugins/aiidaplugins/constants.py
 hzdplugins/aiidaplugins/deprecated.py
 hzdplugins/aiidaplugins/info.py
+hzdplugins/aiidaplugins/inputgenerator.py
 hzdplugins/aiidaplugins/io.py
 hzdplugins/aiidaplugins/submit.py
 hzdplugins/aiidaplugins/adsorbates/__init__.py
