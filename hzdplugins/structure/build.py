@@ -576,6 +576,27 @@ def setFixedCoords(slab, height):
 
     return fixed_coords
 
+def delAtoms(structure, del_list):
+
+    """
+
+    :code:`delAtoms` let us delete atoms which is really simple to do.
+
+    :param structure: The structure we want to delete atoms
+    :type structure: pymatgen.core.structure object
+
+    :param del_list: The atom list that we want to delete the atoms
+    :type del_list: python list object
+
+    """
+
+    from pymatgen.io.ase import AseAtomsAdaptor
+
+    structure_ase = AseAtomsAdaptor.get_atoms(structure)
+    del structure_ase[del_list]
+
+    return structure_ase
+
 def hzd_add_adsMono(slab, molecule, ads_coord, ads_site):
     """
 

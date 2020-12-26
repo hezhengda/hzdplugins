@@ -9,7 +9,7 @@ from aiida.orm import KpointsData, Dict, Code
 from aiida.orm import load_node
 from aiida.orm.nodes.data.upf import get_pseudos_from_structure
 
-from hzdplugins.aiidaplugins.constants import slurm_options
+from hzdplugins.aiidaplugins.constants import slurm_options, pwParameter, projwfcParameter, phParameter
 
 def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, pseudo_dict={}, add_parameters={},
                        del_parameters={}, cluster_options={}, settings_dict={}):
@@ -129,39 +129,7 @@ def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, ps
         kpts.set_kpoints_mesh(mesh=kpoints[0], offset=kpoints[1])
 
     # parameters
-    parameters_default = Dict(dict={
-        'CONTROL': {
-            'calculation': 'vc-relax',
-            'max_seconds': 86000,
-            'restart_mode': 'from_scratch',
-            'wf_collect': True,
-            'nstep': 50000,
-            'tstress': True,
-            'tprnfor': True,
-            'etot_conv_thr': 1e-06,
-            'forc_conv_thr': 0.001,
-            'disk_io': 'low',
-            'verbosity': 'low'
-        },
-        'SYSTEM': {
-            'ibrav': 0,
-            'nosym': False,
-            'ecutwfc': 80.0,
-            'ecutrho': 640.0,
-            'occupations': 'smearing',
-            'degauss': 0.002,
-            'smearing': 'gaussian',
-            'input_dft': 'PBESOL'
-        },
-        'ELECTRONS': {
-            'electron_maxstep': 200,
-            'conv_thr': 1.0e-6,
-            'diagonalization': 'david',
-            'mixing_mode': 'plain',
-            'mixing_beta': 0.3,
-            'mixing_ndim': 10
-        }
-    })
+    parameters_default = Dict(dict=pwParameter)
 
     # add parameters in add_parameters
     parameters_tmp = deepcopy(parameters_default)
@@ -467,15 +435,7 @@ def projwfcOriginalSubmit(uuid, codename, metadata, add_parameters={}, del_param
     projwfc_builder = code.get_builder()
 
     # parameters
-    projwfc_parameter = Dict(dict={
-        'PROJWFC': {
-            'DeltaE': 0.01,
-            'ngauss': 0,
-            'degauss': 0.015,
-            'Emin': -40,
-            'Emax': 40
-        }
-    })
+    projwfc_parameter = Dict(dict=projwfcParameter)
 
     # add parameters in add_parameters
     for key, value in add_parameters.items():
@@ -579,17 +539,7 @@ def phOriginalSubmit(uuid, codename, natlist, qpoints=[[0.0, 0.0, 0.0]], add_par
     ph_builder = code.get_builder()
 
     # parameters
-    ph_parameter = {
-        'INPUTPH': {
-            'title_line': 'This is a ph.x calculation after the CalcNode uuid = {}'.format(uuid),
-            'max_seconds': 86000,
-            'tr2_ph': 1.0e-8,
-            'ldisp': False,
-            'epsil': False,
-            'trans': True,
-            'nat_todo': natlist
-        }
-    }
+    ph_parameter = Dict(dict=phParameter)
 
     # add parameters in add_parameters
     for key, value in add_parameters.items():

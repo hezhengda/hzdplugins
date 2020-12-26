@@ -281,3 +281,59 @@ adsorbates = {
     'HCOO': {'mol': molToMolecule(filename=path('HCOO.mol')), 'ads_site': [2]},
     'COOH': {'mol': molToMolecule(filename=path('COOH.mol')), 'ads_site': [0]}
 }
+
+pwParameter = {
+    'CONTROL': {
+        'calculation': 'vc-relax',
+        'max_seconds': 86000,
+        'restart_mode': 'from_scratch',
+        'wf_collect': True,
+        'nstep': 50000,
+        'tstress': True,
+        'tprnfor': True,
+        'etot_conv_thr': 1e-06,
+        'forc_conv_thr': 0.001,
+        'disk_io': 'low',
+        'verbosity': 'low'
+    },
+    'SYSTEM': {
+        'ibrav': 0,
+        'nosym': False,
+        'ecutwfc': 80.0,
+        'ecutrho': 640.0,
+        'occupations': 'smearing',
+        'degauss': 0.002,
+        'smearing': 'gaussian',
+        'input_dft': 'PBESOL'
+    },
+    'ELECTRONS': {
+        'electron_maxstep': 200,
+        'conv_thr': 1.0e-6,
+        'diagonalization': 'david',
+        'mixing_mode': 'plain',
+        'mixing_beta': 0.3,
+        'mixing_ndim': 10
+    }
+}
+
+projwfcParameter = {
+    'PROJWFC': {
+        'DeltaE': 0.01,
+        'ngauss': 0,
+        'degauss': 0.015,
+        'Emin': -40,
+        'Emax': 40
+    }
+}
+
+phParameter = {
+    'INPUTPH': {
+        'title_line': 'This is a ph.x calculation after the CalcNode uuid = {}'.format(uuid),
+        'max_seconds': 86000,
+        'tr2_ph': 1.0e-8,
+        'ldisp': False,
+        'epsil': False,
+        'trans': True,
+        'nat_todo': natlist
+    }
+}
