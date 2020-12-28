@@ -626,3 +626,78 @@ def hzd_add_adsMono(slab, molecule, ads_coord, ads_site):
                             properties=site.properties)
 
     return slab_tmp
+
+def setSpinStructure(symbol, hl_spin, num_electrons):
+    """
+    :code:`setSpinStructure` can help us generate the :code:`starting_ns_eigenvalue` quickly, otherwise it will take too long. Notice in here we only assume that all the symbol are d-groups (just for simplicity for now.)
+
+    :param symbol: The symbol of our atom, e.g. 'Fe'
+    :type symbol: python string object 
+    :param hl_spin: whether we want low_spin ('ls') or high_spin ('hs')   
+    :type hl_spin: python string object    
+    :param num_electrons: the number of electrons that we want to assign
+    :type num_electrons: python int object
+
+    :raises ValueError: If your :code:`num_electrons` is larger than 10, then it is not possible, because the maximum amount of d electrons is 10.
+    :return: A list of lists which contains the information about the spin configuration.
+    :rtype: python list object
+    """
+    results = []
+
+    if num_electrons > 10:
+        raise ValueError('The amount of electrons in d orbital should be smaller than 10.')
+    
+    tmp = num_electrons
+
+    # assign electrons
+    if hl_spin == 'hs': # high spin
+        m = 1
+        s = 1
+        for i in range(tmp):
+            tmplist = [m, s, symbol, 1.0]
+            results.append(tmplist)
+            m += 1
+            if m > 5:
+                m = 1
+                s = 2
+    elif hl_spin == 'ls':
+        m = 1
+        s = 1
+        for i in range(tmp):
+            tmplist = [m, s, symbol, 1.0]
+            s += 1
+            if s == 3:
+                m += 1
+                s = 1
+            results.append(tmplist)
+    
+    for m in range(5):
+        for s in range(2):
+            tmplist = [m+1, s+1, symbol, 1.0]
+            if tmplist in results:
+                pass 
+            else:
+                results.append([m+1, s+1, symbol, 0.0])
+    
+    return results
+
+def delAtoms(structure, atom_list):
+    """
+    :code:`delAtoms` can delete any atoms you want, and return the aiida.orm.StructureData object.
+
+    :param structure: The structure that we want to deal with
+    :type structure: aiida.orm.StructureData
+    :param atom_list: The list of atoms that we want to delete
+    :type atom_list: python list object
+    :return: A new structure where the atom in the atom_list has been deleted.
+    :rtype: aiida.orm.StructureData
+    """
+
+    from aiida.orm import StructureData
+    # get ase structure
+    str_ase = structure.get_ase()
+
+    # del atoms 
+    del str_ase[atom_list]
+
+    return StructureData(ase=str_ase)
