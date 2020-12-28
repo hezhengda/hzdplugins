@@ -1,0 +1,693 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.39 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/my_theme.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> hzdplugins
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../log.html">Log file for hzdplugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To-Do list for the further</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">hzdplugins</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>hzdplugins.aiidaplugins.info</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hzdplugins.aiidaplugins.info</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This document contains many small functions that can help us find relevant information about each node</span>
+<span class="c1"># It would be better if the key of results dictionary is the uuid of each node, because uuid is unique, but pk value</span>
+<span class="c1"># is not.</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">aiida.orm</span> <span class="kn">import</span> <span class="n">load_node</span><span class="p">,</span> <span class="n">QueryBuilder</span><span class="p">,</span> <span class="n">Node</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">results_keys_set</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<div class="viewcode-block" id="getChargeAndMagneticMoments"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getChargeAndMagneticMoments">[docs]</a><span class="k">def</span> <span class="nf">getChargeAndMagneticMoments</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">traj_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`get_ChargeAndMagneticMoments` function will output the charge and the magnetic moments for each atom if</span>
+<span class="sd">    we have spin-polarized simulation.</span>
+
+<span class="sd">    :param uuid: The uuid of the computational node.</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :param traj_index: The index of the structure. -1 means the end structure, but sometimes we need to use -2</span>
+<span class="sd">                       because the last structure was created by SCF calculation, and for vc-relax simulation,</span>
+<span class="sd">                       the last step can sometimes be questionable.</span>
+
+<span class="sd">    :returns: A table that shows the charge and atomic_magnetic_moments for each species (labeled as :code:`[number][</span>
+<span class="sd">              atomic_species]`, e.g. 1Ni)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">output_trajectory</span>
+    <span class="n">atomic_species</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;atomic_species_name&#39;</span><span class="p">)</span>
+    <span class="n">magnetic_moments</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;atomic_magnetic_moments&#39;</span><span class="p">)[</span><span class="n">traj_index</span><span class="p">]</span>  <span class="c1"># the last step</span>
+    <span class="n">charges</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;atomic_charges&#39;</span><span class="p">)[</span><span class="n">traj_index</span><span class="p">]</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">)):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">atomic_species</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>  <span class="c1"># e.g. Ni1</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;charge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">charges</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;magnetic_moment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">magnetic_moments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="getTotalForces"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getTotalForces">[docs]</a><span class="k">def</span> <span class="nf">getTotalForces</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`get_TotalForces` function will output the total force for each atomic step.</span>
+
+<span class="sd">    :param uuid: The uuid of the computational node.</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :returns: A matplotlib figure that shows the convergence, and also the last 5 steps of total_forces.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">output_trajectory</span>
+    <span class="n">total_force</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;total_force&#39;</span><span class="p">)</span>
+
+    <span class="n">iteration</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">force_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">total_force</span><span class="p">)):</span>
+        <span class="n">iteration</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">force_id</span><span class="p">)</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total_force</span><span class="p">[</span><span class="n">force_id</span><span class="p">])</span>
+
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;iterations&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;total force / eV/A&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">tf</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="getStructureAnalysis"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getStructureAnalysis">[docs]</a><span class="k">def</span> <span class="nf">getStructureAnalysis</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">bond_length</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">atom_index</span><span class="o">=</span><span class="p">[],</span> <span class="n">is_Metal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`get_StructureAnalysis` is a function that can analyze the local structure of each atom in the structure.</span>
+
+<span class="sd">    :param uuid: The uuid of the node.</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :param bond_length: The maximum bond length that we consider as a &quot;neighbour&quot;, 2.5 is sufficiently large enough,</span>
+<span class="sd">                        but if can be adjusted by the user.</span>
+<span class="sd">    :type bond_length: python float object</span>
+
+<span class="sd">    :param atom_index: A list that tell the code which atom that we want to investigate, put the atom_id of the atom</span>
+<span class="sd">                       in the list.</span>
+<span class="sd">    :type atom_index: python list object</span>
+
+<span class="sd">    :param is_Metal: A boolean variable. If you are only interested in the metal elements, then you put that to True,</span>
+<span class="sd">                     else False.</span>
+<span class="sd">    :type is_Metal: python boolean object</span>
+
+<span class="sd">    :returns: A dictionary that shows the distance of the central atom with its surrouding atoms. Since metals are</span>
+<span class="sd">              important, so we mainly focus on Metal atoms. Later maybe I can add a boolean parameters to let the</span>
+<span class="sd">              user choose.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;CalcJobNode&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">node_type</span><span class="p">:</span>  <span class="c1"># node is a calcjob node</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished</span><span class="p">:</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">output_structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>  <span class="c1"># since ase structure is more easy to use</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="s1">&#39;StructureData&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">node_type</span><span class="p">:</span>  <span class="c1"># node is a StructureData node</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;You need to input either a CalcJobNode or a StructureData object.&#39;</span><span class="p">)</span>
+
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">cell</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">investigate_Atoms</span> <span class="o">=</span> <span class="n">atom_index</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">investigate_Atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">))]</span>  <span class="c1"># get all the atoms</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># the final dictionary</span>
+
+    <span class="c1"># calculate the distance between the atoms</span>
+    <span class="k">for</span> <span class="n">atom_id</span> <span class="ow">in</span> <span class="n">investigate_Atoms</span><span class="p">:</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[</span><span class="n">atom_id</span><span class="p">]</span>
+        <span class="n">name_atom</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">atom_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_Metal</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">isMetal</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="p">):</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">id2</span><span class="p">,</span> <span class="n">atom2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+                    <span class="n">check</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">symbol</span> <span class="o">=</span> <span class="n">checkDistance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">atom_id</span> <span class="o">!=</span> <span class="n">id2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span> <span class="ow">and</span> <span class="p">(</span><span class="n">isMetal</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="p">)):</span>
+                        <span class="n">name_atom2</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span> <span class="o">+</span> <span class="n">symbol</span>
+                        <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">][</span><span class="n">name_atom2</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">id2</span><span class="p">,</span> <span class="n">atom2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+                <span class="n">check</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">symbol</span> <span class="o">=</span> <span class="n">checkDistance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">atom_id</span> <span class="o">!=</span> <span class="n">id2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span><span class="p">:</span>
+                    <span class="n">name_atom2</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span> <span class="o">+</span> <span class="n">symbol</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">][</span><span class="n">name_atom2</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+
+    <span class="c1"># sort the bond length in the dictionary, easy for comparison:</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])}</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="getStructure"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getStructure">[docs]</a><span class="k">def</span> <span class="nf">getStructure</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getStructure` can give you the structure by using ase_gui.</span>
+
+<span class="sd">    :param uuid: The uuid of the node.</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :returns: A ase-gui figure represents the structure, which you can view; An ase structure file which you can</span>
+<span class="sd">              manipulate later.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;CalcJobNode&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">node_type</span><span class="p">:</span>  <span class="c1"># node is a calcjob node</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_finished</span><span class="p">:</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">output_structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>  <span class="c1"># since ase structure is more easy to use</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="s1">&#39;StructureData&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">node_type</span><span class="p">:</span>  <span class="c1"># node is a StructureData node</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;You need to input either a CalcJobNode or a StructureData object.&#39;</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">ase.visualize</span> <span class="kn">import</span> <span class="n">view</span>
+
+    <span class="n">v</span> <span class="o">=</span> <span class="n">view</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">viewer</span><span class="o">=</span><span class="s1">&#39;ngl&#39;</span><span class="p">)</span>
+
+    <span class="c1"># setting the output window for the nglview</span>
+    <span class="c1"># nglview is a really good tool, and I need to learn more about that.</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">add_ball_and_stick</span><span class="p">()</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="s1">&#39;800px&#39;</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="s1">&#39;800px&#39;</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">labelType</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span>
+                     <span class="n">labelText</span><span class="o">=</span><span class="p">[</span><span class="n">structure</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">))],</span> <span class="n">zOffset</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                     <span class="n">attachment</span><span class="o">=</span><span class="s1">&#39;middle_center&#39;</span><span class="p">)</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">gui_style</span> <span class="o">=</span> <span class="s1">&#39;ngl&#39;</span>
+
+    <span class="k">return</span> <span class="n">v</span><span class="p">,</span> <span class="n">structure</span></div>
+
+<div class="viewcode-block" id="viewStructure"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.viewStructure">[docs]</a><span class="k">def</span> <span class="nf">viewStructure</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param structure: The structure that we want to show, it has to be pymatgen structure</span>
+<span class="sd">    :type structure: pymatgen.core.structure object</span>
+
+<span class="sd">    :returns: a nglview variable to show the structure</span>
+<span class="sd">    :rtype: nglview object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">ase.visualize</span> <span class="kn">import</span> <span class="n">view</span>
+    <span class="kn">from</span> <span class="nn">pymatgen.io.ase</span> <span class="kn">import</span> <span class="n">AseAtomsAdaptor</span>
+
+    <span class="n">structure</span> <span class="o">=</span> <span class="n">AseAtomsAdaptor</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">)</span>
+
+    <span class="n">v</span> <span class="o">=</span> <span class="n">view</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">viewer</span><span class="o">=</span><span class="s1">&#39;ngl&#39;</span><span class="p">)</span>
+
+    <span class="c1"># setting the output window for the nglview</span>
+    <span class="c1"># nglview is a really good tool, and I need to learn more about that.</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">add_ball_and_stick</span><span class="p">()</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="s1">&#39;800px&#39;</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="s1">&#39;800px&#39;</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">labelType</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span>
+                     <span class="n">labelText</span><span class="o">=</span><span class="p">[</span><span class="n">structure</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">))],</span> <span class="n">zOffset</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                     <span class="n">attachment</span><span class="o">=</span><span class="s1">&#39;middle_center&#39;</span><span class="p">)</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">gui_style</span> <span class="o">=</span> <span class="s1">&#39;ngl&#39;</span>
+
+    <span class="k">return</span> <span class="n">v</span></div>
+
+<div class="viewcode-block" id="getPdos"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getPdos">[docs]</a><span class="k">def</span> <span class="nf">getPdos</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">set_angular_momentum</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getPdos` will give you the PDOS that you want, in order to do the analysis later.</span>
+
+<span class="sd">    :param uuid: The uuid of the computational node.</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :param index: Shows the atoms that we want to investigate.</span>
+<span class="sd">    :type index: python list object</span>
+
+<span class="sd">    :param is_spin: If is_spin is True, then we need to look for spin-up and spin-down, but if is_spin is false,</span>
+<span class="sd">                    then we only need to care about the orbital, not the spin.</span>
+<span class="sd">    :type is_spin: python boolean object</span>
+
+<span class="sd">    :param set_angular_momentum: A list. [0, 1, 2] means [&#39;s&#39;, &#39;p&#39;, &#39;d&#39;] orbitals, and if we are considering</span>
+<span class="sd">                                 f-electrons, then we need to add &#39;3&#39; to this list.</span>
+<span class="sd">    :type set_angular_momentum: python list object</span>
+
+<span class="sd">    :returns: A list and A dictionary. A list is the energy list, which is modified by the Fermi energy. The second</span>
+<span class="sd">              return is a dictionary. First key is the index of atom in the cell, second key is the angular_momentum,</span>
+<span class="sd">              third key is the magnetic number, and in there is the pdos of certain magnetic number,</span>
+<span class="sd">              for each angular_momentum, we will have a &#39;tot&#39; element which shows the combination of all the magnetic</span>
+<span class="sd">              number.</span>
+
+<span class="sd">              The structure can be represented as:</span>
+
+<span class="sd">              .. code-block:: python</span>
+
+<span class="sd">                    res = {</span>
+<span class="sd">                        1: {</span>
+<span class="sd">                            &#39;s&#39;: {</span>
+<span class="sd">                                &#39;s&#39;:</span>
+<span class="sd">                                &#39;tot&#39;:</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &#39;p&#39;: {</span>
+<span class="sd">                                &#39;px&#39;:,</span>
+<span class="sd">                                &#39;py&#39;,</span>
+<span class="sd">                                &#39;pz&#39;</span>
+<span class="sd">                                &#39;tot&#39;:</span>
+<span class="sd">                            }</span>
+<span class="sd">                            ...</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># for the name of the orbital</span>
+    <span class="kn">from</span> <span class="nn">aiida.tools.data.orbital.realhydrogen</span> <span class="kn">import</span> <span class="n">RealhydrogenOrbital</span> <span class="k">as</span> <span class="n">RHO</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="c1"># preparation</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="c1"># check whether the user chooses the correct node.</span>
+    <span class="k">if</span> <span class="s1">&#39;projwfc&#39;</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="s1">&#39;PROJWFC&#39;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You should pick a projwfc calculation node.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># check whether the calculation is using spin-polarization</span>
+    <span class="k">if</span> <span class="n">is_spin</span><span class="p">:</span>
+        <span class="n">projections_up</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">projections_up</span>
+        <span class="n">projections_dw</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">projections_down</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># wait till I have more information</span>
+
+    <span class="c1"># basic dictionary</span>
+    <span class="n">dict_ang_mom</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;f&#39;</span>
+    <span class="p">}</span>
+
+    <span class="c1"># get energy</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;x_array&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">atom_id</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">angular_momentum</span> <span class="ow">in</span> <span class="n">set_angular_momentum</span><span class="p">:</span>  <span class="c1"># 0-&gt;s; 1-&gt;p; 2-&gt;d; 3-&gt;f</span>
+
+            <span class="n">am_label</span> <span class="o">=</span> <span class="n">dict_ang_mom</span><span class="p">[</span><span class="n">angular_momentum</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">if</span> <span class="n">is_spin</span><span class="p">:</span>
+                <span class="n">tot_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+                <span class="n">tot_dw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">for</span> <span class="n">magnetic_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">angular_momentum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Assign the pdos (angular_momentum = </span><span class="si">{}</span><span class="s1">, magnetic_number = </span><span class="si">{}</span><span class="s1">) to the atom </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">angular_momentum</span><span class="p">,</span> <span class="n">magnetic_number</span><span class="p">,</span> <span class="n">atom_id</span><span class="p">))</span>
+
+                <span class="n">start_id</span> <span class="o">=</span> <span class="n">atom_id</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">angular_momentum</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">magnetic_number</span>
+                <span class="n">orbital_name</span> <span class="o">=</span> <span class="n">RHO</span><span class="o">.</span><span class="n">get_name_from_quantum_numbers</span><span class="p">(</span><span class="n">angular_momentum</span><span class="o">=</span><span class="n">angular_momentum</span><span class="p">,</span>
+                                                                 <span class="n">magnetic_number</span><span class="o">=</span><span class="n">magnetic_number</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="k">if</span> <span class="n">is_spin</span><span class="p">:</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;up&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projections_up</span><span class="o">.</span><span class="n">get_pdos</span><span class="p">(</span>
+                        <span class="n">angular_momentum</span><span class="o">=</span><span class="n">angular_momentum</span><span class="p">,</span> <span class="n">magnetic_number</span><span class="o">=</span><span class="n">magnetic_number</span><span class="p">)[</span><span class="n">start_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">tot_up</span> <span class="o">=</span> <span class="n">tot_up</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;up&#39;</span><span class="p">]</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;dw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projections_dw</span><span class="o">.</span><span class="n">get_pdos</span><span class="p">(</span>
+                        <span class="n">angular_momentum</span><span class="o">=</span><span class="n">angular_momentum</span><span class="p">,</span> <span class="n">magnetic_number</span><span class="o">=</span><span class="n">magnetic_number</span><span class="p">)[</span><span class="n">start_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">tot_dw</span> <span class="o">=</span> <span class="n">tot_dw</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="n">orbital_name</span><span class="p">][</span><span class="s1">&#39;dw&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="s1">&#39;tot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">is_spin</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="s1">&#39;tot&#39;</span><span class="p">][</span><span class="s1">&#39;up&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tot_up</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">atom_id</span><span class="p">][</span><span class="n">am_label</span><span class="p">][</span><span class="s1">&#39;tot&#39;</span><span class="p">][</span><span class="s1">&#39;dw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tot_dw</span>
+
+    <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="getDos"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getDos">[docs]</a><span class="k">def</span> <span class="nf">getDos</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getDos` can return the DOS of the system</span>
+
+<span class="sd">    :param uuid: The uuid of the projwfc calc node</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :returns: - **energy** (`python list object`): list of energy</span>
+<span class="sd">              - **dos** (`python list object`): dos of energy</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;x_array&#39;</span><span class="p">)</span>
+    <span class="n">dos</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">Dos</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;y_array_0&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">dos</span></div>
+
+<div class="viewcode-block" id="getLastScf"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getLastScf">[docs]</a><span class="k">def</span> <span class="nf">getLastScf</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getLastScf` will return the value of the last scf accuracy and the stdout of :code:`grep &#39;scf accuracy&#39;</span>
+<span class="sd">    aiida.out`</span>
+
+<span class="sd">    :param uuid: The uuid of the simulation</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :returns: * The last force of the simulation</span>
+<span class="sd">              * The stdout of the cmd</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.io</span> <span class="kn">import</span> <span class="n">setCmdOnRemoteComputer</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">setCmdOnRemoteComputer</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="s2">&quot;grep &#39;scf accuracy&#39; aiida.out&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">list_scf_accuracy</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">string</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">scf</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">list_scf_accuracy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scf</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_scf_accuracy</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># no scf deteced</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_scf_accuracy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stdout</span></div>
+
+<div class="viewcode-block" id="getLastForce"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getLastForce">[docs]</a><span class="k">def</span> <span class="nf">getLastForce</span><span class="p">(</span><span class="n">uuid</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`getLastForce` will return the value of the last total force and the stdout of :code:`grep &#39;Total force&#39;</span>
+<span class="sd">    aiida.out`</span>
+
+<span class="sd">    :param uuid: The uuid of the simulation</span>
+<span class="sd">    :type uuid: python string object</span>
+
+<span class="sd">    :returns: * The last force of the simulation</span>
+<span class="sd">              * The stdout of the cmd</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.io</span> <span class="kn">import</span> <span class="n">setCmdOnRemoteComputer</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">setCmdOnRemoteComputer</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="s2">&quot;grep &#39;Total force&#39; aiida.out&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">list_force</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">string</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">list_force</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">12</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_force</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># no force detected</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_force</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stdout</span></div>
+
+<span class="c1"># In the below are some functions that may help</span>
+
+<div class="viewcode-block" id="checkDistance"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.checkDistance">[docs]</a><span class="k">def</span> <span class="nf">checkDistance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`check_distance` function can help us determine whether the two atoms in the slab structure are close</span>
+<span class="sd">    enough (distance &lt; bond_length) or not. In here we should notice that all slab structures have periodic boundary</span>
+<span class="sd">    condition (PBC), which means that not only we need to consider the position of atom2, we also need to consider 6</span>
+<span class="sd">    different atom positions that is in translational symmetry with atom2.</span>
+
+<span class="sd">    :param cell: A 3x3 array. The cell parameters of the slab, which can be easily accessed by :code:`structure.cell`</span>
+<span class="sd">    :type cell: python list object</span>
+
+<span class="sd">    :param atom1: atom1</span>
+<span class="sd">    :type atom1: ase.Atom object</span>
+
+<span class="sd">    :param atom2: atom2</span>
+<span class="sd">    :type atom2: ase.Atom object</span>
+
+<span class="sd">    :param bond_length: The threshold of the bond length that we are interested in, can be set by the user.</span>
+<span class="sd">    :type bond_length: python float object</span>
+
+<span class="sd">    :returns: * If true, then function will return [True, distance, add_string]</span>
+<span class="sd">              * If false, then function will return [False, -1, &#39;&#39;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v1</span> <span class="o">-</span> <span class="n">v2</span><span class="p">)</span>
+
+    <span class="c1"># in here no matter what x,y,z is, the results are the same, it just easy to write</span>
+    <span class="n">x_cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y_cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">z_cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">ay</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">az</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">atom2_modifyPosition</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="n">ax</span> <span class="o">*</span> <span class="n">x_cell</span> <span class="o">+</span> <span class="n">ay</span> <span class="o">*</span> <span class="n">y_cell</span> <span class="o">+</span> <span class="n">az</span> <span class="o">*</span> <span class="n">z_cell</span>
+                <span class="k">if</span> <span class="n">distance</span><span class="p">(</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">atom2_modifyPosition</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">bond_length</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">distance</span><span class="p">(</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">atom2_modifyPosition</span><span class="p">),</span> <span class="s1">&#39;ax:</span><span class="si">{}</span><span class="s1">, ay:</span><span class="si">{}</span><span class="s1">, az:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span>
+                                                                                                              <span class="n">az</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="isMetal"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.isMetal">[docs]</a><span class="k">def</span> <span class="nf">isMetal</span><span class="p">(</span><span class="n">atom_symbol</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :code:`isMetal` can determine whether an element is metal or not.</span>
+
+<span class="sd">    :param atom_symbol: The symbol of the atom.</span>
+<span class="sd">    :type atom_symbol: python string object</span>
+
+<span class="sd">    :returns: If it is metal, the return True, else return False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">atom_symbol</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;He&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;Ne&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;Si&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;Cl&#39;</span><span class="p">,</span> <span class="s1">&#39;Ar&#39;</span><span class="p">,</span> <span class="s1">&#39;Ge&#39;</span><span class="p">,</span> <span class="s1">&#39;As&#39;</span><span class="p">,</span> <span class="s1">&#39;Se&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;Br&#39;</span><span class="p">,</span> <span class="s1">&#39;Kr&#39;</span><span class="p">,</span> <span class="s1">&#39;Sb&#39;</span><span class="p">,</span> <span class="s1">&#39;Te&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;Xe&#39;</span><span class="p">,</span> <span class="s1">&#39;Rn&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Zheng-Da He
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

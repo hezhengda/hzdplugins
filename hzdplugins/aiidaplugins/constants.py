@@ -51,7 +51,19 @@ slurm_options['jusuf-mac'] = {
     }
 }
 
-# 'jureca_booster-mac'
+# 'jureca-dc-mac'
+slurm_options['jureca-dc-mac'] = {
+    'qe': {
+        'resources': {'num_machines': 2},  # on jureca_booster, each node has 128 cores
+        'max_wallclock_seconds': 86400,
+        'account': 'jiek61',
+        'scheduler_stderr': 'stderr',
+        'scheduler_stdout': 'stdout',
+        'queue_name': 'dc-cpu'
+    }
+}
+
+# 'jureca-booster-mac'
 slurm_options['jureca-booster-mac'] = {
     'qe': {
         'resources': {'num_machines': 2},  # on jureca_booster, each node has 68 cores
@@ -328,12 +340,11 @@ projwfcParameter = {
 
 phParameter = {
     'INPUTPH': {
-        'title_line': 'This is a ph.x calculation after the CalcNode uuid = {}'.format(uuid),
+        'title_line': 'This is a ph.x calculation',
         'max_seconds': 86000,
         'tr2_ph': 1.0e-8,
         'ldisp': False,
         'epsil': False,
         'trans': True,
-        'nat_todo': natlist
     }
 }
