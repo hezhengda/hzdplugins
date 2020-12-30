@@ -725,7 +725,7 @@ def atomQuery(structure, query_dict, is_and=True):
                                 'z': {'>', 30.0},
                                 'connection': 25
                             }
-                            
+
                        which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.  
     :type query_dict: python dictionary object
     :param is_and: whether we want to and the condition in query_dict, defaults to True
@@ -784,7 +784,7 @@ def atomQuery(structure, query_dict, is_and=True):
                         is_in = True
                         break
                 if is_in:
-                    results.append(ind)
+                    results['connection'].append(ind)
         
     # analyze all the results
     tmp = list(range(len(slab_aiida.sites))) #create the index of all atoms
