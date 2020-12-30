@@ -76,13 +76,13 @@ def getTotalForces(uuid):
 
     return tf[-5:-1]
 
-def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
+def getStructureAnalysis(structure, bond_length=2.5, atom_index=[], is_Metal=False):
     """
 
     :code:`get_StructureAnalysis` is a function that can analyze the local structure of each atom in the structure.
 
-    :param uuid: The uuid of the node.
-    :type uuid: python string object
+    :param structure: The structure that we want to investigate
+    :type structure: aiida.orm.StructureData
 
     :param bond_length: The maximum bond length that we consider as a "neighbour", 2.5 is sufficiently large enough,
                         but if can be adjusted by the user.
@@ -102,17 +102,7 @@ def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
 
     """
 
-    node = load_node(uuid=uuid)
-
-    if 'CalcJobNode' in node.node_type:  # node is a calcjob node
-        if node.is_finished:
-            structure = node.outputs.output_structure.get_ase()  # since ase structure is more easy to use
-        else:
-            structure = node.inputs.structure.get_ase()
-    elif 'StructureData' in node.node_type:  # node is a StructureData node
-        structure = node.get_ase()
-    else:
-        raise IOError('You need to input either a CalcJobNode or a StructureData object.')
+    structure = structure.get_ase()
 
     cell = structure.cell
 
@@ -150,30 +140,20 @@ def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
 
     return results
 
-def getStructure(uuid):
+def getStructure(structure):
     """
 
     :code:`getStructure` can give you the structure by using ase_gui.
 
-    :param uuid: The uuid of the node.
-    :type uuid: python string object
+    :param structure: The uuid of the node.
+    :type structure: aiida.orm.StructureData
 
     :returns: A ase-gui figure represents the structure, which you can view; An ase structure file which you can
               manipulate later.
 
     """
 
-    node = load_node(uuid=uuid)
-
-    if 'CalcJobNode' in node.node_type:  # node is a calcjob node
-        if node.is_finished:
-            structure = node.outputs.output_structure.get_ase()  # since ase structure is more easy to use
-        else:
-            structure = node.inputs.structure.get_ase()
-    elif 'StructureData' in node.node_type:  # node is a StructureData node
-        structure = node.get_ase()
-    else:
-        raise IOError('You need to input either a CalcJobNode or a StructureData object.')
+    structure = structure.get_ase()
 
     from ase.visualize import view
 

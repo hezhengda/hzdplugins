@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.39 documentation</title>
+  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.40 documentation</title>
   
 
   
@@ -168,6 +168,7 @@
 <span class="kn">from</span> <span class="nn">pymatgen.core.surface</span> <span class="kn">import</span> <span class="n">SlabGenerator</span>
 
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">color_dictionary</span><span class="p">,</span> <span class="n">adsorbates</span>
+<span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.info</span> <span class="kn">import</span> <span class="n">getStructureAnalysis</span>
 
 
 <div class="viewcode-block" id="getValue"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.getValue">[docs]</a><span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
@@ -275,7 +276,7 @@
 <span class="c1"># In research, not only we need to deal with solids, we also need to deal with surfaces, and add adsorbates on it,</span>
 <span class="c1"># so in my module, it will be important to create any structures that I want easily and efficiently.</span>
 
-<div class="viewcode-block" id="millerSurfaces"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.millerSurfaces">[docs]</a><span class="k">def</span> <span class="nf">millerSurfaces</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">miller_index</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">vacuum</span><span class="p">):</span>
+<div class="viewcode-block" id="millerSurfaces"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.millerSurfaces">[docs]</a><span class="k">def</span> <span class="nf">millerSurfaces</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">miller_index</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">vacuum</span><span class="p">,</span> <span class="n">get_orthogonal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`millerSurfaces` can help us generate a list of slab structures that we could use in future studies</span>
@@ -291,6 +292,12 @@
 
 <span class="sd">    :param vacuum: Set how many layers you want for the vacuum layer.</span>
 <span class="sd">    :type vacuum: python list object</span>
+
+<span class="sd">    :param get_orthogonal: Whether we want to get orthogonal slab or not</span>
+<span class="sd">    :type get_orthogonal: python boolean object</span>
+
+<span class="sd">    :param bonds: a dictionary which define the bond length of two atoms. e.g. {(&#39;P&#39;, &#39;O&#39;):3}</span>
+<span class="sd">    :type bonds: python dictionary object</span>
 
 <span class="sd">    :returns: A list of slabs that we generated, notice that all the slabs are orthogonal, because we use</span>
 <span class="sd">              :code:`slab.get_orthogonal_c_slab()` for all the slabs</span>
@@ -311,8 +318,9 @@
                        <span class="c1"># max_normal_search=max(miller_index),</span>
                        <span class="n">reorient_lattice</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">listOfStructures</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_slabs</span><span class="p">()</span>
-    <span class="n">listOfStructures</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span><span class="o">.</span><span class="n">get_orthogonal_c_slab</span><span class="p">()</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">]</span>
+    <span class="n">listOfStructures</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_slabs</span><span class="p">(</span><span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">get_orthogonal</span><span class="p">:</span>
+        <span class="n">listOfStructures</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span><span class="o">.</span><span class="n">get_orthogonal_c_slab</span><span class="p">()</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">]</span>
 
     <span class="c1"># results = []</span>
     <span class="c1"># for structure in listOfStructures:</span>
@@ -853,7 +861,91 @@
     <span class="c1"># del atoms </span>
     <span class="k">del</span> <span class="n">str_ase</span><span class="p">[</span><span class="n">atom_list</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">str_ase</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">str_ase</span><span class="p">)</span>   </div>
+
+<div class="viewcode-block" id="atomQuery"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.atomQuery">[docs]</a><span class="k">def</span> <span class="nf">atomQuery</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">query_dict</span><span class="p">,</span> <span class="n">is_and</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :code:`atomQuery` can help us query the list of atoms that we want to manipulate later.</span>
+
+<span class="sd">    :param structure: The structure that we want to investigate.</span>
+<span class="sd">    :type structure: aiida.orm.StructureData</span>
+<span class="sd">    :param query_dict: The query dictionary, now support these keys: (1) &#39;symbol&#39; (2) &#39;x&#39;, &#39;y&#39;, &#39;z&#39; (3) &#39;connection&#39;</span>
+
+<span class="sd">                       .. code-block:: python</span>
+
+<span class="sd">                            query_dict = {</span>
+<span class="sd">                                &#39;symbol&#39;: [&#39;Ni&#39;],</span>
+<span class="sd">                                &#39;z&#39;: {&#39;&gt;&#39;, 30.0},</span>
+<span class="sd">                                &#39;connection&#39;: 25</span>
+<span class="sd">                            }</span>
+<span class="sd">                            </span>
+<span class="sd">                       which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.  </span>
+<span class="sd">    :type query_dict: python dictionary object</span>
+<span class="sd">    :param is_and: whether we want to and the condition in query_dict, defaults to True</span>
+<span class="sd">    :type is_and: python bool object, optional</span>
+<span class="sd">    :return: index of atoms</span>
+<span class="sd">    :rtype: python list object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># we want to return a list of symbols</span>
+    <span class="n">tmp_ase</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
+    
+    <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="c1"># to query certain atom symbol</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;symbol&#39;</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_ase</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        
+        <span class="c1"># to query certain position</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]:</span>
+            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_ase</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        
+        <span class="c1"># to query connection</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;connection&#39;</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">connected_atoms</span> <span class="o">=</span> <span class="n">getStructureAnalysis</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">atom_index</span><span class="o">=</span><span class="p">[</span><span class="n">value</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_ase</span><span class="p">):</span>
+                <span class="n">atom_str</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;ax&#39;</span>
+                <span class="n">is_in</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">connected_atoms</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="k">if</span> <span class="n">atom_str</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                        <span class="n">is_in</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="n">is_in</span><span class="p">:</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        
+    <span class="c1"># analyze all the results</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slab_aiida</span><span class="o">.</span><span class="n">sites</span><span class="p">)))</span> <span class="c1">#create the index of all atoms</span>
+    <span class="k">if</span> <span class="n">is_and</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">tmp</span></div>
 </pre></div>
 
            </div>

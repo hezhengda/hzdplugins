@@ -3,6 +3,8 @@ Log file for hzdplugins
 
 * v0.0.40: 2020.12.28
     * Add :code:`setSpinStructure` function in :code:`build.py`
+    * Change the input parameter for :code:`getStructure` and :code:`getStructureAnalysis` to structure, not uuid.
+    * Add :code:`atomQuery` function in :code:`build.py` in order to query the atoms that I want to manipulate further.
 
 * v0.0.39: 2020.12.19
     * remove all the :code:`results` parameter in the `submit.py`, and add :code:`group` parameter to make sure that we use the group functionality in Aiida, not something we create ourselves. Since the :code:`results` parameter is no longer needed, we also need to remove the :code:`saveResults`, :code:`readResults`, :code:`showResults`, :code:`getUnDoneTasks`, :code:`getUnFinishedTasks`, :code:`getUnConvergedTasks`, :code:`assignValue`, :code:`pkToUuidConverter` from `info.py` to `deprecated.py`

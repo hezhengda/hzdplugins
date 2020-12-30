@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>structure Modules &mdash; hzdplugins 0.0.39 documentation</title>
+  <title>structure Modules &mdash; hzdplugins 0.0.40 documentation</title>
   
 
   
@@ -233,6 +233,36 @@ where we want to put the adsorbates.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="hzdplugins.structure.build.atomQuery">
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">atomQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">query_dict</span></em>, <em class="sig-param"><span class="n">is_and</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#atomQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.atomQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">atomQuery</span></code> can help us query the list of atoms that we want to manipulate later.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>aiida.orm.StructureData</em>) – The structure that we want to investigate.</p></li>
+<li><p><strong>query_dict</strong> (<em>python dictionary object</em>) – <p>The query dictionary, now support these keys: (1) ‘symbol’ (2) ‘x’, ‘y’, ‘z’ (3) ‘connection’</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">query_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;symbol&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Ni&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">},</span>
+    <span class="s1">&#39;connection&#39;</span><span class="p">:</span> <span class="mi">25</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.</p>
+</p></li>
+<li><p><strong>is_and</strong> (<em>python bool object</em><em>, </em><em>optional</em>) – whether we want to and the condition in query_dict, defaults to True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>index of atoms</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>python list object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="hzdplugins.structure.build.bulkFromFile">
 <code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">bulkFromFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">supercell</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#bulkFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.bulkFromFile" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">bulkFromFile</span></code> function can help us create a Bulk from the file.</p>
@@ -358,7 +388,7 @@ treat differently).</p></li>
 
 <dl class="py function">
 <dt id="hzdplugins.structure.build.millerSurfaces">
-<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">millerSurfaces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bulk</span></em>, <em class="sig-param"><span class="n">miller_index</span></em>, <em class="sig-param"><span class="n">layers</span></em>, <em class="sig-param"><span class="n">vacuum</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#millerSurfaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.millerSurfaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.structure.build.</code><code class="sig-name descname">millerSurfaces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bulk</span></em>, <em class="sig-param"><span class="n">miller_index</span></em>, <em class="sig-param"><span class="n">layers</span></em>, <em class="sig-param"><span class="n">vacuum</span></em>, <em class="sig-param"><span class="n">get_orthogonal</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bonds</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/structure/build.html#millerSurfaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.structure.build.millerSurfaces" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">millerSurfaces</span></code> can help us generate a list of slab structures that we could use in future studies</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -367,6 +397,8 @@ treat differently).</p></li>
 <li><p><strong>miller_index</strong> (<em>python list object</em>) – The miller index that we want to get.</p></li>
 <li><p><strong>layers</strong> (<em>python int object</em>) – Set how many layers you want for the surface slab.</p></li>
 <li><p><strong>vacuum</strong> (<em>python list object</em>) – Set how many layers you want for the vacuum layer.</p></li>
+<li><p><strong>get_orthogonal</strong> (<em>python boolean object</em>) – Whether we want to get orthogonal slab or not</p></li>
+<li><p><strong>bonds</strong> (<em>python dictionary object</em>) – a dictionary which define the bond length of two atoms. e.g. {(‘P’, ‘O’):3}</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

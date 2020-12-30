@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.39 documentation</title>
+  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.40 documentation</title>
   
 
   
@@ -396,11 +396,11 @@ number.</p>
 
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.info.getStructure">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getStructure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uuid</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getStructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getStructure" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getStructure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getStructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getStructure" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">getStructure</span></code> can give you the structure by using ase_gui.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>uuid</strong> (<em>python string object</em>) – The uuid of the node.</p>
+<dd class="field-odd"><p><strong>structure</strong> (<em>aiida.orm.StructureData</em>) – The uuid of the node.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A ase-gui figure represents the structure, which you can view; An ase structure file which you can
@@ -411,12 +411,12 @@ manipulate later.</p>
 
 <dl class="py function">
 <dt id="hzdplugins.aiidaplugins.info.getStructureAnalysis">
-<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getStructureAnalysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uuid</span></em>, <em class="sig-param"><span class="n">bond_length</span><span class="o">=</span><span class="default_value">2.5</span></em>, <em class="sig-param"><span class="n">atom_index</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">is_Metal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getStructureAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getStructureAnalysis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getStructureAnalysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">bond_length</span><span class="o">=</span><span class="default_value">2.5</span></em>, <em class="sig-param"><span class="n">atom_index</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">is_Metal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getStructureAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getStructureAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">get_StructureAnalysis</span></code> is a function that can analyze the local structure of each atom in the structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uuid</strong> (<em>python string object</em>) – The uuid of the node.</p></li>
+<li><p><strong>structure</strong> (<em>aiida.orm.StructureData</em>) – The structure that we want to investigate</p></li>
 <li><p><strong>bond_length</strong> (<em>python float object</em>) – The maximum bond length that we consider as a “neighbour”, 2.5 is sufficiently large enough,
 but if can be adjusted by the user.</p></li>
 <li><p><strong>atom_index</strong> (<em>python list object</em>) – A list that tell the code which atom that we want to investigate, put the atom_id of the atom
