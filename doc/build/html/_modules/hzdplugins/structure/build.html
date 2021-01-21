@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.40 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -30,7 +33,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -50,7 +52,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> hzdplugins
+            <a href="../../../index.html" class="icon icon-home"> hzdplugins
           
 
           
@@ -112,6 +114,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -321,6 +325,11 @@
     <span class="n">listOfStructures</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_slabs</span><span class="p">(</span><span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">get_orthogonal</span><span class="p">:</span>
         <span class="n">listOfStructures</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span><span class="o">.</span><span class="n">get_orthogonal_c_slab</span><span class="p">()</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">]</span>
+    
+    <span class="c1"># check whether all the atoms are in the unit cell</span>
+    <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slab</span><span class="o">.</span><span class="n">sites</span><span class="p">)):</span>
+            <span class="n">slab</span><span class="o">.</span><span class="n">sites</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">sites</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span><span class="o">.</span><span class="n">to_unit_cell</span><span class="p">()</span>
 
     <span class="c1"># results = []</span>
     <span class="c1"># for structure in listOfStructures:</span>
@@ -878,7 +887,7 @@
 <span class="sd">                                &#39;z&#39;: {&#39;&gt;&#39;, 30.0},</span>
 <span class="sd">                                &#39;connection&#39;: 25</span>
 <span class="sd">                            }</span>
-<span class="sd">                            </span>
+
 <span class="sd">                       which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.  </span>
 <span class="sd">    :type query_dict: python dictionary object</span>
 <span class="sd">    :param is_and: whether we want to and the condition in query_dict, defaults to True</span>
@@ -937,7 +946,7 @@
                         <span class="n">is_in</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="k">break</span>
                 <span class="k">if</span> <span class="n">is_in</span><span class="p">:</span>
-                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+                    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
         
     <span class="c1"># analyze all the results</span>
     <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slab_aiida</span><span class="o">.</span><span class="n">sites</span><span class="p">)))</span> <span class="c1">#create the index of all atoms</span>
@@ -952,28 +961,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Zheng-Da He
+        &#169; Copyright 2020, Zheng-Da He.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

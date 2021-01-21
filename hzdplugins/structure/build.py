@@ -168,6 +168,11 @@ def millerSurfaces(bulk, miller_index, layers, vacuum, get_orthogonal=False, bon
     listOfStructures = sg.get_slabs(bonds=bonds)
     if get_orthogonal:
         listOfStructures = [slab.get_orthogonal_c_slab() for slab in listOfStructures]
+    
+    # check whether all the atoms are in the unit cell
+    for slab in listOfStructures:
+        for ind in range(len(slab.sites)):
+            slab.sites[ind] = slab.sites[ind].to_unit_cell()
 
     # results = []
     # for structure in listOfStructures:
