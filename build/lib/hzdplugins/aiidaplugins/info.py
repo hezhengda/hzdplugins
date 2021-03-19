@@ -76,13 +76,13 @@ def getTotalForces(uuid):
 
     return tf[-5:-1]
 
-def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
+def getStructureAnalysis(structure, bond_length=2.5, atom_index=[], is_Metal=False):
     """
 
     :code:`get_StructureAnalysis` is a function that can analyze the local structure of each atom in the structure.
 
-    :param uuid: The uuid of the node.
-    :type uuid: python string object
+    :param structure: The structure that we want to investigate
+    :type structure: aiida.orm.StructureData
 
     :param bond_length: The maximum bond length that we consider as a "neighbour", 2.5 is sufficiently large enough,
                         but if can be adjusted by the user.
@@ -102,17 +102,7 @@ def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
 
     """
 
-    node = load_node(uuid=uuid)
-
-    if 'CalcJobNode' in node.node_type:  # node is a calcjob node
-        if node.is_finished:
-            structure = node.outputs.output_structure.get_ase()  # since ase structure is more easy to use
-        else:
-            structure = node.inputs.structure.get_ase()
-    elif 'StructureData' in node.node_type:  # node is a StructureData node
-        structure = node.get_ase()
-    else:
-        raise IOError('You need to input either a CalcJobNode or a StructureData object.')
+    structure = structure.get_ase()
 
     cell = structure.cell
 
@@ -131,17 +121,21 @@ def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
             if isMetal(atom.symbol):
                 results[name_atom] = {}
                 for id2, atom2 in enumerate(structure):
-                    check, length, symbol = checkDistance(cell, atom, atom2, bond_length)
-                    if (atom_id != id2) and check and (isMetal(atom.symbol)):
-                        name_atom2 = atom2.symbol + str(id2) + symbol
-                        results[name_atom][name_atom2] = length
+                    dist_results = checkDistance(cell, atom, atom2, bond_length)
+                    for tmp in dist_results:
+                        check, length, symbol = tmp
+                        if (atom_id != id2) and check and (isMetal(atom.symbol)):
+                            name_atom2 = atom2.symbol + str(id2) + symbol
+                            results[name_atom][name_atom2] = length
         else:
             results[name_atom] = {}
             for id2, atom2 in enumerate(structure):
-                check, length, symbol = checkDistance(cell, atom, atom2, bond_length)
-                if (atom_id != id2) and check:
-                    name_atom2 = atom2.symbol + str(id2) + symbol
-                    results[name_atom][name_atom2] = length
+                dist_results = checkDistance(cell, atom, atom2, bond_length)
+                for tmp in dist_results:
+                    check, length, symbol = tmp
+                    if (atom_id != id2) and check:
+                        name_atom2 = atom2.symbol + str(id2) + symbol
+                        results[name_atom][name_atom2] = length
 
     # sort the bond length in the dictionary, easy for comparison:
     for key, value in results.items():
@@ -150,30 +144,20 @@ def getStructureAnalysis(uuid, bond_length=2.5, atom_index=[], is_Metal=False):
 
     return results
 
-def getStructure(uuid):
+def getStructure(structure):
     """
 
     :code:`getStructure` can give you the structure by using ase_gui.
 
-    :param uuid: The uuid of the node.
-    :type uuid: python string object
+    :param structure: The uuid of the node.
+    :type structure: aiida.orm.StructureData
 
     :returns: A ase-gui figure represents the structure, which you can view; An ase structure file which you can
               manipulate later.
 
     """
 
-    node = load_node(uuid=uuid)
-
-    if 'CalcJobNode' in node.node_type:  # node is a calcjob node
-        if node.is_finished:
-            structure = node.outputs.output_structure.get_ase()  # since ase structure is more easy to use
-        else:
-            structure = node.inputs.structure.get_ase()
-    elif 'StructureData' in node.node_type:  # node is a StructureData node
-        structure = node.get_ase()
-    else:
-        raise IOError('You need to input either a CalcJobNode or a StructureData object.')
+    structure = structure.get_ase()
 
     from ase.visualize import view
 
@@ -461,15 +445,21 @@ def checkDistance(cell, atom1, atom2, bond_length):
     y_cell = cell[1]
     z_cell = cell[2]
 
+    results = []
+
     for ax in [0, 1, -1]:
         for ay in [0, 1, -1]:
             for az in [0, 1, -1]:
                 atom2_modifyPosition = atom2.position + ax * x_cell + ay * y_cell + az * z_cell
                 if distance(atom1.position, atom2_modifyPosition) <= bond_length:
-                    return True, distance(atom1.position, atom2_modifyPosition), 'ax:{}, ay:{}, az:{}'.format(ax, ay,
-                                                                                                              az)
-
-    return False, -1, ''
+                    results.append((True, distance(atom1.position, atom2_modifyPosition), 'ax:{}, ay:{}, az:{}'.format(ax, ay,
+                                                                                                              az)))
+                    # return True, distance(atom1.position, atom2_modifyPosition), 'ax:{}, ay:{}, az:{}'.format(ax, ay,
+                    #                                                                                           az)
+    if len(results) != 0:
+        return results 
+    else:
+        return [(False, -1, '')]
 
 def isMetal(atom_symbol):
 
@@ -489,3 +479,51 @@ def isMetal(atom_symbol):
         return False
     else:
         return True
+
+def getGCN(structure, bond_length, atom_list, cn_max):
+
+    """
+    This function is used to calculate the GCN (generalized coordination number of certain atom) of certain site.
+
+    :param structure: Structure of the slab
+    :type structure: aiida.orm.StructureData
+    
+    :param bond_length: the maximum bond_length that we need to investigate
+    :type bond_length: python real object
+
+    :param atom_list: a list of atoms which constructs a unique site (could be ensemble)
+    :type atom_list: python list object
+
+    :param cn_max: the maximum coordination number of certain atom in the structure
+    :type cn_max: python integer
+
+    :param atom_name: the name of the atom (useful in dealing with the dictionary)
+    :type atom_name: python string object
+    """
+
+    import re
+
+    # get the coordination dictionary
+    coord_dict = getStructureAnalysis(structure=structure, atom_index=atom_list, bond_length = bond_length, is_Metal=False)
+    
+    # do the analysis
+
+    conn_set = [] # for all the atoms that connected to the site
+    for symbol, conn_dict in coord_dict.items():
+        for name, distance in conn_dict.items():
+            match = re.match(r"([a-z]+)(\d+)([a-z]*)", name, re.I)
+            if match:
+                items = match.groups()
+            index = int(items[1]) # get the index of that atom
+            conn_set.append(index)
+    
+    print(conn_set)
+    sum_cn = 0
+    for ind in conn_set:
+        coord_dict = getStructureAnalysis(structure=structure, atom_index=[ind], bond_length=bond_length, is_Metal=False)
+        for key, value in coord_dict.items():
+            sum_cn += len(value)
+    
+    return sum_cn/cn_max
+
+

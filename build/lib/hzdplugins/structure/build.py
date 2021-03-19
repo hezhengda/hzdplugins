@@ -15,6 +15,7 @@ from pymatgen.analysis.adsorption import AdsorbateSiteFinder, get_rot
 from pymatgen.core.surface import SlabGenerator
 
 from hzdplugins.aiidaplugins.constants import color_dictionary, adsorbates
+from hzdplugins.aiidaplugins.info import getStructureAnalysis
 
 
 def getValue(var):
@@ -122,7 +123,7 @@ def bulkFromString(bulkStr, crystal_structure, a, cubic, supercell, b=None, c=No
 # In research, not only we need to deal with solids, we also need to deal with surfaces, and add adsorbates on it,
 # so in my module, it will be important to create any structures that I want easily and efficiently.
 
-def millerSurfaces(bulk, miller_index, layers, vacuum):
+def millerSurfaces(bulk, miller_index, layers, vacuum, get_orthogonal=False, bonds=None):
     """
 
     :code:`millerSurfaces` can help us generate a list of slab structures that we could use in future studies
@@ -138,6 +139,12 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
 
     :param vacuum: Set how many layers you want for the vacuum layer.
     :type vacuum: python list object
+
+    :param get_orthogonal: Whether we want to get orthogonal slab or not
+    :type get_orthogonal: python boolean object
+
+    :param bonds: a dictionary which define the bond length of two atoms. e.g. {('P', 'O'):3}
+    :type bonds: python dictionary object
 
     :returns: A list of slabs that we generated, notice that all the slabs are orthogonal, because we use
               :code:`slab.get_orthogonal_c_slab()` for all the slabs
@@ -158,8 +165,14 @@ def millerSurfaces(bulk, miller_index, layers, vacuum):
                        # max_normal_search=max(miller_index),
                        reorient_lattice=True)
 
-    listOfStructures = sg.get_slabs()
-    listOfStructures = [slab.get_orthogonal_c_slab() for slab in listOfStructures]
+    listOfStructures = sg.get_slabs(bonds=bonds)
+    if get_orthogonal:
+        listOfStructures = [slab.get_orthogonal_c_slab() for slab in listOfStructures]
+    
+    # check whether all the atoms are in the unit cell
+    for slab in listOfStructures:
+        for ind in range(len(slab.sites)):
+            slab.sites[ind] = slab.sites[ind].to_unit_cell()
 
     # results = []
     # for structure in listOfStructures:
@@ -700,4 +713,88 @@ def delAtoms(structure, atom_list):
     # del atoms 
     del str_ase[atom_list]
 
-    return StructureData(ase=str_ase)
+    return StructureData(ase=str_ase)   
+
+def atomQuery(structure, query_dict, is_and=True):
+    """
+    :code:`atomQuery` can help us query the list of atoms that we want to manipulate later.
+
+    :param structure: The structure that we want to investigate.
+    :type structure: aiida.orm.StructureData
+    :param query_dict: The query dictionary, now support these keys: (1) 'symbol' (2) 'x', 'y', 'z' (3) 'connection'
+
+                       .. code-block:: python
+
+                            query_dict = {
+                                'symbol': ['Ni'],
+                                'z': {'>', 30.0},
+                                'connection': 25
+                            }
+
+                       which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.  
+    :type query_dict: python dictionary object
+    :param is_and: whether we want to and the condition in query_dict, defaults to True
+    :type is_and: python bool object, optional
+    :return: index of atoms
+    :rtype: python list object
+    """
+
+    results = {} # we want to return a list of symbols
+    tmp_ase = structure.get_ase()
+    
+    for item, value in query_dict.items():
+
+        # to query certain atom symbol
+        if item == 'symbol':
+            results['symbol'] = []
+            for ind, atom in enumerate(tmp_ase):
+                if atom.symbol in value:
+                    results['symbol'].append(ind)
+        
+        # to query certain position
+        if item in ['x', 'y', 'z']:
+            results['coords'] = []
+            for ind, atom in enumerate(tmp_ase):
+                if list(value.keys())[0] == '>':
+                    if item == 'x':
+                        if atom.position[0] > list(value.values())[0]:
+                            results['coords'].append(ind)
+                    elif item == 'y':
+                        if atom.position[1] > list(value.values())[0]:
+                            results['coords'].append(ind)
+                    elif item == 'z':
+                        if atom.position[2] > list(value.values())[0]:
+                            results['coords'].append(ind)
+
+                if list(value.keys())[0] == '<':
+                    if item == 'x':
+                        if atom.position[0] < list(value.values())[0]:
+                            results['coords'].append(ind)
+                    elif item == 'y':
+                        if atom.position[1] < list(value.values())[0]:
+                            results['coords'].append(ind)
+                    elif item == 'z':
+                        if atom.position[2] < list(value.values())[0]:
+                            results['coords'].append(ind)
+        
+        # to query connection
+        if item == 'connection':
+            results['connection'] = []
+            connected_atoms = getStructureAnalysis(structure, atom_index=[value])
+            for ind, atom in enumerate(tmp_ase):
+                atom_str = atom.symbol + str(ind) + 'ax'
+                is_in = False
+                for name in list(list(connected_atoms.values())[0].keys()):
+                    if atom_str in name:
+                        is_in = True
+                        break
+                if is_in:
+                    results['connection'].append(ind)
+        
+    # analyze all the results
+    tmp = list(range(len(slab_aiida.sites))) #create the index of all atoms
+    if is_and:
+        for key, value in results.items():
+            tmp = list(set(tmp) & set(value))
+
+    return tmp

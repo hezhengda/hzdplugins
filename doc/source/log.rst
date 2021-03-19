@@ -1,6 +1,10 @@
 Log file for hzdplugins
 =======================
 
+* v0.0.41: 2021.03.19
+    * Add :code:`getGCN` in :code:`info.py`, :code:`getGCN` can help us calculate the generalized coordination number of certain atom
+    * Modify the :code:`getStructureAnalysis` and :code:`checkDistance`, because in previous version, it cannot get all the possible atoms, but now it works fine!
+
 * v0.0.40: 2020.12.28
     * Add :code:`setSpinStructure` function in :code:`build.py`
     * Change the input parameter for :code:`getStructure` and :code:`getStructureAnalysis` to structure, not uuid.
