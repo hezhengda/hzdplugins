@@ -517,7 +517,6 @@ def getGCN(structure, bond_length, atom_list, cn_max):
             index = int(items[1]) # get the index of that atom
             conn_set.append(index)
     
-    print(conn_set)
     sum_cn = 0
     for ind in conn_set:
         coord_dict = getStructureAnalysis(structure=structure, atom_index=[ind], bond_length=bond_length, is_Metal=False)
@@ -525,5 +524,3 @@ def getGCN(structure, bond_length, atom_list, cn_max):
             sum_cn += len(value)
     
     return sum_cn/cn_max
-
-
