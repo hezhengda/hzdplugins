@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.40 documentation</title>
+  <title>aiidaplugins Modules &mdash; hzdplugins 0.0.41 documentation</title>
   
 
   
@@ -317,6 +317,23 @@ the last step can sometimes be questionable.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.getGCN">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getGCN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">bond_length</span></em>, <em class="sig-param"><span class="n">atom_list</span></em>, <em class="sig-param"><span class="n">cn_max</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getGCN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getGCN" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to calculate the GCN (generalized coordination number of certain atom) of certain site.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>aiida.orm.StructureData</em>) – Structure of the slab</p></li>
+<li><p><strong>bond_length</strong> (<em>python real object</em>) – the maximum bond_length that we need to investigate</p></li>
+<li><p><strong>atom_list</strong> (<em>python list object</em>) – a list of atoms which constructs a unique site (could be ensemble)</p></li>
+<li><p><strong>cn_max</strong> (<em>python integer</em>) – the maximum coordination number of certain atom in the structure</p></li>
+<li><p><strong>atom_name</strong> (<em>python string object</em>) – the name of the atom (useful in dealing with the dictionary)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="hzdplugins.aiidaplugins.info.getLastForce">
 <code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">getLastForce</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uuid</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#getLastForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.getLastForce" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">getLastForce</span></code> will return the value of the last total force and the stdout of <code class="code docutils literal notranslate"><span class="pre">grep</span> <span class="pre">'Total</span> <span class="pre">force'</span>
@@ -463,6 +480,12 @@ user choose.</p>
 <dd class="field-even"><p>If it is metal, the return True, else return False.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="hzdplugins.aiidaplugins.info.spin">
+<code class="sig-prename descclassname">hzdplugins.aiidaplugins.info.</code><code class="sig-name descname">spin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span></em>, <em class="sig-param"><span class="n">electron_configuration</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/aiidaplugins/info.html#spin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.aiidaplugins.info.spin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the spin of certain configurations.</p>
 </dd></dl>
 
 <dl class="py function">

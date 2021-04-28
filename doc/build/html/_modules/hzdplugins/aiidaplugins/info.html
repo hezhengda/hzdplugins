@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.40 documentation</title>
+  <title>hzdplugins.aiidaplugins.info &mdash; hzdplugins 0.0.41 documentation</title>
   
 
   
@@ -278,17 +278,21 @@
             <span class="k">if</span> <span class="n">isMetal</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="p">):</span>
                 <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">id2</span><span class="p">,</span> <span class="n">atom2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
-                    <span class="n">check</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">symbol</span> <span class="o">=</span> <span class="n">checkDistance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">atom_id</span> <span class="o">!=</span> <span class="n">id2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span> <span class="ow">and</span> <span class="p">(</span><span class="n">isMetal</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="p">)):</span>
-                        <span class="n">name_atom2</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span> <span class="o">+</span> <span class="n">symbol</span>
-                        <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">][</span><span class="n">name_atom2</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+                    <span class="n">dist_results</span> <span class="o">=</span> <span class="n">checkDistance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">dist_results</span><span class="p">:</span>
+                        <span class="n">check</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">symbol</span> <span class="o">=</span> <span class="n">tmp</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">atom_id</span> <span class="o">!=</span> <span class="n">id2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span> <span class="ow">and</span> <span class="p">(</span><span class="n">isMetal</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="p">)):</span>
+                            <span class="n">name_atom2</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span> <span class="o">+</span> <span class="n">symbol</span>
+                            <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">][</span><span class="n">name_atom2</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">id2</span><span class="p">,</span> <span class="n">atom2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
-                <span class="n">check</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">symbol</span> <span class="o">=</span> <span class="n">checkDistance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">atom_id</span> <span class="o">!=</span> <span class="n">id2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span><span class="p">:</span>
-                    <span class="n">name_atom2</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span> <span class="o">+</span> <span class="n">symbol</span>
-                    <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">][</span><span class="n">name_atom2</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+                <span class="n">dist_results</span> <span class="o">=</span> <span class="n">checkDistance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">dist_results</span><span class="p">:</span>
+                    <span class="n">check</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">symbol</span> <span class="o">=</span> <span class="n">tmp</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">atom_id</span> <span class="o">!=</span> <span class="n">id2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span><span class="p">:</span>
+                        <span class="n">name_atom2</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span> <span class="o">+</span> <span class="n">symbol</span>
+                        <span class="n">results</span><span class="p">[</span><span class="n">name_atom</span><span class="p">][</span><span class="n">name_atom2</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
 
     <span class="c1"># sort the bond length in the dictionary, easy for comparison:</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -598,15 +602,21 @@
     <span class="n">y_cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">z_cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
     <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">ay</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">for</span> <span class="n">az</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="n">atom2_modifyPosition</span> <span class="o">=</span> <span class="n">atom2</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="n">ax</span> <span class="o">*</span> <span class="n">x_cell</span> <span class="o">+</span> <span class="n">ay</span> <span class="o">*</span> <span class="n">y_cell</span> <span class="o">+</span> <span class="n">az</span> <span class="o">*</span> <span class="n">z_cell</span>
                 <span class="k">if</span> <span class="n">distance</span><span class="p">(</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">atom2_modifyPosition</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">bond_length</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">distance</span><span class="p">(</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">atom2_modifyPosition</span><span class="p">),</span> <span class="s1">&#39;ax:</span><span class="si">{}</span><span class="s1">, ay:</span><span class="si">{}</span><span class="s1">, az:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span>
-                                                                                                              <span class="n">az</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;&#39;</span></div>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="n">distance</span><span class="p">(</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">atom2_modifyPosition</span><span class="p">),</span> <span class="s1">&#39;ax:</span><span class="si">{}</span><span class="s1">, ay:</span><span class="si">{}</span><span class="s1">, az:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span>
+                                                                                                              <span class="n">az</span><span class="p">)))</span>
+                    <span class="c1"># return True, distance(atom1.position, atom2_modifyPosition), &#39;ax:{}, ay:{}, az:{}&#39;.format(ax, ay,</span>
+                    <span class="c1">#                                                                                           az)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">results</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="kc">False</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="isMetal"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.isMetal">[docs]</a><span class="k">def</span> <span class="nf">isMetal</span><span class="p">(</span><span class="n">atom_symbol</span><span class="p">):</span>
 
@@ -626,6 +636,63 @@
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="getGCN"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.getGCN">[docs]</a><span class="k">def</span> <span class="nf">getGCN</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">,</span> <span class="n">atom_list</span><span class="p">,</span> <span class="n">cn_max</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is used to calculate the GCN (generalized coordination number of certain atom) of certain site.</span>
+
+<span class="sd">    :param structure: Structure of the slab</span>
+<span class="sd">    :type structure: aiida.orm.StructureData</span>
+
+<span class="sd">    :param bond_length: the maximum bond_length that we need to investigate</span>
+<span class="sd">    :type bond_length: python real object</span>
+
+<span class="sd">    :param atom_list: a list of atoms which constructs a unique site (could be ensemble)</span>
+<span class="sd">    :type atom_list: python list object</span>
+
+<span class="sd">    :param cn_max: the maximum coordination number of certain atom in the structure</span>
+<span class="sd">    :type cn_max: python integer</span>
+
+<span class="sd">    :param atom_name: the name of the atom (useful in dealing with the dictionary)</span>
+<span class="sd">    :type atom_name: python string object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">re</span>
+
+    <span class="c1"># get the coordination dictionary</span>
+    <span class="n">coord_dict</span> <span class="o">=</span> <span class="n">getStructureAnalysis</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">,</span> <span class="n">atom_index</span><span class="o">=</span><span class="n">atom_list</span><span class="p">,</span> <span class="n">bond_length</span> <span class="o">=</span> <span class="n">bond_length</span><span class="p">,</span> <span class="n">is_Metal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># do the analysis</span>
+
+    <span class="n">conn_set</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># for all the atoms that connected to the site</span>
+    <span class="k">for</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">conn_dict</span> <span class="ow">in</span> <span class="n">coord_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">distance</span> <span class="ow">in</span> <span class="n">conn_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-z]+)(\d+)([a-z]*)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># get the index of that atom</span>
+            <span class="n">conn_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">sum_cn</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">conn_set</span><span class="p">:</span>
+        <span class="n">coord_dict</span> <span class="o">=</span> <span class="n">getStructureAnalysis</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">,</span> <span class="n">atom_index</span><span class="o">=</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">bond_length</span><span class="o">=</span><span class="n">bond_length</span><span class="p">,</span> <span class="n">is_Metal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">coord_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">sum_cn</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sum_cn</span><span class="o">/</span><span class="n">cn_max</span></div>
+
+<div class="viewcode-block" id="spin"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.info.spin">[docs]</a><span class="k">def</span> <span class="nf">spin</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">electron_configuration</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the spin of certain configurations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">electron_configuration</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">+=</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">+=</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span></div>
 </pre></div>
 
            </div>

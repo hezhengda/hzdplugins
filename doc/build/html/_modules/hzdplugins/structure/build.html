@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.40 documentation</title>
+  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.41 documentation</title>
   
 
   
@@ -325,7 +325,7 @@
     <span class="n">listOfStructures</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_slabs</span><span class="p">(</span><span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">get_orthogonal</span><span class="p">:</span>
         <span class="n">listOfStructures</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span><span class="o">.</span><span class="n">get_orthogonal_c_slab</span><span class="p">()</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">]</span>
-    
+
     <span class="c1"># check whether all the atoms are in the unit cell</span>
     <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">listOfStructures</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slab</span><span class="o">.</span><span class="n">sites</span><span class="p">)):</span>
@@ -660,11 +660,14 @@
     <span class="c1"># create the kind_names list</span>
     <span class="n">kind_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">structure_ase</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
+
     <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">structure_ase</span><span class="p">:</span>
         <span class="n">kind_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">kind_id</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">changeDict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">kind_names</span><span class="p">[</span><span class="n">kind_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">symbol</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">changeDict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">atomSymbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kind_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">atomSymbol</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">kind_names</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="c1"># since I recreate kind_names from structure, then they must be the same.</span>
     <span class="c1"># if len(structure.sites) != len(kind_names):</span>
@@ -802,9 +805,9 @@
 <span class="sd">    :code:`setSpinStructure` can help us generate the :code:`starting_ns_eigenvalue` quickly, otherwise it will take too long. Notice in here we only assume that all the symbol are d-groups (just for simplicity for now.)</span>
 
 <span class="sd">    :param symbol: The symbol of our atom, e.g. &#39;Fe&#39;</span>
-<span class="sd">    :type symbol: python string object </span>
-<span class="sd">    :param hl_spin: whether we want low_spin (&#39;ls&#39;) or high_spin (&#39;hs&#39;)   </span>
-<span class="sd">    :type hl_spin: python string object    </span>
+<span class="sd">    :type symbol: python string object</span>
+<span class="sd">    :param hl_spin: whether we want low_spin (&#39;ls&#39;) or high_spin (&#39;hs&#39;)</span>
+<span class="sd">    :type hl_spin: python string object</span>
 <span class="sd">    :param num_electrons: the number of electrons that we want to assign</span>
 <span class="sd">    :type num_electrons: python int object</span>
 
@@ -816,7 +819,7 @@
 
     <span class="k">if</span> <span class="n">num_electrons</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The amount of electrons in d orbital should be smaller than 10.&#39;</span><span class="p">)</span>
-    
+
     <span class="n">tmp</span> <span class="o">=</span> <span class="n">num_electrons</span>
 
     <span class="c1"># assign electrons</span>
@@ -840,15 +843,15 @@
                 <span class="n">m</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmplist</span><span class="p">)</span>
-    
+
     <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
             <span class="n">tmplist</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">tmplist</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-                <span class="k">pass</span> 
+                <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
-    
+
     <span class="k">return</span> <span class="n">results</span></div>
 
 <div class="viewcode-block" id="delAtoms"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.delAtoms">[docs]</a><span class="k">def</span> <span class="nf">delAtoms</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">atom_list</span><span class="p">):</span>
@@ -867,10 +870,10 @@
     <span class="c1"># get ase structure</span>
     <span class="n">str_ase</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
 
-    <span class="c1"># del atoms </span>
+    <span class="c1"># del atoms</span>
     <span class="k">del</span> <span class="n">str_ase</span><span class="p">[</span><span class="n">atom_list</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">str_ase</span><span class="p">)</span>   </div>
+    <span class="k">return</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">str_ase</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="atomQuery"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.atomQuery">[docs]</a><span class="k">def</span> <span class="nf">atomQuery</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">query_dict</span><span class="p">,</span> <span class="n">is_and</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -888,7 +891,7 @@
 <span class="sd">                                &#39;connection&#39;: 25</span>
 <span class="sd">                            }</span>
 
-<span class="sd">                       which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.  </span>
+<span class="sd">                       which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.</span>
 <span class="sd">    :type query_dict: python dictionary object</span>
 <span class="sd">    :param is_and: whether we want to and the condition in query_dict, defaults to True</span>
 <span class="sd">    :type is_and: python bool object, optional</span>
@@ -898,7 +901,7 @@
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># we want to return a list of symbols</span>
     <span class="n">tmp_ase</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
-    
+
     <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
         <span class="c1"># to query certain atom symbol</span>
@@ -907,7 +910,7 @@
             <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_ase</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="n">results</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
-        
+
         <span class="c1"># to query certain position</span>
         <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]:</span>
             <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -933,7 +936,7 @@
                     <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
                             <span class="n">results</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
-        
+
         <span class="c1"># to query connection</span>
         <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;connection&#39;</span><span class="p">:</span>
             <span class="n">results</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -947,7 +950,7 @@
                         <span class="k">break</span>
                 <span class="k">if</span> <span class="n">is_in</span><span class="p">:</span>
                     <span class="n">results</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
-        
+
     <span class="c1"># analyze all the results</span>
     <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slab_aiida</span><span class="o">.</span><span class="n">sites</span><span class="p">)))</span> <span class="c1">#create the index of all atoms</span>
     <span class="k">if</span> <span class="n">is_and</span><span class="p">:</span>
