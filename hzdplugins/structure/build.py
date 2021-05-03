@@ -794,7 +794,7 @@ def atomQuery(structure, query_dict, is_and=True):
                     results['connection'].append(ind)
 
     # analyze all the results
-    tmp = list(range(len(slab_aiida.sites))) #create the index of all atoms
+    tmp = list(range(len(structure.sites))) #create the index of all atoms
     if is_and:
         for key, value in results.items():
             tmp = list(set(tmp) & set(value))
