@@ -846,3 +846,37 @@ def expandLayerDistance(struct, begin_end_layer, setDistance):
     struct = StructureData(ase=tmp_ase)
     
     return struct
+
+def buildMoleculeFromSMILE(smileStr):
+    """
+    Create molecular structure by using 
+
+    :param smileStr: The string of the SMILES
+    :type smileStr: Python string
+
+    :return: A molecule structure
+    :rtype: ase.Atoms object
+    """
+
+    from openbabel import openbabel
+    from ase.io import read, write 
+    import numpy as np
+    import os
+
+    f = open('babel.xyz', 'w')
+    gen3d = openbabel.OBOp.FindType('gen3D')
+    mol = openbabel.OBMol()
+
+    obConversion = openbabel.OBConversion()
+    obConversion.SetInAndOutFormats('smi', 'xyz')
+    obConversion.ReadString(mol, smileStr)
+
+    gen3d.Do(mol, '--best')
+    outMDL = obConversion.WriteString(mol)
+    f.write(outMDL)
+    f.close()
+
+    atoms = read('babel.xyz')
+    os.system('rm babel.xyz')
+
+    return atoms

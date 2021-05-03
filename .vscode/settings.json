@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/Users/z.he/opt/miniconda3/envs/aiidaconda/bin/python",
+    "python.pythonPath": "/Users/z.he/.conda/envs/aiida/bin/python",
     "restructuredtext.confPath": "",
     "restructuredtext.languageServer.disabled": true,
     "python.linting.enabled": true
