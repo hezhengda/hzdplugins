@@ -17,7 +17,6 @@ from pymatgen.core.surface import SlabGenerator
 from hzdplugins.aiidaplugins.constants import color_dictionary, adsorbates
 from hzdplugins.aiidaplugins.info import getStructureAnalysis
 
-
 def getValue(var):
     """
 
@@ -801,3 +800,49 @@ def atomQuery(structure, query_dict, is_and=True):
             tmp = list(set(tmp) & set(value))
 
     return tmp
+
+def expandLayerDistance(struct, begin_end_layer, setDistance):
+    
+    """
+    expandLayerDistance can expand the distance between layers in the layered structure
+    
+    :param struct: The structure
+    :type struct: aiida.orm.StructureData
+    
+    :param begin_end_layer: The beginning and the ending of each layer
+    :type struct: python list
+    
+    e.g. begin_end_layer = [[a1, b1], [a2, b2], [a3, b3]]
+    
+    :param setDistance: The distance between layers that we want to set
+    :type setDistance: python float
+    
+    """
+    
+    tmp_ase = struct.get_ase()
+
+    originalDistance = begin_end_layer[1][0] - begin_end_layer[0][1]
+    diff = setDistance - originalDistance
+    c_new = tmp_ase.cell[2][2] + len(begin_end_layer) * diff
+
+    tmp_ase.cell[2] = [0, 0, c_new]
+
+    atomLayers = [] # used to store the atom in different layers
+
+    # divide the system into different layers
+    for begin_end in begin_end_layer:
+        tmp_layer = []
+        for atom in tmp_ase:
+            if atom.position[2] > begin_end[0] and atom.position[2] < begin_end[1]:
+                tmp_layer.append(atom)
+        atomLayers.append(tmp_layer)
+
+    # add the distance to each layer
+    for ind, atoms in enumerate(atomLayers):
+        print(ind)
+        for atom in atoms:
+            atom.position += [0, 0, ind*diff]
+
+    struct = StructureData(ase=tmp_ase)
+    
+    return struct
