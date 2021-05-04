@@ -525,7 +525,7 @@ def getGCN(structure, bond_length, atom_list, cn_max):
 
     return sum_cn/cn_max
 
-def spin(symbol, electron_configuration):
+def checkTotalSpin(symbol, electron_configuration):
     """
     Get the spin of certain configurations.
     """

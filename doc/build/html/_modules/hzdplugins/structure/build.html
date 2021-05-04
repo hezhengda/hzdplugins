@@ -1,42 +1,39 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.41 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/my_theme.css" type="text/css" />
-
-  
+  <title>hzdplugins.structure.build &mdash; hzdplugins 0.0.42 documentation</title>
   
 
   
   
-
+  
   
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/my_theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -75,7 +72,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -83,7 +79,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
@@ -94,7 +90,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -129,13 +124,11 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -173,7 +166,6 @@
 
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">color_dictionary</span><span class="p">,</span> <span class="n">adsorbates</span>
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.info</span> <span class="kn">import</span> <span class="n">getStructureAnalysis</span>
-
 
 <div class="viewcode-block" id="getValue"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.getValue">[docs]</a><span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -952,37 +944,112 @@
                     <span class="n">results</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
 
     <span class="c1"># analyze all the results</span>
-    <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slab_aiida</span><span class="o">.</span><span class="n">sites</span><span class="p">)))</span> <span class="c1">#create the index of all atoms</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">sites</span><span class="p">)))</span> <span class="c1">#create the index of all atoms</span>
     <span class="k">if</span> <span class="n">is_and</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">tmp</span></div>
+
+<div class="viewcode-block" id="expandLayerDistance"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.expandLayerDistance">[docs]</a><span class="k">def</span> <span class="nf">expandLayerDistance</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">begin_end_layer</span><span class="p">,</span> <span class="n">setDistance</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    expandLayerDistance can expand the distance between layers in the layered structure</span>
+<span class="sd">    </span>
+<span class="sd">    :param struct: The structure</span>
+<span class="sd">    :type struct: aiida.orm.StructureData</span>
+<span class="sd">    </span>
+<span class="sd">    :param begin_end_layer: The beginning and the ending of each layer</span>
+<span class="sd">    :type struct: python list</span>
+<span class="sd">    </span>
+<span class="sd">    e.g. begin_end_layer = [[a1, b1], [a2, b2], [a3, b3]]</span>
+<span class="sd">    </span>
+<span class="sd">    :param setDistance: The distance between layers that we want to set</span>
+<span class="sd">    :type setDistance: python float</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">tmp_ase</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">get_ase</span><span class="p">()</span>
+
+    <span class="n">originalDistance</span> <span class="o">=</span> <span class="n">begin_end_layer</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">begin_end_layer</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">setDistance</span> <span class="o">-</span> <span class="n">originalDistance</span>
+    <span class="n">c_new</span> <span class="o">=</span> <span class="n">tmp_ase</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">begin_end_layer</span><span class="p">)</span> <span class="o">*</span> <span class="n">diff</span>
+
+    <span class="n">tmp_ase</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c_new</span><span class="p">]</span>
+
+    <span class="n">atomLayers</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># used to store the atom in different layers</span>
+
+    <span class="c1"># divide the system into different layers</span>
+    <span class="k">for</span> <span class="n">begin_end</span> <span class="ow">in</span> <span class="n">begin_end_layer</span><span class="p">:</span>
+        <span class="n">tmp_layer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">tmp_ase</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">begin_end</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">begin_end</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">tmp_layer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+        <span class="n">atomLayers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_layer</span><span class="p">)</span>
+
+    <span class="c1"># add the distance to each layer</span>
+    <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atomLayers</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">position</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ind</span><span class="o">*</span><span class="n">diff</span><span class="p">]</span>
+
+    <span class="n">struct</span> <span class="o">=</span> <span class="n">StructureData</span><span class="p">(</span><span class="n">ase</span><span class="o">=</span><span class="n">tmp_ase</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">struct</span></div>
+
+<div class="viewcode-block" id="buildMoleculeFromSMILE"><a class="viewcode-back" href="../../../structure.html#hzdplugins.structure.build.buildMoleculeFromSMILE">[docs]</a><span class="k">def</span> <span class="nf">buildMoleculeFromSMILE</span><span class="p">(</span><span class="n">smileStr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create molecular structure by using </span>
+
+<span class="sd">    :param smileStr: The string of the SMILES</span>
+<span class="sd">    :type smileStr: Python string</span>
+
+<span class="sd">    :return: A molecule structure</span>
+<span class="sd">    :rtype: ase.Atoms object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">openbabel</span> <span class="kn">import</span> <span class="n">openbabel</span>
+    <span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span><span class="p">,</span> <span class="n">write</span> 
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;babel.xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">gen3d</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBOp</span><span class="o">.</span><span class="n">FindType</span><span class="p">(</span><span class="s1">&#39;gen3D&#39;</span><span class="p">)</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMol</span><span class="p">()</span>
+
+    <span class="n">obConversion</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBConversion</span><span class="p">()</span>
+    <span class="n">obConversion</span><span class="o">.</span><span class="n">SetInAndOutFormats</span><span class="p">(</span><span class="s1">&#39;smi&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span>
+    <span class="n">obConversion</span><span class="o">.</span><span class="n">ReadString</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">smileStr</span><span class="p">)</span>
+
+    <span class="n">gen3d</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="s1">&#39;--best&#39;</span><span class="p">)</span>
+    <span class="n">outMDL</span> <span class="o">=</span> <span class="n">obConversion</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outMDL</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;babel.xyz&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;rm babel.xyz&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atoms</span></div>
 </pre></div>
 
            </div>
            
           </div>
           <footer>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Zheng-Da He.
+        &copy; Copyright 2020, Zheng-Da He
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -990,6 +1057,7 @@
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

@@ -17,7 +17,6 @@ from pymatgen.core.surface import SlabGenerator
 from hzdplugins.aiidaplugins.constants import color_dictionary, adsorbates
 from hzdplugins.aiidaplugins.info import getStructureAnalysis
 
-
 def getValue(var):
     """
 
@@ -168,7 +167,7 @@ def millerSurfaces(bulk, miller_index, layers, vacuum, get_orthogonal=False, bon
     listOfStructures = sg.get_slabs(bonds=bonds)
     if get_orthogonal:
         listOfStructures = [slab.get_orthogonal_c_slab() for slab in listOfStructures]
-    
+
     # check whether all the atoms are in the unit cell
     for slab in listOfStructures:
         for ind in range(len(slab.sites)):
@@ -503,11 +502,14 @@ def newStructure(structure, changeDict):
     # create the kind_names list
     kind_names = []
     structure_ase = structure.get_ase()
+
     for atom in structure_ase:
         kind_names.append(atom.symbol)
 
-    for kind_id, symbol in changeDict.items():
-        kind_names[kind_id] = symbol
+    for key, value in changeDict.items():
+        for ind, atomSymbol in enumerate(kind_names):
+            if atomSymbol == key:
+                kind_names[ind] = value
 
     # since I recreate kind_names from structure, then they must be the same.
     # if len(structure.sites) != len(kind_names):
@@ -645,9 +647,9 @@ def setSpinStructure(symbol, hl_spin, num_electrons):
     :code:`setSpinStructure` can help us generate the :code:`starting_ns_eigenvalue` quickly, otherwise it will take too long. Notice in here we only assume that all the symbol are d-groups (just for simplicity for now.)
 
     :param symbol: The symbol of our atom, e.g. 'Fe'
-    :type symbol: python string object 
-    :param hl_spin: whether we want low_spin ('ls') or high_spin ('hs')   
-    :type hl_spin: python string object    
+    :type symbol: python string object
+    :param hl_spin: whether we want low_spin ('ls') or high_spin ('hs')
+    :type hl_spin: python string object
     :param num_electrons: the number of electrons that we want to assign
     :type num_electrons: python int object
 
@@ -659,7 +661,7 @@ def setSpinStructure(symbol, hl_spin, num_electrons):
 
     if num_electrons > 10:
         raise ValueError('The amount of electrons in d orbital should be smaller than 10.')
-    
+
     tmp = num_electrons
 
     # assign electrons
@@ -683,15 +685,15 @@ def setSpinStructure(symbol, hl_spin, num_electrons):
                 m += 1
                 s = 1
             results.append(tmplist)
-    
+
     for m in range(5):
         for s in range(2):
             tmplist = [m+1, s+1, symbol, 1.0]
             if tmplist in results:
-                pass 
+                pass
             else:
                 results.append([m+1, s+1, symbol, 0.0])
-    
+
     return results
 
 def delAtoms(structure, atom_list):
@@ -710,10 +712,10 @@ def delAtoms(structure, atom_list):
     # get ase structure
     str_ase = structure.get_ase()
 
-    # del atoms 
+    # del atoms
     del str_ase[atom_list]
 
-    return StructureData(ase=str_ase)   
+    return StructureData(ase=str_ase)
 
 def atomQuery(structure, query_dict, is_and=True):
     """
@@ -731,7 +733,7 @@ def atomQuery(structure, query_dict, is_and=True):
                                 'connection': 25
                             }
 
-                       which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.  
+                       which means we want to query Ni atoms, that z coordinates is larger than 30.0, also have connection to 25th atom.
     :type query_dict: python dictionary object
     :param is_and: whether we want to and the condition in query_dict, defaults to True
     :type is_and: python bool object, optional
@@ -741,7 +743,7 @@ def atomQuery(structure, query_dict, is_and=True):
 
     results = {} # we want to return a list of symbols
     tmp_ase = structure.get_ase()
-    
+
     for item, value in query_dict.items():
 
         # to query certain atom symbol
@@ -750,7 +752,7 @@ def atomQuery(structure, query_dict, is_and=True):
             for ind, atom in enumerate(tmp_ase):
                 if atom.symbol in value:
                     results['symbol'].append(ind)
-        
+
         # to query certain position
         if item in ['x', 'y', 'z']:
             results['coords'] = []
@@ -776,7 +778,7 @@ def atomQuery(structure, query_dict, is_and=True):
                     elif item == 'z':
                         if atom.position[2] < list(value.values())[0]:
                             results['coords'].append(ind)
-        
+
         # to query connection
         if item == 'connection':
             results['connection'] = []
@@ -790,11 +792,91 @@ def atomQuery(structure, query_dict, is_and=True):
                         break
                 if is_in:
                     results['connection'].append(ind)
-        
+
     # analyze all the results
-    tmp = list(range(len(slab_aiida.sites))) #create the index of all atoms
+    tmp = list(range(len(structure.sites))) #create the index of all atoms
     if is_and:
         for key, value in results.items():
             tmp = list(set(tmp) & set(value))
 
     return tmp
+
+def expandLayerDistance(struct, begin_end_layer, setDistance):
+    
+    """
+    expandLayerDistance can expand the distance between layers in the layered structure
+    
+    :param struct: The structure
+    :type struct: aiida.orm.StructureData
+    
+    :param begin_end_layer: The beginning and the ending of each layer
+    :type struct: python list
+    
+    e.g. begin_end_layer = [[a1, b1], [a2, b2], [a3, b3]]
+    
+    :param setDistance: The distance between layers that we want to set
+    :type setDistance: python float
+    
+    """
+    
+    tmp_ase = struct.get_ase()
+
+    originalDistance = begin_end_layer[1][0] - begin_end_layer[0][1]
+    diff = setDistance - originalDistance
+    c_new = tmp_ase.cell[2][2] + len(begin_end_layer) * diff
+
+    tmp_ase.cell[2] = [0, 0, c_new]
+
+    atomLayers = [] # used to store the atom in different layers
+
+    # divide the system into different layers
+    for begin_end in begin_end_layer:
+        tmp_layer = []
+        for atom in tmp_ase:
+            if atom.position[2] > begin_end[0] and atom.position[2] < begin_end[1]:
+                tmp_layer.append(atom)
+        atomLayers.append(tmp_layer)
+
+    # add the distance to each layer
+    for ind, atoms in enumerate(atomLayers):
+        print(ind)
+        for atom in atoms:
+            atom.position += [0, 0, ind*diff]
+
+    struct = StructureData(ase=tmp_ase)
+    
+    return struct
+
+def buildMoleculeFromSMILE(smileStr):
+    """
+    Create molecular structure by using 
+
+    :param smileStr: The string of the SMILES
+    :type smileStr: Python string
+
+    :return: A molecule structure
+    :rtype: ase.Atoms object
+    """
+
+    from openbabel import openbabel
+    from ase.io import read, write 
+    import numpy as np
+    import os
+
+    f = open('babel.xyz', 'w')
+    gen3d = openbabel.OBOp.FindType('gen3D')
+    mol = openbabel.OBMol()
+
+    obConversion = openbabel.OBConversion()
+    obConversion.SetInAndOutFormats('smi', 'xyz')
+    obConversion.ReadString(mol, smileStr)
+
+    gen3d.Do(mol, '--best')
+    outMDL = obConversion.WriteString(mol)
+    f.write(outMDL)
+    f.close()
+
+    atoms = read('babel.xyz')
+    os.system('rm babel.xyz')
+
+    return atoms

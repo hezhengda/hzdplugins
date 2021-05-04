@@ -457,7 +457,7 @@ def checkDistance(cell, atom1, atom2, bond_length):
                     # return True, distance(atom1.position, atom2_modifyPosition), 'ax:{}, ay:{}, az:{}'.format(ax, ay,
                     #                                                                                           az)
     if len(results) != 0:
-        return results 
+        return results
     else:
         return [(False, -1, '')]
 
@@ -487,7 +487,7 @@ def getGCN(structure, bond_length, atom_list, cn_max):
 
     :param structure: Structure of the slab
     :type structure: aiida.orm.StructureData
-    
+
     :param bond_length: the maximum bond_length that we need to investigate
     :type bond_length: python real object
 
@@ -505,7 +505,7 @@ def getGCN(structure, bond_length, atom_list, cn_max):
 
     # get the coordination dictionary
     coord_dict = getStructureAnalysis(structure=structure, atom_index=atom_list, bond_length = bond_length, is_Metal=False)
-    
+
     # do the analysis
 
     conn_set = [] # for all the atoms that connected to the site
@@ -516,14 +516,23 @@ def getGCN(structure, bond_length, atom_list, cn_max):
                 items = match.groups()
             index = int(items[1]) # get the index of that atom
             conn_set.append(index)
-    
-    print(conn_set)
+
     sum_cn = 0
     for ind in conn_set:
         coord_dict = getStructureAnalysis(structure=structure, atom_index=[ind], bond_length=bond_length, is_Metal=False)
         for key, value in coord_dict.items():
             sum_cn += len(value)
-    
+
     return sum_cn/cn_max
 
-
+def checkTotalSpin(symbol, electron_configuration):
+    """
+    Get the spin of certain configurations.
+    """
+    results = 0
+    for line in electron_configuration:
+        if line[1] == 1:
+            results += line[3]*1.0
+        else:
+            results += line[3]*(-1.0)
+    return results
