@@ -13,9 +13,9 @@ hzdplugins/aiidaplugins/constants.py
 hzdplugins/aiidaplugins/deprecated.py
 hzdplugins/aiidaplugins/info.py
 hzdplugins/aiidaplugins/inputgenerator.py
-hzdplugins/aiidaplugins/io.py
-hzdplugins/aiidaplugins/pwUtilities.py
+hzdplugins/aiidaplugins/serverio.py
 hzdplugins/aiidaplugins/submit.py
+hzdplugins/aiidaplugins/utilities.py
 hzdplugins/aiidaplugins/adsorbates/CH.mol
 hzdplugins/aiidaplugins/adsorbates/CH2.mol
 hzdplugins/aiidaplugins/adsorbates/CH2OH.mol
