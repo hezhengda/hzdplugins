@@ -1,0 +1,1 @@
+recursive-include hzdplugins/aiidaplugins/adsorbates *.mol *.py

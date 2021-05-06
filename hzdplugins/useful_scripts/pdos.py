@@ -1,4 +1,3 @@
-#!/Users/z.he/.conda/envs/aiidaconda/bin/python
 import re
 import os
 import sys
