@@ -1,7 +1,7 @@
 import setuptools
 from setuptools import setup
 setup(name='hzdplugins',
-version='0.0.45',
+version='0.0.46',
 description='plugins for my own research',
 author='Zheng-Da He',
 author_email='z.he@fz-juelich.de, jameshzd@mail.ustc.edu.cn, zhengdahe.electrocatalysis@gmail.com',
