@@ -4,7 +4,7 @@ aiidaplugins Modules
 addiaplugins.io Module
 ----------------------
 
-.. automodule:: hzdplugins.aiidaplugins.io
+.. automodule:: hzdplugins.aiidaplugins.serverio
     :members:
     :undoc-members:
     :show-inheritance:
@@ -29,6 +29,14 @@ addiaplugins.inputgenerator Module
 ----------------------------------
 
 .. automodule:: hzdplugins.aiidaplugins.inputgenerator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+addiaplugins.utilities Module
+----------------------------------
+
+.. automodule:: hzdplugins.aiidaplugins.utilities
     :members:
     :undoc-members:
     :show-inheritance:

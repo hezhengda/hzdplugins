@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, os.path.abspath('../../hzdplugins/structure'))
 sys.path.insert(0, os.path.abspath('../../hzdplugins/aiidaplugins'))
 sys.path.insert(0, os.path.abspath('../../hzdplugins'))
+sys.path.insert(0, os.path.abspath('../../hzdplugins/scripts'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('.'))
@@ -30,7 +31,7 @@ copyright = '2020, Zheng-Da He'
 author = 'Zheng-Da He'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.46'
+release = '0.0.49'
 
 
 # -- General configuration ---------------------------------------------------

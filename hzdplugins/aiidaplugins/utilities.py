@@ -1,3 +1,6 @@
+from .constants import slurm_options
+from copy import deepcopy
+
 def pwInputToDict(loc_file, atomic_species_list):
     """
     Create the input dictionary from the INP_PWSCF
@@ -167,21 +170,21 @@ def dictToPwInput(dict_input, location, atomic_species_list):
                 if 'hubbard_u' in param:
                     
                     for k, v in p_v.items():
-                        f.write('  hubbard_u({})={}\n'.format(atomic_species_list[k], v))
+                        f.write('  hubbard_u({}) = {}\n'.format(atomic_species_list[k], v))
                 
                 elif 'starting_magnetization' in param:
 
                     for k, v in p_v.items():
-                        f.write('  starting_magneitzation({})={}\n'.format(atomic_species_list[k], v))
+                        f.write('  starting_magneitzation({}) = {}\n'.format(atomic_species_list[k], v))
                 
                 elif 'starting_ns_eigenvalue' in param:
 
                     for l in p_v:
-                        f.write('  starting_ns_eigenvalue({},{},{})={}\n'.format(l[0], l[1], atomic_species_list[l[2]], l[3]))
+                        f.write('  starting_ns_eigenvalue({},{},{}) = {}\n'.format(l[0], l[1], atomic_species_list[l[2]], l[3]))
                 
                 else:
 
-                    f.write('  {}={}\n'.format(param, p_v))
+                    f.write('  {} = {}\n'.format(param, p_v))
             
             f.write('/\n')
 
@@ -217,5 +220,86 @@ def dictToPwInput(dict_input, location, atomic_species_list):
         
         else:
             pass
+
+    f.close()
+
+def getSubmitFile(filename, computer, typeCalculation, inpDict):
+    """
+    This function can help us generate the submitting file for the supercomputer.
+
+    :param location: the filename of the submitting script
+    :type location: Python string
+
+    :param computer: the name of the computer that we want to run on, the options are: 
+                    ['rwth-claix', 'juwels-mac', 'jureca-dc-mac', 'jureca-booster-mac'] (currently)
+    :type computer: Pythong string
+        
+    :param typeCalculation: the type of the simulation that we want to conduct
+    :type typeCalculation: Python string (e.g. ['qe'] or others)
+
+    :param inpDict: The dictionary that contains all the information that we need for constructing the input file.
+                    All the keywords are: ['job_name', 'scheduler_stdout', 'scheduler_stderr', 
+                                           'queue_name', 'account', 'resources', 
+                                           'max_wallclock_seconds', 'modules', 'cmd', 'ntasks_per_node']
+    :type inpDict: Python dictionary
+
+    :return: a file named filename, no other return
+    """
+
+    f = open(filename, 'w')
+
+    tmpDict = deepcopy(slurm_options[computer+'-mac'][typeCalculation])
+    for k, v in inpDict.items():
+        if k == 'resources':
+            for k1, v1 in v.items():
+                tmpDict[k][k1] = v1
+        else:
+            tmpDict[k] = v
+    
+    f.write('#!/bin/bash\n')
+
+    for k, v in tmpDict.items():
+
+        # choose different things to f.write
+        if k == 'job_name':
+            f.write('#SBATCH --job-name={}\n'.format(v))
+
+        if k == 'scheduler_stdout':
+            f.write('#SBATCH --output={}\n'.format(v))
+
+        if k == 'scheduler_stderr':
+            f.write('#SBATCH --error={}\n'.format(v))
+
+        if k == 'queue_name':
+            f.write('#SBATCH --partition={}\n'.format(v))
+
+        if k == 'account':
+            f.write('#SBATCH --account={}\n'.format(v))
+
+        if k == 'resources':
+            f.write('#SBATCH --nodes={}\n'.format(v['num_machines']))
+
+            if 'gpus' in list(v.keys()):
+                f.write('#SBATCH --gres:gpu={}\n'.format(v['gpus']))
+        
+        if k == 'ntasks_per_node':
+            f.write('#SBATCH --ntasks-per-node={}\n'.format(v))
+
+        if k == 'max_wallclock_seconds':
+            
+            hours = v // 3600
+            minutes = v % 3600 // 60
+            seconds = v % 3600 % 60
+            
+            f.write('#SBATCH --time={:02d}:{:02d}:{:02d}\n'.format(hours,minutes,seconds))
+
+        if k == 'modules':
+
+            for item in v:
+                f.write('module load {}\n'.format(item))
+
+        if k == 'cmd':
+
+            f.write('{}\n'.format(v))
 
     f.close()

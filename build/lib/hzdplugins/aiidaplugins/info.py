@@ -560,16 +560,29 @@ def getOptimizedStructure(data_xml):
     :returns: There are two returns, the first is the cell of the optimized structure, the second is the atomic positions.
     """
 
+    convertBohrToAngstrom = 0.5291772109
+
     cell = data_xml['qes:espresso']['output']['atomic_structure']['cell']
     tmp_cell = []
-    for key, value in cell.itemize():
-        tmp_cell.append(value)
+    for key, value in cell.items():
+        np_value = np.array(value) * convertBohrToAngstrom
+        tmp_cell.append(np_value.tolist())
     
     atomic_positions = data_xml['qes:espresso']['output']['atomic_structure']['atomic_positions']['atom']
     tmp_atomic_positions = []
     for atom in atomic_positions:
-        tmp_list = [atom['@name'], atom['$'][0], atom['$'][1], atom['$'][2]]
+        tmp_list = [atom['@name'], atom['$'][0]*convertBohrToAngstrom, atom['$'][1]*convertBohrToAngstrom, atom['$'][2]*convertBohrToAngstrom]
         tmp_atomic_positions.append(tmp_list)
     
     return tmp_cell, tmp_atomic_positions
     
+def getAtomicSpeciesList(data_xml):
+    
+    tmp_species_list = data_xml['qes:espresso']['output']['atomic_species']['species']
+
+    species_list = {}
+
+    for ind, l in enumerate(tmp_species_list):
+        species_list[l['@name']] = ind+1
+    
+    return species_list
