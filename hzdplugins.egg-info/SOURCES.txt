@@ -32,9 +32,11 @@ hzdplugins/aiidaplugins/adsorbates/NH2.mol
 hzdplugins/aiidaplugins/adsorbates/OH.mol
 hzdplugins/aiidaplugins/adsorbates/OOH.mol
 hzdplugins/aiidaplugins/adsorbates/__init__.py
-hzdplugins/scripts/__init__.py
-hzdplugins/scripts/pdos.py
-hzdplugins/scripts/wannier.py
+hzdplugins/deepmdplugins/__init__.py
+hzdplugins/deepmdplugins/submit.py
 hzdplugins/structure/__init__.py
 hzdplugins/structure/build.py
 hzdplugins/structure/math.py
+hzdplugins/workflows/__init__.py
+hzdplugins/workflows/results_pdos.py
+hzdplugins/workflows/wannier.py

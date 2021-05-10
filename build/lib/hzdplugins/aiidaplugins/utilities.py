@@ -175,7 +175,7 @@ def dictToPwInput(dict_input, location, atomic_species_list):
                 elif 'starting_magnetization' in param:
 
                     for k, v in p_v.items():
-                        f.write('  starting_magneitzation({}) = {}\n'.format(atomic_species_list[k], v))
+                        f.write('  starting_magnetization({}) = {}\n'.format(atomic_species_list[k], v))
                 
                 elif 'starting_ns_eigenvalue' in param:
 
@@ -292,6 +292,11 @@ def getSubmitFile(filename, computer, typeCalculation, inpDict):
             seconds = v % 3600 % 60
             
             f.write('#SBATCH --time={:02d}:{:02d}:{:02d}\n'.format(hours,minutes,seconds))
+
+        if k == 'use':
+
+            for item in v:
+                f.write('module use {}\n'.format(item))
 
         if k == 'modules':
 

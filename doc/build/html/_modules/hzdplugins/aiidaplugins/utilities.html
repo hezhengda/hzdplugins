@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.utilities &mdash; hzdplugins 0.0.50 documentation</title>
+  <title>hzdplugins.aiidaplugins.utilities &mdash; hzdplugins 0.0.53 documentation</title>
   
 
   
@@ -325,7 +325,7 @@
                 <span class="k">elif</span> <span class="s1">&#39;starting_magnetization&#39;</span> <span class="ow">in</span> <span class="n">param</span><span class="p">:</span>
 
                     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">p_v</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  starting_magneitzation(</span><span class="si">{}</span><span class="s1">) = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species_list</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">))</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  starting_magnetization(</span><span class="si">{}</span><span class="s1">) = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species_list</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">))</span>
                 
                 <span class="k">elif</span> <span class="s1">&#39;starting_ns_eigenvalue&#39;</span> <span class="ow">in</span> <span class="n">param</span><span class="p">:</span>
 
@@ -442,6 +442,11 @@
             <span class="n">seconds</span> <span class="o">=</span> <span class="n">v</span> <span class="o">%</span> <span class="mi">3600</span> <span class="o">%</span> <span class="mi">60</span>
             
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#SBATCH --time=</span><span class="si">{:02d}</span><span class="s1">:</span><span class="si">{:02d}</span><span class="s1">:</span><span class="si">{:02d}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span><span class="n">minutes</span><span class="p">,</span><span class="n">seconds</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;use&#39;</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;module use </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;modules&#39;</span><span class="p">:</span>
 
