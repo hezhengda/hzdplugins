@@ -260,17 +260,7 @@ class deepmdInputGenerator():
         :type filename: python string 
         """
 
-        # check
-        if len(list(self.model.keys())) == 0:
-            print('There are no paramters in model')
-        elif len(list(self.learning_rate.keys())):
-            print('There are no parameters in learning_rate')
-        elif len(list(self.loss.keys())):
-            print('There are no parameters in loss') 
-        elif len(list(self.training.keys())):
-            print('There are no parameters in training')
-        else:
-            print('everything is fine, generating the input json file now') 
+        print('The items in model:{}; learning_rate:{}, loss:{}, training:{}'.format(len(self.model), len(self.learning_rate), len(self.loss), len(self.training)))
         
         tmp_dict = {
             'model': self.model,
