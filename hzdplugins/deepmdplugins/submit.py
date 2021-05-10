@@ -55,6 +55,7 @@ class deepmdInputGenerator():
         :rtype: a python list? 
         """
         tmp_descriptor = {}
+        tmp_descriptor['type'] = 'se_a'
         tmp_descriptor['sel'] = sel 
         tmp_descriptor['rcut'] = rcut
         tmp_descriptor['rcut_smth'] = rcut_smth
@@ -272,10 +273,10 @@ class deepmdInputGenerator():
             print('everything is fine, generating the input json file now') 
         
         tmp_dict = {
-            'model': model,
-            'learning_rate': learning_rate,
-            'loss': loss,
-            'training': training
+            'model': self.model,
+            'learning_rate': self.learning_rate,
+            'loss': self.loss,
+            'training': self.training
         }
         f = open(filename,'w+')
         json.dump(tmp_dict, f)
