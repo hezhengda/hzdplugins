@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hzdplugins.deepmdplugins.submit &mdash; hzdplugins 0.0.54 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> hzdplugins
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../log.html">Log file for hzdplugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To-Do list for the further</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">hzdplugins</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>hzdplugins.deepmdplugins.submit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hzdplugins.deepmdplugins.submit</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<div class="viewcode-block" id="deepmdInputGenerator"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator">[docs]</a><span class="k">class</span> <span class="nc">deepmdInputGenerator</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    deepmdInputGenerator will help us to generate the input file for the deepmd-kit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="p">{},</span> <span class="n">learning_rate</span><span class="o">=</span><span class="p">{},</span> <span class="n">loss</span><span class="o">=</span><span class="p">{},</span> <span class="n">training</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In the input file of deepmd-kit, there are four major components: (1) model (2) learning rate (3) loss function (4) training</span>
+
+<span class="sd">        :param model: represent the model of the system, including the descriptor, defaults to {}</span>
+<span class="sd">        :type model: python dictionary, optional</span>
+<span class="sd">        :param learning_rate: the learning rate of neural network, defaults to {}</span>
+<span class="sd">        :type learning_rate: python dictionary, optional</span>
+<span class="sd">        :param loss: the parameters for the loss functions, defaults to {}</span>
+<span class="sd">        :type loss: python dictionary, optional</span>
+<span class="sd">        :param training: the parameters for the training, defaults to {}</span>
+<span class="sd">        :type training: python dictionary, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="o">=</span> <span class="n">training</span>
+
+<div class="viewcode-block" id="deepmdInputGenerator.setDescriptor_se_a"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setDescriptor_se_a">[docs]</a>    <span class="k">def</span> <span class="nf">setDescriptor_se_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sel</span><span class="p">,</span> <span class="n">rcut</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">rcut_smth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">neuron</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="n">axis_neuron</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">activation_function</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span> <span class="n">resnet_dt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">type_one_side</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">,</span> <span class="n">trainable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">exclude_types</span><span class="o">=</span><span class="p">[],</span> <span class="n">set_davg_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The `se_a` is (I think) the most popular descriptor, so that I should only used it in here.</span>
+
+<span class="sd">        :param sel: a list of integers. The length of the list should be the same as the number of atom types in the system. `sel[i]` gives the selected number of typi-i neighbors. `sel[i]` is recommended to be larger than the maximally possible number of type-i neighbors in the cut-ff radius. </span>
+<span class="sd">        :type sel: python list </span>
+<span class="sd">        :param rcut: the cut-off radius, defaults to 6.0</span>
+<span class="sd">        :type rcut: python float, optional</span>
+<span class="sd">        :param rcut_smth: the 1/r term is smoothed from `rcut` to `rcut_smth`, defaults to 0.5</span>
+<span class="sd">        :type rcut_smth: python float, optional</span>
+<span class="sd">        :param neuron: number of neurons in each hidden layers of the embedding net. When two layers are of the same size or one layer is twice as large as the previous layer, a skip connection is built. defaults to [10, 20, 40]. This list could influence the accuracy of our model.</span>
+<span class="sd">        :type neuron: python list, optional</span>
+<span class="sd">        :param axis_neuron: size of the submatrix of G (embedding matrix), defaults to 4</span>
+<span class="sd">        :type axis_neuron: python int, optional</span>
+<span class="sd">        :param activation_function: the activation function in the embedding net, supported activation functions are: `relu`, `relu6`, `softplus`, `sigmoid`, `tanh`, `gelu`, defaults to &#39;tanh&#39;</span>
+<span class="sd">        :type activation_function: python str, optional</span>
+<span class="sd">        :param seed: random seed for parameter initialization. Usually it is set to be 1.</span>
+<span class="sd">        :type seed: python int.</span>
+<span class="sd">        :param resnet_dt: whether to use a `timestep` in the skip connection, defaults to False</span>
+<span class="sd">        :type resnet_dt: bool, optional</span>
+<span class="sd">        :param type_one_side: try to build N_types embedding nets. Otherwise, building N_types^2 embedding nets, defaults to False</span>
+<span class="sd">        :type type_one_side: bool, optional</span>
+<span class="sd">        :param precision: the precision of the float numbers, defaults to &#39;float64&#39;</span>
+<span class="sd">        :type precision: str, optional</span>
+<span class="sd">        :param trainable: if the parameters in the embedding net is trainable, defaults to True</span>
+<span class="sd">        :type trainable: bool, optional</span>
+<span class="sd">        :param exclude_types: the excluded types, defaults to []</span>
+<span class="sd">        :type exclude_types: list, optional</span>
+<span class="sd">        :param set_davg_zero: set the normalization average to zero. This option should be set when `atom_ener` in the energy fitting is used, defaults to False</span>
+<span class="sd">        :type set_davg_zero: bool, optional</span>
+<span class="sd">        :return: the descriptor (feature vector) for each atom </span>
+<span class="sd">        :rtype: a python list? </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp_descriptor</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;sel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sel</span> 
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;rcut&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rcut</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;rcut_smth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rcut_smth</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;neuron&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">neuron</span> 
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;axis_neuron&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">axis_neuron</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;activation_function&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_function</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;resnet_dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resnet_dt</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;type_one_side&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_one_side</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">precision</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;trainable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trainable</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">seed</span> 
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;exclude_types&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exclude_types</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;set_davg_zero&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_davg_zero</span>
+        <span class="k">return</span> <span class="n">tmp_descriptor</span></div>
+
+<div class="viewcode-block" id="deepmdInputGenerator.setFittingNet"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setFittingNet">[docs]</a>    <span class="k">def</span> <span class="nf">setFittingNet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fntype</span> <span class="o">=</span> <span class="s1">&#39;ener&#39;</span><span class="p">,</span> <span class="n">numb_fparam</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">numb_aparm</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">neuron</span> <span class="o">=</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="n">activation_function</span> <span class="o">=</span> <span class="s1">&#39;tanh&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span> <span class="n">resnet_dt</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">trainable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rcond</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">atom_ener</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;The fitting of physical properties</span>
+
+<span class="sd">        :param fntype: the types of the fitting, usually we like to fit the energy (potential energy surface), but deep potential can also fit `dipole`, `polar` and also `global_polar`, defaults to &#39;ener&#39;.</span>
+<span class="sd">        :type fntype: python str, optional</span>
+<span class="sd">        :param numb_fparam: the dimension of the frame parameter. If set to &gt; 0, file `fparam.npy` should be included to provided the input fparams, defaults to 0</span>
+<span class="sd">        :type numb_fparam: int, optional</span>
+<span class="sd">        :param numb_aparm: the dimension of atomic parameter. If set to &gt; 0, the `aparam.npy` should be included to provided the input aparams, defaults to 0</span>
+<span class="sd">        :type numb_aparm: int, optional</span>
+<span class="sd">        :param neuron: the number of neurons in each hidden layers of the fitting net, defaults to [120, 120, 120]</span>
+<span class="sd">        :type neuron: list, optional</span>
+<span class="sd">        :param activation_function: the activation function used in the neural network, defaults to &#39;tanh&#39;</span>
+<span class="sd">        :type activation_function: str, optional</span>
+<span class="sd">        :param precision: the precision for float numbers, defaults to &#39;float64&#39;</span>
+<span class="sd">        :type precision: str, optional</span>
+<span class="sd">        :param resnet_dt: whether to use a `timestep` in the skip connection, defaults to True</span>
+<span class="sd">        :type resnet_dt: bool, optional</span>
+<span class="sd">        :param trainable: whether the parameter in the fitting net is trainable, defaults to True</span>
+<span class="sd">        :type trainable: bool, optional</span>
+<span class="sd">        :param rcond: the condition number used to determine the initial energy shift for each type of atoms, defaults to 0.001</span>
+<span class="sd">        :type rcond: float, optional</span>
+<span class="sd">        :param seed: random seed for parameter initialization of the fitting net, defaults to 1</span>
+<span class="sd">        :type seed: int, optional</span>
+<span class="sd">        :param atom_ener: specify the atomic energy in vacuum for each type, defaults to []</span>
+<span class="sd">        :type atom_ener: list, optional</span>
+<span class="sd">        :return: a dictionary that can be prepared in the mode stages </span>
+<span class="sd">        :rtype: python dictionary </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp_fitting_net</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">fntype</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;numb_fparam&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numb_fparam</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;numb_aparam&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numb_aparm</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;neuron&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">neuron</span> 
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;activation_function&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_function</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">precision</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;resnet_dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resnet_dt</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;trainable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trainable</span>
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;rcond&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rcond</span> 
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">seed</span> 
+        <span class="n">tmp_fitting_net</span><span class="p">[</span><span class="s1">&#39;atom_ener&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_ener</span>
+        <span class="k">return</span> <span class="n">tmp_fitting_net</span></div>
+        
+<div class="viewcode-block" id="deepmdInputGenerator.setModel"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setModel">[docs]</a>    <span class="k">def</span> <span class="nf">setModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_map</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">fitting_net</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function can help us set the parameters for the model part</span>
+
+<span class="sd">        :param type_map: a list of elements investigated in here</span>
+<span class="sd">        :type type_map: python list</span>
+<span class="sd">        :param descriptor: the parameters for the descriptor, this can be generated by using self.setDescriptor_se_a() method</span>
+<span class="sd">        :type descriptor: python dictionary</span>
+<span class="sd">        :param fitting_net: the parameters for the fitting new, this can be generated by using self.setFittingNet() method</span>
+<span class="sd">        :type fitting_net: python dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp_model</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_model</span><span class="p">[</span><span class="s1">&#39;type_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_map</span>
+        <span class="n">tmp_model</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">descriptor</span>
+        <span class="n">tmp_model</span><span class="p">[</span><span class="s1">&#39;fitting_net&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitting_net</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">tmp_model</span></div>
+    
+<div class="viewcode-block" id="deepmdInputGenerator.setLearningRate"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setLearningRate">[docs]</a>    <span class="k">def</span> <span class="nf">setLearningRate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr_type</span><span class="o">=</span><span class="s1">&#39;exp&#39;</span><span class="p">,</span> <span class="n">decay_steps</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">start_lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">stop_lr</span><span class="o">=</span><span class="mf">1e-08</span><span class="p">):</span>
+        <span class="n">tmp_learningrate</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_learningrate</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_type</span>
+        <span class="n">tmp_learningrate</span><span class="p">[</span><span class="s1">&#39;decay_steps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decay_steps</span>
+        <span class="n">tmp_learningrate</span><span class="p">[</span><span class="s1">&#39;start_lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_lr</span>
+        <span class="n">tmp_learningrate</span><span class="p">[</span><span class="s1">&#39;stop_lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">tmp_learningrate</span></div>
+
+<div class="viewcode-block" id="deepmdInputGenerator.setLoss"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setLoss">[docs]</a>    <span class="k">def</span> <span class="nf">setLoss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_pref_e</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">limit_pref_e</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">start_pref_f</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">limit_pref_f</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">start_pref_v</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">limit_pref_v</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">tmp_loss</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_loss</span><span class="p">[</span><span class="s1">&#39;start_pref_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_pref_e</span> 
+        <span class="n">tmp_loss</span><span class="p">[</span><span class="s1">&#39;limit_pref_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_pref_e</span>
+        <span class="n">tmp_loss</span><span class="p">[</span><span class="s1">&#39;start_pref_f&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_pref_f</span>
+        <span class="n">tmp_loss</span><span class="p">[</span><span class="s1">&#39;limit_pref_f&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit_pref_f</span>
+        <span class="n">tmp_loss</span><span class="p">[</span><span class="s1">&#39;start_pref_v&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_pref_v</span>
+        <span class="n">tmp_loss</span><span class="p">[</span><span class="s1">&#39;limit_pref_v&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit_pref_v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">tmp_loss</span></div>
+
+<div class="viewcode-block" id="deepmdInputGenerator.setTrainingData"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTrainingData">[docs]</a>    <span class="k">def</span> <span class="nf">setTrainingData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">systems</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;./&#39;</span><span class="p">],</span> <span class="n">set_prefix</span><span class="o">=</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">auto_prob</span><span class="o">=</span><span class="s1">&#39;prob_sys_size&#39;</span><span class="p">,</span> <span class="n">sys_probs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function is used to set the training_data section in the training section</span>
+
+<span class="sd">        :param systems: The data systems for training. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated. </span>
+<span class="sd">        :type systems: python list </span>
+<span class="sd">        :param set_prefix: the prefix of sets in the systems, defaults to &#39;set&#39;</span>
+<span class="sd">        :type set_prefix: str, optional</span>
+<span class="sd">        :param batch_size: automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to &#39;auto&#39;</span>
+<span class="sd">        :type batch_size: str, optional</span>
+<span class="sd">        :param auto_prob: defaults to &#39;prob_sys_size&#39;, the probability of a system is proportional to the number of batches in the system</span>
+<span class="sd">        :type auto_prob: str, optional</span>
+<span class="sd">        :param sys_probs: defaults to None</span>
+<span class="sd">        :type sys_probs: None, optional</span>
+<span class="sd">        :return: the dictionary of `training_data` </span>
+<span class="sd">        :rtype: python dictionary </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp_training_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;systems&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">systems</span> 
+        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;set_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_prefix</span> 
+        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_size</span> 
+        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;auto_prob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">auto_prob</span>
+        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;sys_probs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys_probs</span>
+        <span class="k">return</span> <span class="n">tmp_training_data</span></div>
+        
+<div class="viewcode-block" id="deepmdInputGenerator.setValidationData"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setValidationData">[docs]</a>    <span class="k">def</span> <span class="nf">setValidationData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">systems</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;./&#39;</span><span class="p">],</span> <span class="n">set_prefix</span><span class="o">=</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">auto_prob</span><span class="o">=</span><span class="s1">&#39;prob_sys_size&#39;</span><span class="p">,</span> <span class="n">sys_probs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">numb_batch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function is used to set the validation_data section in the validation section</span>
+
+<span class="sd">        :param systems: The data systems for validation. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated. </span>
+<span class="sd">        :type systems: python list </span>
+<span class="sd">        :param set_prefix: the prefix of sets in the systems, defaults to &#39;set&#39;</span>
+<span class="sd">        :type set_prefix: str, optional</span>
+<span class="sd">        :param batch_size: automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to &#39;auto&#39;</span>
+<span class="sd">        :type batch_size: str, optional</span>
+<span class="sd">        :param auto_prob: defaults to &#39;prob_sys_size&#39;, the probability of a system is proportional to the number of batches in the system</span>
+<span class="sd">        :type auto_prob: str, optional</span>
+<span class="sd">        :param sys_probs: defaults to None</span>
+<span class="sd">        :type sys_probs: None, optional</span>
+<span class="sd">        :param numb_batch: an integer that specifies the number of systems to be sampled for each validation period.</span>
+<span class="sd">        :type numb_batch: python int</span>
+<span class="sd">        :return: the dictionary of `validation_data` </span>
+<span class="sd">        :rtype: python dictionary </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp_validation_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;systems&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">systems</span> 
+        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;set_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_prefix</span> 
+        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_size</span> 
+        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;auto_prob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">auto_prob</span>
+        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;sys_probs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys_probs</span>
+        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;numb_batch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numb_batch</span>
+        <span class="k">return</span> <span class="n">tmp_validation_data</span></div>
+
+<div class="viewcode-block" id="deepmdInputGenerator.setTraining"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining">[docs]</a>    <span class="k">def</span> <span class="nf">setTraining</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span><span class="p">,</span> <span class="n">validation_data</span><span class="p">,</span> <span class="n">stop_batch</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> \
+                    <span class="n">numb_test</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">disp_file</span><span class="o">=</span><span class="s1">&#39;lcurve.out&#39;</span><span class="p">,</span> <span class="n">disp_freq</span><span class="o">=</span><span class="s1">&#39;500&#39;</span><span class="p">,</span> <span class="n">save_freq</span><span class="o">=</span><span class="s1">&#39;1000&#39;</span><span class="p">,</span> <span class="n">save_ckpt</span><span class="o">=</span><span class="s1">&#39;model.ckpt&#39;</span><span class="p">,</span> \
+                    <span class="n">disp_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profiling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profiling_file</span><span class="o">=</span><span class="s1">&#39;timeline.json&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function can help us generate the parameters for the training section</span>
+
+<span class="sd">        :param training_data: parameters about the training_data, this can be generated from self.setTrainingData() method </span>
+<span class="sd">        :type training_data: python dictionary </span>
+<span class="sd">        :param validation_data: parameters about the validation_data, this can be generated from self.setValidationData() method </span>
+<span class="sd">        :type validation_data: python dictionary</span>
+<span class="sd">        :param stop_batch: the number of batches that we want to train the model, defaults to 1000000</span>
+<span class="sd">        :type stop_batch: int, optional</span>
+<span class="sd">        :param seed: the seed for generating the random number, defaults to 1</span>
+<span class="sd">        :type seed: int, optional</span>
+<span class="sd">        :param disp_file: the output file for the error, defaults to &#39;lcurve.out&#39;</span>
+<span class="sd">        :type disp_file: str, optional</span>
+<span class="sd">        :param disp_freq: output every `disp_freq` steps, defaults to &#39;500&#39;</span>
+<span class="sd">        :type disp_freq: str, optional</span>
+<span class="sd">        :param save_freq: steps for saving the training data, defaults to &#39;1000&#39;</span>
+<span class="sd">        :type save_freq: str, optional</span>
+<span class="sd">        :param save_ckpt: the file for storing the training stage, defaults to &#39;model.ckpt&#39;</span>
+<span class="sd">        :type save_ckpt: str, optional</span>
+<span class="sd">        :param time_training: output the training time for each step, defaults to True</span>
+<span class="sd">        :type time_training: bool, optional</span>
+<span class="sd">        :param profiling: output the profile (cpu / gpu usages for training), defaults to True</span>
+<span class="sd">        :type profiling: bool, optional</span>
+<span class="sd">        :param profiling_file: filename of the profiling data, defaults to &#39;timeline.json&#39;</span>
+<span class="sd">        :type profiling_file: str, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp_training</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;training_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">training_data</span> 
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;validation_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validation_data</span> 
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;stop_batch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop_batch</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">seed</span> 
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;numb_test&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numb_test</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;disp_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp_file</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;disp_freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp_freq</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;save_freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_freq</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;save_ckpt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_ckpt</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;disp_training&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp_training</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;time_training&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_training</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;profiling&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profiling</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;profiling_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profiling_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="o">=</span> <span class="n">tmp_training</span></div>
+ 
+<div class="viewcode-block" id="deepmdInputGenerator.output"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function can output the current stages of the input file for deepmd-kit, very useful for checking which parameter is still missing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span>
+        <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span>
+        <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;training&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> 
+        <span class="k">return</span> <span class="n">tmp_dict</span></div>
+
+<div class="viewcode-block" id="deepmdInputGenerator.export"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`export` function can help us generate the json file</span>
+
+<span class="sd">        :param filename: the name of the json file </span>
+<span class="sd">        :type filename: python string </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no paramters in model&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no parameters in learning_rate&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no parameters in loss&#39;</span><span class="p">)</span> 
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no parameters in training&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;everything is fine, generating the input json file now&#39;</span><span class="p">)</span> 
+        
+        <span class="n">tmp_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
+            <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="n">learning_rate</span><span class="p">,</span>
+            <span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span>
+            <span class="s1">&#39;training&#39;</span><span class="p">:</span> <span class="n">training</span>
+        <span class="p">}</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;w+&#39;</span><span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="dpgenInputGenerator"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.dpgenInputGenerator">[docs]</a><span class="k">class</span> <span class="nc">dpgenInputGenerator</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    dpgenInputGenerator will help us to generate the input json file for the dpgen package.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="lammpsInputGenerator"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.lammpsInputGenerator">[docs]</a><span class="k">class</span> <span class="nc">lammpsInputGenerator</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    `lammpsInputGenerator` will help us to generate the input file for LAMMPS (if we want to combine the deepmd with lammps)</span>
+
+<span class="sd">    There are four parts of the input file for LAMMPS:</span>
+<span class="sd">    * Initilization</span>
+<span class="sd">    * System definition</span>
+<span class="sd">    * Simulation settings</span>
+<span class="sd">    * Run a simulation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sys_name</span><span class="p">,</span> <span class="n">data_file</span><span class="p">,</span> <span class="n">dp_graph_file</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">timestep</span><span class="p">,</span> <span class="n">run_num</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;boundary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;p p p&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;metal&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;atom_style&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;atomic&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;neighbor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;2.0 bin&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;neigh_modify&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;every 10 delay 0 check no&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;read_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_file</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;pair_style&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;deepmd </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dp_graph_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;pair_coeff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;all create </span><span class="si">{}</span><span class="s1"> 23456789&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;minimize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1.0e-8 1.0e-6 100000 100000&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;fix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1 all nvt temp </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> 0.5&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">timestep</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;thermo_style&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;custom step pe ke etotal temp press vol&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;thermo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;100&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;dump&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;hzd_dump all custom 1000 geo.xyz type x y z&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;run&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">run_num</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;write_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.dat&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sys_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;write_restart&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.rest&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sys_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="lammpsInputGenerator.output"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.lammpsInputGenerator.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> </div>
+
+<div class="viewcode-block" id="lammpsInputGenerator.export"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.lammpsInputGenerator.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Zheng-Da He
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

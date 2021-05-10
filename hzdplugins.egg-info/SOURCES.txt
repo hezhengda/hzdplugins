@@ -38,5 +38,7 @@ hzdplugins/structure/__init__.py
 hzdplugins/structure/build.py
 hzdplugins/structure/math.py
 hzdplugins/workflows/__init__.py
+hzdplugins/workflows/data.py
 hzdplugins/workflows/results_pdos.py
 hzdplugins/workflows/wannier.py
+hzdplugins/workflows/wannier_output.py

@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>deepmdplugins Modules &mdash; hzdplugins 0.0.54 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Log file for hzdplugins" href="log.html" />
+    <link rel="prev" title="structure Modules" href="structure.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> hzdplugins
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aiidaplugins.html">aiidaplugins Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure.html">structure Modules</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">deepmdplugins Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-hzdplugins.deepmdplugins.submit">deepmdplugins.submit Module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Log file for hzdplugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="todo.html">To-Do list for the further</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hzdplugins</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Modules</a> &raquo;</li>
+        
+      <li>deepmdplugins Modules</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/deepmdplugins.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="deepmdplugins-modules">
+<h1>deepmdplugins Modules<a class="headerlink" href="#deepmdplugins-modules" title="Permalink to this headline">¶</a></h1>
+<section id="module-hzdplugins.deepmdplugins.submit">
+<span id="deepmdplugins-submit-module"></span><h2>deepmdplugins.submit Module<a class="headerlink" href="#module-hzdplugins.deepmdplugins.submit" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">hzdplugins.deepmdplugins.submit.</code><code class="sig-name descname">deepmdInputGenerator</code><span class="sig-paren">(</span><em class="sig-param">model={}</em>, <em class="sig-param">learning_rate={}</em>, <em class="sig-param">loss={}</em>, <em class="sig-param">training={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>deepmdInputGenerator will help us to generate the input file for the deepmd-kit</p>
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.export">
+<code class="sig-name descname">export</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.export" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>export</cite> function can help us generate the json file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>python string</em>) – the name of the json file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.output">
+<code class="sig-name descname">output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.output" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function can output the current stages of the input file for deepmd-kit, very useful for checking which parameter is still missing</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setDescriptor_se_a">
+<code class="sig-name descname">setDescriptor_se_a</code><span class="sig-paren">(</span><em class="sig-param">sel, rcut=6.0, rcut_smth=0.5, neuron=[10, 20, 40], axis_neuron=4, activation_function='tanh', resnet_dt=False, type_one_side=False, precision='float64', trainable=True, seed=1, exclude_types=[], set_davg_zero=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setDescriptor_se_a"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setDescriptor_se_a" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <cite>se_a</cite> is (I think) the most popular descriptor, so that I should only used it in here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sel</strong> (<em>python list</em>) – a list of integers. The length of the list should be the same as the number of atom types in the system. <cite>sel[i]</cite> gives the selected number of typi-i neighbors. <cite>sel[i]</cite> is recommended to be larger than the maximally possible number of type-i neighbors in the cut-ff radius.</p></li>
+<li><p><strong>rcut</strong> (<em>python float</em><em>, </em><em>optional</em>) – the cut-off radius, defaults to 6.0</p></li>
+<li><p><strong>rcut_smth</strong> (<em>python float</em><em>, </em><em>optional</em>) – the 1/r term is smoothed from <cite>rcut</cite> to <cite>rcut_smth</cite>, defaults to 0.5</p></li>
+<li><p><strong>neuron</strong> (<em>python list</em><em>, </em><em>optional</em>) – number of neurons in each hidden layers of the embedding net. When two layers are of the same size or one layer is twice as large as the previous layer, a skip connection is built. defaults to [10, 20, 40]. This list could influence the accuracy of our model.</p></li>
+<li><p><strong>axis_neuron</strong> (<em>python int</em><em>, </em><em>optional</em>) – size of the submatrix of G (embedding matrix), defaults to 4</p></li>
+<li><p><strong>activation_function</strong> (<em>python str</em><em>, </em><em>optional</em>) – the activation function in the embedding net, supported activation functions are: <cite>relu</cite>, <cite>relu6</cite>, <cite>softplus</cite>, <cite>sigmoid</cite>, <cite>tanh</cite>, <cite>gelu</cite>, defaults to ‘tanh’</p></li>
+<li><p><strong>seed</strong> (<em>python int.</em>) – random seed for parameter initialization. Usually it is set to be 1.</p></li>
+<li><p><strong>resnet_dt</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to use a <cite>timestep</cite> in the skip connection, defaults to False</p></li>
+<li><p><strong>type_one_side</strong> (<em>bool</em><em>, </em><em>optional</em>) – try to build N_types embedding nets. Otherwise, building N_types^2 embedding nets, defaults to False</p></li>
+<li><p><strong>precision</strong> (<em>str</em><em>, </em><em>optional</em>) – the precision of the float numbers, defaults to ‘float64’</p></li>
+<li><p><strong>trainable</strong> (<em>bool</em><em>, </em><em>optional</em>) – if the parameters in the embedding net is trainable, defaults to True</p></li>
+<li><p><strong>exclude_types</strong> (<em>list</em><em>, </em><em>optional</em>) – the excluded types, defaults to []</p></li>
+<li><p><strong>set_davg_zero</strong> (<em>bool</em><em>, </em><em>optional</em>) – set the normalization average to zero. This option should be set when <cite>atom_ener</cite> in the energy fitting is used, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the descriptor (feature vector) for each atom</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>a python list?</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setFittingNet">
+<code class="sig-name descname">setFittingNet</code><span class="sig-paren">(</span><em class="sig-param">fntype='ener', numb_fparam=0, numb_aparm=0, neuron=[120, 120, 120], activation_function='tanh', precision='float64', resnet_dt=True, trainable=True, rcond=0.001, seed=1, atom_ener=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setFittingNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setFittingNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>The fitting of physical properties</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fntype</strong> (<em>python str</em><em>, </em><em>optional</em>) – the types of the fitting, usually we like to fit the energy (potential energy surface), but deep potential can also fit <cite>dipole</cite>, <cite>polar</cite> and also <cite>global_polar</cite>, defaults to ‘ener’.</p></li>
+<li><p><strong>numb_fparam</strong> (<em>int</em><em>, </em><em>optional</em>) – the dimension of the frame parameter. If set to &gt; 0, file <cite>fparam.npy</cite> should be included to provided the input fparams, defaults to 0</p></li>
+<li><p><strong>numb_aparm</strong> (<em>int</em><em>, </em><em>optional</em>) – the dimension of atomic parameter. If set to &gt; 0, the <cite>aparam.npy</cite> should be included to provided the input aparams, defaults to 0</p></li>
+<li><p><strong>neuron</strong> (<em>list</em><em>, </em><em>optional</em>) – the number of neurons in each hidden layers of the fitting net, defaults to [120, 120, 120]</p></li>
+<li><p><strong>activation_function</strong> (<em>str</em><em>, </em><em>optional</em>) – the activation function used in the neural network, defaults to ‘tanh’</p></li>
+<li><p><strong>precision</strong> (<em>str</em><em>, </em><em>optional</em>) – the precision for float numbers, defaults to ‘float64’</p></li>
+<li><p><strong>resnet_dt</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to use a <cite>timestep</cite> in the skip connection, defaults to True</p></li>
+<li><p><strong>trainable</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether the parameter in the fitting net is trainable, defaults to True</p></li>
+<li><p><strong>rcond</strong> (<em>float</em><em>, </em><em>optional</em>) – the condition number used to determine the initial energy shift for each type of atoms, defaults to 0.001</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – random seed for parameter initialization of the fitting net, defaults to 1</p></li>
+<li><p><strong>atom_ener</strong> (<em>list</em><em>, </em><em>optional</em>) – specify the atomic energy in vacuum for each type, defaults to []</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dictionary that can be prepared in the mode stages</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>python dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setLearningRate">
+<code class="sig-name descname">setLearningRate</code><span class="sig-paren">(</span><em class="sig-param">lr_type='exp'</em>, <em class="sig-param">decay_steps=5000</em>, <em class="sig-param">start_lr=0.001</em>, <em class="sig-param">stop_lr=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setLearningRate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setLearningRate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setLoss">
+<code class="sig-name descname">setLoss</code><span class="sig-paren">(</span><em class="sig-param">start_pref_e=0.02</em>, <em class="sig-param">limit_pref_e=1.0</em>, <em class="sig-param">start_pref_f=1000</em>, <em class="sig-param">limit_pref_f=1.0</em>, <em class="sig-param">start_pref_v=0.0</em>, <em class="sig-param">limit_pref_v=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setModel">
+<code class="sig-name descname">setModel</code><span class="sig-paren">(</span><em class="sig-param">type_map</em>, <em class="sig-param">descriptor</em>, <em class="sig-param">fitting_net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function can help us set the parameters for the model part</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>type_map</strong> (<em>python list</em>) – a list of elements investigated in here</p></li>
+<li><p><strong>descriptor</strong> (<em>python dictionary</em>) – the parameters for the descriptor, this can be generated by using self.setDescriptor_se_a() method</p></li>
+<li><p><strong>fitting_net</strong> (<em>python dictionary</em>) – the parameters for the fitting new, this can be generated by using self.setFittingNet() method</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining">
+<code class="sig-name descname">setTraining</code><span class="sig-paren">(</span><em class="sig-param">training_data</em>, <em class="sig-param">validation_data</em>, <em class="sig-param">stop_batch=1000000</em>, <em class="sig-param">seed=1</em>, <em class="sig-param">numb_test=1</em>, <em class="sig-param">disp_file='lcurve.out'</em>, <em class="sig-param">disp_freq='500'</em>, <em class="sig-param">save_freq='1000'</em>, <em class="sig-param">save_ckpt='model.ckpt'</em>, <em class="sig-param">disp_training=True</em>, <em class="sig-param">time_training=True</em>, <em class="sig-param">profiling=True</em>, <em class="sig-param">profiling_file='timeline.json'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setTraining"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function can help us generate the parameters for the training section</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_data</strong> (<em>python dictionary</em>) – parameters about the training_data, this can be generated from self.setTrainingData() method</p></li>
+<li><p><strong>validation_data</strong> (<em>python dictionary</em>) – parameters about the validation_data, this can be generated from self.setValidationData() method</p></li>
+<li><p><strong>stop_batch</strong> (<em>int</em><em>, </em><em>optional</em>) – the number of batches that we want to train the model, defaults to 1000000</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – the seed for generating the random number, defaults to 1</p></li>
+<li><p><strong>disp_file</strong> (<em>str</em><em>, </em><em>optional</em>) – the output file for the error, defaults to ‘lcurve.out’</p></li>
+<li><p><strong>disp_freq</strong> (<em>str</em><em>, </em><em>optional</em>) – output every <cite>disp_freq</cite> steps, defaults to ‘500’</p></li>
+<li><p><strong>save_freq</strong> (<em>str</em><em>, </em><em>optional</em>) – steps for saving the training data, defaults to ‘1000’</p></li>
+<li><p><strong>save_ckpt</strong> (<em>str</em><em>, </em><em>optional</em>) – the file for storing the training stage, defaults to ‘model.ckpt’</p></li>
+<li><p><strong>time_training</strong> (<em>bool</em><em>, </em><em>optional</em>) – output the training time for each step, defaults to True</p></li>
+<li><p><strong>profiling</strong> (<em>bool</em><em>, </em><em>optional</em>) – output the profile (cpu / gpu usages for training), defaults to True</p></li>
+<li><p><strong>profiling_file</strong> (<em>str</em><em>, </em><em>optional</em>) – filename of the profiling data, defaults to ‘timeline.json’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTrainingData">
+<code class="sig-name descname">setTrainingData</code><span class="sig-paren">(</span><em class="sig-param">systems=['./'], set_prefix='set', batch_size='auto', auto_prob='prob_sys_size', sys_probs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setTrainingData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTrainingData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to set the training_data section in the training section</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>systems</strong> (<em>python list</em>) – The data systems for training. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated.</p></li>
+<li><p><strong>set_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – the prefix of sets in the systems, defaults to ‘set’</p></li>
+<li><p><strong>batch_size</strong> (<em>str</em><em>, </em><em>optional</em>) – automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to ‘auto’</p></li>
+<li><p><strong>auto_prob</strong> (<em>str</em><em>, </em><em>optional</em>) – defaults to ‘prob_sys_size’, the probability of a system is proportional to the number of batches in the system</p></li>
+<li><p><strong>sys_probs</strong> (<em>None</em><em>, </em><em>optional</em>) – defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the dictionary of <cite>training_data</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>python dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setValidationData">
+<code class="sig-name descname">setValidationData</code><span class="sig-paren">(</span><em class="sig-param">systems=['./'], set_prefix='set', batch_size='auto', auto_prob='prob_sys_size', sys_probs=None, numb_batch=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setValidationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setValidationData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to set the validation_data section in the validation section</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>systems</strong> (<em>python list</em>) – The data systems for validation. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated.</p></li>
+<li><p><strong>set_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – the prefix of sets in the systems, defaults to ‘set’</p></li>
+<li><p><strong>batch_size</strong> (<em>str</em><em>, </em><em>optional</em>) – automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to ‘auto’</p></li>
+<li><p><strong>auto_prob</strong> (<em>str</em><em>, </em><em>optional</em>) – defaults to ‘prob_sys_size’, the probability of a system is proportional to the number of batches in the system</p></li>
+<li><p><strong>sys_probs</strong> (<em>None</em><em>, </em><em>optional</em>) – defaults to None</p></li>
+<li><p><strong>numb_batch</strong> (<em>python int</em>) – an integer that specifies the number of systems to be sampled for each validation period.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the dictionary of <cite>validation_data</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>python dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hzdplugins.deepmdplugins.submit.dpgenInputGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">hzdplugins.deepmdplugins.submit.</code><code class="sig-name descname">dpgenInputGenerator</code><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#dpgenInputGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.dpgenInputGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>dpgenInputGenerator will help us to generate the input json file for the dpgen package.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="hzdplugins.deepmdplugins.submit.lammpsInputGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">hzdplugins.deepmdplugins.submit.</code><code class="sig-name descname">lammpsInputGenerator</code><span class="sig-paren">(</span><em class="sig-param">sys_name</em>, <em class="sig-param">data_file</em>, <em class="sig-param">dp_graph_file</em>, <em class="sig-param">temperature</em>, <em class="sig-param">timestep</em>, <em class="sig-param">run_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#lammpsInputGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.lammpsInputGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><cite>lammpsInputGenerator</cite> will help us to generate the input file for LAMMPS (if we want to combine the deepmd with lammps)</p>
+<p>There are four parts of the input file for LAMMPS:
+* Initilization
+* System definition
+* Simulation settings
+* Run a simulation</p>
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.lammpsInputGenerator.export">
+<code class="sig-name descname">export</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#lammpsInputGenerator.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.lammpsInputGenerator.export" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hzdplugins.deepmdplugins.submit.lammpsInputGenerator.output">
+<code class="sig-name descname">output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#lammpsInputGenerator.output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.lammpsInputGenerator.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="log.html" class="btn btn-neutral float-right" title="Log file for hzdplugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="structure.html" class="btn btn-neutral float-left" title="structure Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Zheng-Da He
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
