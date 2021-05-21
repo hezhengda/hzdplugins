@@ -147,65 +147,10 @@ class deepmdInputGenerator():
         tmp_loss['limit_pref_v'] = limit_pref_v
         self.loss = tmp_loss
 
-    def setTrainingData(self, systems=['./'], set_prefix='set', batch_size='auto', auto_prob='prob_sys_size', sys_probs=None):
-        """This function is used to set the training_data section in the training section
-
-        :param systems: The data systems for training. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated. 
-        :type systems: python list 
-        :param set_prefix: the prefix of sets in the systems, defaults to 'set'
-        :type set_prefix: str, optional
-        :param batch_size: automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to 'auto'
-        :type batch_size: str, optional
-        :param auto_prob: defaults to 'prob_sys_size', the probability of a system is proportional to the number of batches in the system
-        :type auto_prob: str, optional
-        :param sys_probs: defaults to None
-        :type sys_probs: None, optional
-        :return: the dictionary of `training_data` 
-        :rtype: python dictionary 
-        """
-        tmp_training_data = {}
-        tmp_training_data['systems'] = systems 
-        tmp_training_data['set_prefix'] = set_prefix 
-        tmp_training_data['batch_size'] = batch_size 
-        tmp_training_data['auto_prob'] = auto_prob
-        tmp_training_data['sys_probs'] = sys_probs
-        return tmp_training_data
-        
-    def setValidationData(self, systems=['./'], set_prefix='set', batch_size='auto', auto_prob='prob_sys_size', sys_probs=None, numb_batch=1):
-        """This function is used to set the validation_data section in the validation section
-
-        :param systems: The data systems for validation. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated. 
-        :type systems: python list 
-        :param set_prefix: the prefix of sets in the systems, defaults to 'set'
-        :type set_prefix: str, optional
-        :param batch_size: automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to 'auto'
-        :type batch_size: str, optional
-        :param auto_prob: defaults to 'prob_sys_size', the probability of a system is proportional to the number of batches in the system
-        :type auto_prob: str, optional
-        :param sys_probs: defaults to None
-        :type sys_probs: None, optional
-        :param numb_batch: an integer that specifies the number of systems to be sampled for each validation period.
-        :type numb_batch: python int
-        :return: the dictionary of `validation_data` 
-        :rtype: python dictionary 
-        """
-        tmp_validation_data = {}
-        tmp_validation_data['systems'] = systems 
-        tmp_validation_data['set_prefix'] = set_prefix 
-        tmp_validation_data['batch_size'] = batch_size 
-        tmp_validation_data['auto_prob'] = auto_prob
-        tmp_validation_data['sys_probs'] = sys_probs
-        tmp_validation_data['numb_batch'] = numb_batch
-        return tmp_validation_data
-
-    def setTraining(self, training_data, validation_data, stop_batch=1000000, seed=1, \
-                    numb_test=1, disp_file='lcurve.out', disp_freq='500', save_freq='1000', save_ckpt='model.ckpt', \
-                    disp_training=True, time_training=True, profiling=True, profiling_file='timeline.json'):
+    def setTraining(self, systems=['./'], set_prefix='set', stop_batch=1000000, seed=1, numb_test=10, disp_file='lcurve.out', disp_freq=50, save_freq=100, save_ckpt='model.ckpt', load_ckpt='model.ckpt', disp_training=True, time_training=True, profiling=True, profiling_file='timeline.json'):
         """This function can help us generate the parameters for the training section
 
-        :param training_data: parameters about the training_data, this can be generated from self.setTrainingData() method 
-        :type training_data: python dictionary 
-        :param validation_data: parameters about the validation_data, this can be generated from self.setValidationData() method 
+         
         :type validation_data: python dictionary
         :param stop_batch: the number of batches that we want to train the model, defaults to 1000000
         :type stop_batch: int, optional
@@ -227,8 +172,8 @@ class deepmdInputGenerator():
         :type profiling_file: str, optional
         """
         tmp_training = {}
-        tmp_training['training_data'] = training_data 
-        tmp_training['validation_data'] = validation_data 
+        tmp_training['systems'] = systems
+        tmp_training['set_prefix'] = set_prefix
         tmp_training['stop_batch'] = stop_batch
         tmp_training['seed'] = seed 
         tmp_training['numb_test'] = numb_test
@@ -260,17 +205,7 @@ class deepmdInputGenerator():
         :type filename: python string 
         """
 
-        # check
-        if len(list(self.model.keys())) == 0:
-            print('There are no paramters in model')
-        elif len(list(self.learning_rate.keys())):
-            print('There are no parameters in learning_rate')
-        elif len(list(self.loss.keys())):
-            print('There are no parameters in loss') 
-        elif len(list(self.training.keys())):
-            print('There are no parameters in training')
-        else:
-            print('everything is fine, generating the input json file now') 
+        print('The items in model:{}; learning_rate:{}, loss:{}, training:{}'.format(len(self.model), len(self.learning_rate), len(self.loss), len(self.training)))
         
         tmp_dict = {
             'model': self.model,
@@ -279,7 +214,7 @@ class deepmdInputGenerator():
             'training': self.training
         }
         f = open(filename,'w+')
-        json.dump(tmp_dict, f)
+        json.dump(tmp_dict, f, sort_keys=True, indent=4)
 
 class dpgenInputGenerator():
     """

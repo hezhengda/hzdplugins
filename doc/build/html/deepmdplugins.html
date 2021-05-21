@@ -9,7 +9,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>deepmdplugins Modules &mdash; hzdplugins 0.0.54 documentation</title>
+  <title>deepmdplugins Modules &mdash; hzdplugins 0.0.56 documentation</title>
   
 
   
@@ -275,13 +275,11 @@
 
 <dl class="method">
 <dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining">
-<code class="sig-name descname">setTraining</code><span class="sig-paren">(</span><em class="sig-param">training_data</em>, <em class="sig-param">validation_data</em>, <em class="sig-param">stop_batch=1000000</em>, <em class="sig-param">seed=1</em>, <em class="sig-param">numb_test=1</em>, <em class="sig-param">disp_file='lcurve.out'</em>, <em class="sig-param">disp_freq='500'</em>, <em class="sig-param">save_freq='1000'</em>, <em class="sig-param">save_ckpt='model.ckpt'</em>, <em class="sig-param">disp_training=True</em>, <em class="sig-param">time_training=True</em>, <em class="sig-param">profiling=True</em>, <em class="sig-param">profiling_file='timeline.json'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setTraining"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setTraining</code><span class="sig-paren">(</span><em class="sig-param">systems=['./'], set_prefix='set', stop_batch=1000000, seed=1, numb_test=10, disp_file='lcurve.out', disp_freq=50, save_freq=100, save_ckpt='model.ckpt', load_ckpt='model.ckpt', disp_training=True, time_training=True, profiling=True, profiling_file='timeline.json'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setTraining"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function can help us generate the parameters for the training section</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>training_data</strong> (<em>python dictionary</em>) – parameters about the training_data, this can be generated from self.setTrainingData() method</p></li>
-<li><p><strong>validation_data</strong> (<em>python dictionary</em>) – parameters about the validation_data, this can be generated from self.setValidationData() method</p></li>
 <li><p><strong>stop_batch</strong> (<em>int</em><em>, </em><em>optional</em>) – the number of batches that we want to train the model, defaults to 1000000</p></li>
 <li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – the seed for generating the random number, defaults to 1</p></li>
 <li><p><strong>disp_file</strong> (<em>str</em><em>, </em><em>optional</em>) – the output file for the error, defaults to ‘lcurve.out’</p></li>
@@ -292,53 +290,6 @@
 <li><p><strong>profiling</strong> (<em>bool</em><em>, </em><em>optional</em>) – output the profile (cpu / gpu usages for training), defaults to True</p></li>
 <li><p><strong>profiling_file</strong> (<em>str</em><em>, </em><em>optional</em>) – filename of the profiling data, defaults to ‘timeline.json’</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTrainingData">
-<code class="sig-name descname">setTrainingData</code><span class="sig-paren">(</span><em class="sig-param">systems=['./'], set_prefix='set', batch_size='auto', auto_prob='prob_sys_size', sys_probs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setTrainingData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTrainingData" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used to set the training_data section in the training section</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>systems</strong> (<em>python list</em>) – The data systems for training. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated.</p></li>
-<li><p><strong>set_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – the prefix of sets in the systems, defaults to ‘set’</p></li>
-<li><p><strong>batch_size</strong> (<em>str</em><em>, </em><em>optional</em>) – automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to ‘auto’</p></li>
-<li><p><strong>auto_prob</strong> (<em>str</em><em>, </em><em>optional</em>) – defaults to ‘prob_sys_size’, the probability of a system is proportional to the number of batches in the system</p></li>
-<li><p><strong>sys_probs</strong> (<em>None</em><em>, </em><em>optional</em>) – defaults to None</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the dictionary of <cite>training_data</cite></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>python dictionary</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setValidationData">
-<code class="sig-name descname">setValidationData</code><span class="sig-paren">(</span><em class="sig-param">systems=['./'], set_prefix='set', batch_size='auto', auto_prob='prob_sys_size', sys_probs=None, numb_batch=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hzdplugins/deepmdplugins/submit.html#deepmdInputGenerator.setValidationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setValidationData" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used to set the validation_data section in the validation section</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>systems</strong> (<em>python list</em>) – The data systems for validation. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated.</p></li>
-<li><p><strong>set_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – the prefix of sets in the systems, defaults to ‘set’</p></li>
-<li><p><strong>batch_size</strong> (<em>str</em><em>, </em><em>optional</em>) – automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to ‘auto’</p></li>
-<li><p><strong>auto_prob</strong> (<em>str</em><em>, </em><em>optional</em>) – defaults to ‘prob_sys_size’, the probability of a system is proportional to the number of batches in the system</p></li>
-<li><p><strong>sys_probs</strong> (<em>None</em><em>, </em><em>optional</em>) – defaults to None</p></li>
-<li><p><strong>numb_batch</strong> (<em>python int</em>) – an integer that specifies the number of systems to be sampled for each validation period.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the dictionary of <cite>validation_data</cite></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>python dictionary</p>
 </dd>
 </dl>
 </dd></dl>

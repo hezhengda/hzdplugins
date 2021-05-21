@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.deepmdplugins.submit &mdash; hzdplugins 0.0.54 documentation</title>
+  <title>hzdplugins.deepmdplugins.submit &mdash; hzdplugins 0.0.56 documentation</title>
   
 
   
@@ -205,6 +205,7 @@
 <span class="sd">        :rtype: a python list? </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tmp_descriptor</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;se_a&#39;</span>
         <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;sel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sel</span> 
         <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;rcut&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rcut</span>
         <span class="n">tmp_descriptor</span><span class="p">[</span><span class="s1">&#39;rcut_smth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rcut_smth</span>
@@ -296,65 +297,10 @@
         <span class="n">tmp_loss</span><span class="p">[</span><span class="s1">&#39;limit_pref_v&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit_pref_v</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">tmp_loss</span></div>
 
-<div class="viewcode-block" id="deepmdInputGenerator.setTrainingData"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTrainingData">[docs]</a>    <span class="k">def</span> <span class="nf">setTrainingData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">systems</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;./&#39;</span><span class="p">],</span> <span class="n">set_prefix</span><span class="o">=</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">auto_prob</span><span class="o">=</span><span class="s1">&#39;prob_sys_size&#39;</span><span class="p">,</span> <span class="n">sys_probs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This function is used to set the training_data section in the training section</span>
-
-<span class="sd">        :param systems: The data systems for training. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated. </span>
-<span class="sd">        :type systems: python list </span>
-<span class="sd">        :param set_prefix: the prefix of sets in the systems, defaults to &#39;set&#39;</span>
-<span class="sd">        :type set_prefix: str, optional</span>
-<span class="sd">        :param batch_size: automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to &#39;auto&#39;</span>
-<span class="sd">        :type batch_size: str, optional</span>
-<span class="sd">        :param auto_prob: defaults to &#39;prob_sys_size&#39;, the probability of a system is proportional to the number of batches in the system</span>
-<span class="sd">        :type auto_prob: str, optional</span>
-<span class="sd">        :param sys_probs: defaults to None</span>
-<span class="sd">        :type sys_probs: None, optional</span>
-<span class="sd">        :return: the dictionary of `training_data` </span>
-<span class="sd">        :rtype: python dictionary </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp_training_data</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;systems&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">systems</span> 
-        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;set_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_prefix</span> 
-        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_size</span> 
-        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;auto_prob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">auto_prob</span>
-        <span class="n">tmp_training_data</span><span class="p">[</span><span class="s1">&#39;sys_probs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys_probs</span>
-        <span class="k">return</span> <span class="n">tmp_training_data</span></div>
-        
-<div class="viewcode-block" id="deepmdInputGenerator.setValidationData"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setValidationData">[docs]</a>    <span class="k">def</span> <span class="nf">setValidationData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">systems</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;./&#39;</span><span class="p">],</span> <span class="n">set_prefix</span><span class="o">=</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">auto_prob</span><span class="o">=</span><span class="s1">&#39;prob_sys_size&#39;</span><span class="p">,</span> <span class="n">sys_probs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">numb_batch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This function is used to set the validation_data section in the validation section</span>
-
-<span class="sd">        :param systems: The data systems for validation. This key can be provided with a list that specifies the systems, or be provided with a string by which the prefix of all systems are given and the list of the systems is automatically generated. </span>
-<span class="sd">        :type systems: python list </span>
-<span class="sd">        :param set_prefix: the prefix of sets in the systems, defaults to &#39;set&#39;</span>
-<span class="sd">        :type set_prefix: str, optional</span>
-<span class="sd">        :param batch_size: automatically determines the batch size so that the batch_size times the number of atoms in the system is no less than 32., defaults to &#39;auto&#39;</span>
-<span class="sd">        :type batch_size: str, optional</span>
-<span class="sd">        :param auto_prob: defaults to &#39;prob_sys_size&#39;, the probability of a system is proportional to the number of batches in the system</span>
-<span class="sd">        :type auto_prob: str, optional</span>
-<span class="sd">        :param sys_probs: defaults to None</span>
-<span class="sd">        :type sys_probs: None, optional</span>
-<span class="sd">        :param numb_batch: an integer that specifies the number of systems to be sampled for each validation period.</span>
-<span class="sd">        :type numb_batch: python int</span>
-<span class="sd">        :return: the dictionary of `validation_data` </span>
-<span class="sd">        :rtype: python dictionary </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp_validation_data</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;systems&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">systems</span> 
-        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;set_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_prefix</span> 
-        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_size</span> 
-        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;auto_prob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">auto_prob</span>
-        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;sys_probs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys_probs</span>
-        <span class="n">tmp_validation_data</span><span class="p">[</span><span class="s1">&#39;numb_batch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numb_batch</span>
-        <span class="k">return</span> <span class="n">tmp_validation_data</span></div>
-
-<div class="viewcode-block" id="deepmdInputGenerator.setTraining"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining">[docs]</a>    <span class="k">def</span> <span class="nf">setTraining</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span><span class="p">,</span> <span class="n">validation_data</span><span class="p">,</span> <span class="n">stop_batch</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> \
-                    <span class="n">numb_test</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">disp_file</span><span class="o">=</span><span class="s1">&#39;lcurve.out&#39;</span><span class="p">,</span> <span class="n">disp_freq</span><span class="o">=</span><span class="s1">&#39;500&#39;</span><span class="p">,</span> <span class="n">save_freq</span><span class="o">=</span><span class="s1">&#39;1000&#39;</span><span class="p">,</span> <span class="n">save_ckpt</span><span class="o">=</span><span class="s1">&#39;model.ckpt&#39;</span><span class="p">,</span> \
-                    <span class="n">disp_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profiling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profiling_file</span><span class="o">=</span><span class="s1">&#39;timeline.json&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="deepmdInputGenerator.setTraining"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.deepmdInputGenerator.setTraining">[docs]</a>    <span class="k">def</span> <span class="nf">setTraining</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">systems</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;./&#39;</span><span class="p">],</span> <span class="n">set_prefix</span><span class="o">=</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="n">stop_batch</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">numb_test</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">disp_file</span><span class="o">=</span><span class="s1">&#39;lcurve.out&#39;</span><span class="p">,</span> <span class="n">disp_freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">save_freq</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">save_ckpt</span><span class="o">=</span><span class="s1">&#39;model.ckpt&#39;</span><span class="p">,</span> <span class="n">load_ckpt</span><span class="o">=</span><span class="s1">&#39;model.ckpt&#39;</span><span class="p">,</span> <span class="n">disp_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profiling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profiling_file</span><span class="o">=</span><span class="s1">&#39;timeline.json&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function can help us generate the parameters for the training section</span>
 
-<span class="sd">        :param training_data: parameters about the training_data, this can be generated from self.setTrainingData() method </span>
-<span class="sd">        :type training_data: python dictionary </span>
-<span class="sd">        :param validation_data: parameters about the validation_data, this can be generated from self.setValidationData() method </span>
+<span class="sd">         </span>
 <span class="sd">        :type validation_data: python dictionary</span>
 <span class="sd">        :param stop_batch: the number of batches that we want to train the model, defaults to 1000000</span>
 <span class="sd">        :type stop_batch: int, optional</span>
@@ -376,8 +322,8 @@
 <span class="sd">        :type profiling_file: str, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tmp_training</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;training_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">training_data</span> 
-        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;validation_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validation_data</span> 
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;systems&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">systems</span>
+        <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;set_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_prefix</span>
         <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;stop_batch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop_batch</span>
         <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">seed</span> 
         <span class="n">tmp_training</span><span class="p">[</span><span class="s1">&#39;numb_test&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numb_test</span>
@@ -409,26 +355,16 @@
 <span class="sd">        :type filename: python string </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># check</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no paramters in model&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no parameters in learning_rate&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no parameters in loss&#39;</span><span class="p">)</span> 
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are no parameters in training&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;everything is fine, generating the input json file now&#39;</span><span class="p">)</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The items in model:</span><span class="si">{}</span><span class="s1">; learning_rate:</span><span class="si">{}</span><span class="s1">, loss:</span><span class="si">{}</span><span class="s1">, training:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="p">)))</span>
         
         <span class="n">tmp_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
-            <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="n">learning_rate</span><span class="p">,</span>
-            <span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span>
-            <span class="s1">&#39;training&#39;</span><span class="p">:</span> <span class="n">training</span>
+            <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
+            <span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span>
+            <span class="s1">&#39;training&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span>
         <span class="p">}</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;w+&#39;</span><span class="p">)</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div></div>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="dpgenInputGenerator"><a class="viewcode-back" href="../../../deepmdplugins.html#hzdplugins.deepmdplugins.submit.dpgenInputGenerator">[docs]</a><span class="k">class</span> <span class="nc">dpgenInputGenerator</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>

@@ -27,8 +27,7 @@ def pwInputToDict(loc_file, atomic_species_list):
     input_dict = {}
     for line in f.readlines():
         line = line.rstrip()
-        keyword = line.split(' ')[0]
-
+        keyword = line.split(' ')[0].upper()
         # face /, just move to the next line
         if keyword == '/':
             continue
@@ -161,7 +160,7 @@ def dictToPwInput(dict_input, location, atomic_species_list):
    
     for key, value in dict_input.items():
     
-        if key in ['CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL']:
+        if key.upper() in ['CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL']:
             
             f.write('&{}\n'.format(key))
             
@@ -188,14 +187,14 @@ def dictToPwInput(dict_input, location, atomic_species_list):
             
             f.write('/\n')
 
-        elif key in ['ATOMIC_SPECIES']:
+        elif key.upper() in ['ATOMIC_SPECIES']:
             
             f.write('{}\n'.format(key))
             
             for element, e_v in value.items():
                 f.write('{} {} {}\n'.format(element, e_v['atomic_weight'], e_v['pseudopotential']))
 
-        elif key in ['K_POINTS']:
+        elif key.upper() in ['K_POINTS']:
             
             kpts = value['kpoints']
             disp = value['displacement']
@@ -205,13 +204,13 @@ def dictToPwInput(dict_input, location, atomic_species_list):
                 disp[0], disp[1], disp[2]
             ))
 
-        elif key in ['CELL_PARAMETERS']:
+        elif key.upper() in ['CELL_PARAMETERS']:
             f.write('CELL_PARAMETERS (angstrom)\n')
             tmp_str = ''
             for l in value:
                 f.write('{}\n'.format(listToStr(l, ' ')))
 
-        elif key in ['ATOMIC_POSITIONS']:
+        elif key.upper() in ['ATOMIC_POSITIONS']:
             
             f.write('ATOMIC_POSITIONS (angstrom)\n')
             

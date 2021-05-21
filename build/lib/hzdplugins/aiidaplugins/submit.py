@@ -2,6 +2,7 @@
 # Aiida, that's why all the relevant information will be provided in aiida.orm types. (I can convert them in the
 # code, it is very straightforward)
 
+import json
 from copy import deepcopy
 
 from aiida.engine.launch import submit
@@ -11,11 +12,14 @@ from aiida.orm.nodes.data.upf import get_pseudos_from_structure
 
 from hzdplugins.aiidaplugins.constants import slurm_options, pwParameter, projwfcParameter, phParameter
 
-def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, pseudo_dict={}, add_parameters={},
+def qePwOriginalSubmit(json_file, codename, structure, kpoints, pseudo_family, metadata, pseudo_dict={}, add_parameters={},
                        del_parameters={}, cluster_options={}, settings_dict={}):
     """
 
     :code:`qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.
+
+    :param json_file: (mandatory) A string represents the json file for the project
+    :type json_file: python string object 
 
     :param codename: (mandatory) A string represents the code for pw.x that you want to use.
     :type codename: python string object
@@ -104,6 +108,9 @@ def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, ps
     :returns: uuid of the new CalcJobNode
 
     """
+    f = open(json_file, 'r')
+    json_dict = json.load(f)
+    f.close()
 
     code = Code.get_from_string(codename)
     computer = codename.split('@')[1]  # get the name of the cluster
@@ -188,6 +195,20 @@ def qePwOriginalSubmit(codename, structure, kpoints, pseudo_family, metadata, ps
     pw_builder.parameters = parameters_default
     pw_builder.settings = Dict(dict=settings_dict)
     calc = submit(pw_builder)
+
+    uuid = calc.uuid
+    nn = load_node(uuid=uuid)
+
+    tmp_dict = {}
+    tmp_dict['pk'] = nn.pk
+    tmp_dict['uuid'] = nn.uuid
+    tmp_dict['status'] = 'ongoing'
+    tmp_dict['computer'] = nn.computer.label
+
+    f = open(json_file, 'w')
+    json_dict[pw_builder.metadata.label] = tmp_dict 
+    json.dump(json_dict, f)
+    f.close()
 
     return calc.uuid
 

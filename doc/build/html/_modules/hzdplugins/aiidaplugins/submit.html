@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>hzdplugins.aiidaplugins.submit &mdash; hzdplugins 0.0.54 documentation</title>
+  <title>hzdplugins.aiidaplugins.submit &mdash; hzdplugins 0.0.56 documentation</title>
   
 
   
@@ -152,6 +152,7 @@
 <span class="c1"># Aiida, that&#39;s why all the relevant information will be provided in aiida.orm types. (I can convert them in the</span>
 <span class="c1"># code, it is very straightforward)</span>
 
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">from</span> <span class="nn">aiida.engine.launch</span> <span class="kn">import</span> <span class="n">submit</span>
@@ -161,11 +162,14 @@
 
 <span class="kn">from</span> <span class="nn">hzdplugins.aiidaplugins.constants</span> <span class="kn">import</span> <span class="n">slurm_options</span><span class="p">,</span> <span class="n">pwParameter</span><span class="p">,</span> <span class="n">projwfcParameter</span><span class="p">,</span> <span class="n">phParameter</span>
 
-<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span>
+<div class="viewcode-block" id="qePwOriginalSubmit"><a class="viewcode-back" href="../../../aiidaplugins.html#hzdplugins.aiidaplugins.submit.qePwOriginalSubmit">[docs]</a><span class="k">def</span> <span class="nf">qePwOriginalSubmit</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">codename</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">pseudo_family</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">pseudo_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">add_parameters</span><span class="o">=</span><span class="p">{},</span>
                        <span class="n">del_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">cluster_options</span><span class="o">=</span><span class="p">{},</span> <span class="n">settings_dict</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :code:`qePwOriginalSubmit` will submit an original computational task to the desired computer by using certain code.</span>
+
+<span class="sd">    :param json_file: (mandatory) A string represents the json file for the project</span>
+<span class="sd">    :type json_file: python string object </span>
 
 <span class="sd">    :param codename: (mandatory) A string represents the code for pw.x that you want to use.</span>
 <span class="sd">    :type codename: python string object</span>
@@ -254,6 +258,9 @@
 <span class="sd">    :returns: uuid of the new CalcJobNode</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">json_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="n">code</span> <span class="o">=</span> <span class="n">Code</span><span class="o">.</span><span class="n">get_from_string</span><span class="p">(</span><span class="n">codename</span><span class="p">)</span>
     <span class="n">computer</span> <span class="o">=</span> <span class="n">codename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># get the name of the cluster</span>
@@ -338,6 +345,20 @@
     <span class="n">pw_builder</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters_default</span>
     <span class="n">pw_builder</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="n">settings_dict</span><span class="p">)</span>
     <span class="n">calc</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">pw_builder</span><span class="p">)</span>
+
+    <span class="n">uuid</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span>
+    <span class="n">nn</span> <span class="o">=</span> <span class="n">load_node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">pk</span>
+    <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;uuid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">uuid</span>
+    <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ongoing&#39;</span>
+    <span class="n">tmp_dict</span><span class="p">[</span><span class="s1">&#39;computer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">computer</span><span class="o">.</span><span class="n">label</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">json_dict</span><span class="p">[</span><span class="n">pw_builder</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_dict</span> 
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">calc</span><span class="o">.</span><span class="n">uuid</span></div>
 
