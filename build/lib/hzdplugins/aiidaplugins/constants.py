@@ -10,32 +10,125 @@ slurm_options = {}
 # 'claix-mac'
 slurm_options['rwth-claix-mac'] = {
     'qe': {
-        'resources': {'num_machines': 2},  # on rwth_claix, each node has 48 cores.
-        'max_wallclock_seconds': 86400,
+        'job_name': 'scf',
+        'scheduler_stdout': 'stdout-scf-%j',
+        'scheduler_stderr': 'stderr-scf-%j',
+        'queue_name': 'c18m',
         'account': 'jara0037',
-        'scheduler_stderr': 'stderr',
-        'scheduler_stdout': 'stdout',
-        'queue_name': 'c18m'
+        'resources': {'num_machines': 2},  # on rwth_claix, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['CHEMISTRY', 'qe/6.5'],
+        'cmd': 'srun pw.x -nk 4 -in aiida.in > aiida.out'
+    },
+    'pmw': {
+        'job_name': 'pmw',
+        'scheduler_stdout': 'stdout-pmw-%j',
+        'scheduler_stderr': 'stderr-pmw-%j',
+        'queue_name': 'c18m',
+        'account': 'jara0037',
+        'resources': {'num_machines': 1},  # on rwth_claix, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['CHEMISTRY', 'qe/6.5'],
+        'cmd': 'srun pmw.x < inp_pmw > out_pmw'
     },
     'projwfc': {
-        'resources': {'num_machines': 1},  # on rwth_claix, each node has 48 cores.
-        'max_wallclock_seconds': 86400,
+        'job_name': 'projwfc',
+        'scheduler_stdout': 'stdout-projwfc-%j',
+        'scheduler_stderr': 'stderr-projwfc-%j',
+        'queue_name': 'c18m',
         'account': 'jara0037',
-        'scheduler_stderr': 'stderr',
-        'scheduler_stdout': 'stdout',
-        'queue_name': 'c18m'
+        'resources': {'num_machines': 1},  # on rwth_claix, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['CHEMISTRY', 'qe/6.5'],
     }
 }
 
+# iek13cluster-mac
+slurm_options['iek13cluster-mac'] = {
+    'qe': {
+        'job_name': 'scf',
+        'scheduler_stdout': 'stdout-scf-%j',
+        'scheduler_stderr': 'stderr-scf-%j',
+        'queue_name': 'medium',
+        'account': 'z.he',
+        'resources': {'num_machines': 1},  # on iek13cluster, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['intel/compiler/latest', 'intel/mkl/2021.1.1', 'intel/mpi/2021.1.1'],
+        'cmd': 'srun pw.x -nk 2 -in aiida.in > aiida.out'
+    },
+    'pmw': {
+        'job_name': 'pmw',
+        'scheduler_stdout': 'stdout-pmw-%j',
+        'scheduler_stderr': 'stderr-pmw-%j',
+        'queue_name': 'medium',
+        'account': 'z.he',
+        'resources': {'num_machines': 1},  # on rwth_claix, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['intel/compiler/latest', 'intel/mkl/2021.1.1', 'intel/mpi/2021.1.1'],
+        'cmd': 'srun pmw.x < inp_pmw > out_pmw'
+    },
+    'projwfc': {
+        'job_name': 'projwfc',
+        'scheduler_stdout': 'stdout-projwfc-%j',
+        'scheduler_stderr': 'stderr-projwfc-%j',
+        'queue_name': 'c18m',
+        'account': 'jara0037',
+        'resources': {'num_machines': 1},  # on rwth_claix, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['CHEMISTRY', 'qe/6.5'],
+    }
+}
 # 'juwels-mac'
 slurm_options['juwels-mac'] = {
     'qe': {
-        'resources': {'num_machines': 4},  # on juwels, each node has 48 cores.
-        'max_wallclock_seconds': 86400,
+        'job_name': 'scf',
+        'scheduler_stdout': 'stdout-scf-%j',
+        'scheduler_stderr': 'stderr-scf-%j',
+        'queue_name': 'batch',
         'account': 'fzj-mac',
-        'scheduler_stderr': 'stderr',
-        'scheduler_stdout': 'stdout',
-        'queue_name': 'batch'
+        'resources': {'num_machines': 2},  # on juwels, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': ['$OTHERSTAGES'],
+        'modules': ['Stages/2020', 'Intel/2020.2.254-GCC-9.3.0', 'ParaStationMPI/5.4.7-1', 'QuantumESPRESSO/6.6'],
+        'cmd': 'srun pw.x -nk 2 -in aiida.in > aiida.out'
+    },
+    'pmw': {
+        'job_name': 'pmw',
+        'scheduler_stdout': 'stdout-pmw-%j',
+        'scheduler_stderr': 'stderr-pmw-%j',
+        'queue_name': 'batch',
+        'account': 'fzj-mac',
+        'resources': {'num_machines': 1},  # on juwels, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': ['$OTHERSTAGES'],
+        'modules': ['Stages/2020', 'Intel/2020.2.254-GCC-9.3.0', 'ParaStationMPI/5.4.7-1', 'QuantumESPRESSO/6.6'],
+        'cmd': 'srun pmw.x < inp_pmw > out_pmw'
+    },
+    'projwfc': {
+        'job_name': 'projwfc',
+        'scheduler_stdout': 'stdout-projwfc-%j',
+        'scheduler_stderr': 'stderr-projwfc-%j',
+        'queue_name': 'batch',
+        'account': 'fzj-mac',
+        'resources': {'num_machines': 1},  # on juwels, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': ['$OTHERSTAGES'],
+        'modules': ['Stages/2020', 'Intel/2020.2.254-GCC-9.3.0', 'ParaStationMPI/5.4.7-1', 'QuantumESPRESSO/6.6']
     }
 }
 
@@ -54,24 +147,59 @@ slurm_options['jusuf-mac'] = {
 # 'jureca-dc-mac'
 slurm_options['jureca-dc-mac'] = {
     'qe': {
-        'resources': {'num_machines': 2},  # on jureca_booster, each node has 128 cores
-        'max_wallclock_seconds': 86400,
+        'job_name': 'scf',
+        'scheduler_stdout': 'stdout-scf-%j',
+        'scheduler_stderr': 'stderr-scf-%j',
+        'queue_name': 'dc-cpu',
         'account': 'jiek61',
-        'scheduler_stderr': 'stderr',
-        'scheduler_stdout': 'stdout',
-        'queue_name': 'dc-cpu'
+        'resources': {'num_machines': 2},  # on jureca-dc, each node has 128 cores.
+        'ntasks_per_node': 128,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['Architecture/jurecadc', 'Intel/2020.2.254-GCC-9.3.0', 'ParaStationMPI/5.4.7-1', 'QuantumESPRESSO/6.6'],
+        'cmd': 'srun pw.x -nk 2 -in aiida.in > aiida.out'
+    },
+    'pmw': {
+        'job_name': 'pmw',
+        'scheduler_stdout': 'stdout-pmw-%j',
+        'scheduler_stderr': 'stderr-pmw-%j',
+        'queue_name': 'dc-cpu',
+        'account': 'jiek61',
+        'resources': {'num_machines': 1},  # on juwels, each node has 48 cores.
+        'ntasks_per_node': 128,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['Architecture/jurecadc', 'Intel/2020.2.254-GCC-9.3.0', 'ParaStationMPI/5.4.7-1', 'QuantumESPRESSO/6.6'],
+        'cmd': 'srun pmw.x < inp_pmw > out_pmw'
+    },
+    'projwfc': {
+        'job_name': 'projwfc',
+        'scheduler_stdout': 'stdout-projwfc-%j',
+        'scheduler_stderr': 'stderr-projwfc-%j',
+        'queue_name': 'dc-cpu',
+        'account': 'jiek61',
+        'resources': {'num_machines': 1},  # on juwels, each node has 48 cores.
+        'ntasks_per_node': 48,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['Architecture/jurecadc', 'Intel/2020.2.254-GCC-9.3.0', 'ParaStationMPI/5.4.7-1', 'QuantumESPRESSO/6.6']
     }
 }
 
 # 'jureca-booster-mac'
 slurm_options['jureca-booster-mac'] = {
     'qe': {
-        'resources': {'num_machines': 2},  # on jureca_booster, each node has 68 cores
-        'max_wallclock_seconds': 86400,
+        'job_name': 'scf',
+        'scheduler_stdout': 'stdout-scf-%j',
+        'scheduler_stderr': 'stderr-scf-%j',
+        'queue_name': 'booster',
         'account': 'jiek61',
-        'scheduler_stderr': 'stderr',
-        'scheduler_stdout': 'stdout',
-        'queue_name': 'booster'
+        'resources': {'num_machines': 2},  # on jureca-booster, each node has 68 cores.
+        'ntasks_per_node': 68,
+        'max_wallclock_seconds': 86400,
+        'use': [],
+        'modules': ['Architecture/KNL', 'Intel/2019.3.199-GCC-8.3.0', 'IntelMPI/2018.5.288'],
+        'cmd': 'srun ~/bin/pw_6.2.1_booster_FFT3_scalapack_MPI.x -i aiida.in -npool 4 > aiida.out'
     }
 }
 
